@@ -27,6 +27,11 @@ const commonStyles = StyleSheet.create({
     margin: 10,
     color: "#e60000",
     textAlign: "center"
+  },
+  imgDashboardIcon: {
+    height: 60,
+    width: 60,
+    borderRadius: 60
   }
 });
 

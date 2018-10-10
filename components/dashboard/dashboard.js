@@ -11,8 +11,9 @@ import {
 import { createDrawerNavigator, DrawerItems } from "react-navigation";
 import Customers from "../customers/customers";
 import Orders from "../orders/orders";
+import CustomerProfile from "../customers/profile";
 
-export default class Dashboard extends React.Component {
+export default class Dashboard extends React.Component {  
   render() {
     return <AppDrawerNavigator />;
   }
@@ -38,14 +39,23 @@ const customDrawComponent = props => (
     </ScrollView>
   </SafeAreaView>
 );
-const AppDrawerNavigator = createDrawerNavigator({
-  Customer: Customers,
-  Order: Orders,
-  Transfer: Customers,
-  Inventory: Orders
-},{
+const AppDrawerNavigator = createDrawerNavigator(
+  {
+    Customer: Customers,
+    Order: Orders,
+    Transfer: Customers,
+    Inventory: Orders,
+    // Profile: CustomerProfile,
+    Profile: {
+      screen: CustomerProfile,
+      navigationOptions: {
+        drawerLabel: ()=>null,
+      }}
+  },
+  {
     contentComponent: customDrawComponent
-  });
+  }
+);
 const styles = StyleSheet.create({
   container: {
     flex: 1,

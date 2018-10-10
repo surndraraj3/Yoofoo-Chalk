@@ -78,11 +78,11 @@ export default class Login extends React.Component {
                 Sign In
               </Text>
             </View>
-            <View style={commonStyles.buttonCommonMargin}>
+            {/* <View style={commonStyles.buttonCommonMargin}>
               <Button block light>
                 <Text>Auto Fill With Last Pass</Text>
               </Button>
-            </View>
+            </View> */}
             <View>
               <Text
                 style={commonStyles.forgotPass}
