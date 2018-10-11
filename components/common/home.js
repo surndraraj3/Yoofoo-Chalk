@@ -21,7 +21,7 @@ import {
 } from "native-base";
 import commonStyles from "../styles/styles";
 
-export default class Customers extends React.Component {
+export default class Home extends React.Component {
   onOpenMenu = () => {
     UIManager.showPopupMenu(
       ReactNative.findNodeHandle(this._button),

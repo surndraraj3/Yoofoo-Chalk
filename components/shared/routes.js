@@ -2,7 +2,7 @@ import React from "react";
 import { createStackNavigator } from "react-navigation";
 import Dashboard from "../dashboard/dashboard";
 import Login from "../login/login";
-import Customers from "../customers/customers";
+import Home from "../common/home";
 import Orders from "../orders/orders";
 import ResetPassword from "../customers/reset_password";
 
@@ -21,7 +21,7 @@ const Routes = createStackNavigator(
         header: null
       }
     },
-    Customer: { screen: Customers },
+    Home: { screen: Home },
     OrdersScreen: { screen: Orders },
     ResetCustomerDetails: {
       screen: ResetPassword,

@@ -32,6 +32,11 @@ const commonStyles = StyleSheet.create({
     height: 60,
     width: 60,
     borderRadius: 60
+  },
+  rowData: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between"
   }
 });
 

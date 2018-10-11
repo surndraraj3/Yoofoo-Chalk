@@ -25,7 +25,7 @@ export default class CustomerProfile extends React.Component {
         </Button> */}
         <Header>
           <Left>
-            <Button transparent onPress={() => this.props.navigation.navigate("Customer")}>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="arrow-back" />
             </Button>
           </Left>

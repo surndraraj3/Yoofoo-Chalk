@@ -9,11 +9,14 @@ import {
   Image
 } from "react-native";
 import { createDrawerNavigator, DrawerItems } from "react-navigation";
-import Customers from "../customers/customers";
+import Home from "../common/home";
 import Orders from "../orders/orders";
 import CustomerProfile from "../customers/profile";
+import Help from "../common/help";
+import Settings from '../common/settings'
+import Login from '../login/login'
 
-export default class Dashboard extends React.Component {  
+export default class Dashboard extends React.Component {
   render() {
     return <AppDrawerNavigator />;
   }
@@ -41,16 +44,34 @@ const customDrawComponent = props => (
 );
 const AppDrawerNavigator = createDrawerNavigator(
   {
-    Customer: Customers,
+    Home: Home,
     Order: Orders,
-    Transfer: Customers,
+    Transfer: Home,
     Inventory: Orders,
-    // Profile: CustomerProfile,
     Profile: {
       screen: CustomerProfile,
       navigationOptions: {
-        drawerLabel: ()=>null,
-      }}
+        drawerLabel: () => null
+      }
+    },
+    HelpScreen: {
+      screen: Help,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
+    SettingsScreen: {
+      screen: Settings,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
+    // Login: {
+    //   screen: Login,
+    //   navigationOptions: {
+    //     drawerLabel: () => null
+    //   }
+    // }
   },
   {
     contentComponent: customDrawComponent

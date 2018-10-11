@@ -32,7 +32,7 @@ export default class Orders extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Profile</Title>
+            <Title>Orders</Title>
           </Body>
           <Right>
             <Button transparent>
