@@ -9,6 +9,7 @@ import {
   Header,
   Body,
   Button,
+  Input,
   Left,
   Right,
   Title,
@@ -19,6 +20,20 @@ import commonStyles from "../styles/styles";
 
 const deviceWidth = Dimensions.get("window").width;
 export default class Settings extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      errorZipCode: false
+    };
+  }
+  handleZipCode = valZipCode => {
+    // console.log(`${valZipCode}`, '----', valZipCode.length);
+    if (valZipCode.length === 5) {
+      this.props.navigation.navigate("Home");
+    } else {
+      this.setState({ errorZipCode: true });
+    }
+  };
   render() {
     return (
       <Container>
@@ -51,10 +66,16 @@ export default class Settings extends React.Component {
             </CardItem>
             <CardItem>
               <View style={commonStyles.rowData}>
-                <Label>Default Zip</Label>
-                <Label>84106</Label>
+                <Left>
+                  <Label>Default Zip</Label>
+                </Left>
+                <Input placeholder="84106" onChangeText={this.handleZipCode} />
+                {/* <Right><Input placeholder="84106" onChangeText={this.handleZipCode} /></Right>  */}
               </View>
             </CardItem>
+            {this.state.errorZipCode && (
+              <Label style={commonStyles.errorMsg}>Incorrect Zip Code</Label>
+            )}
           </Card>
         </Content>
       </Container>
