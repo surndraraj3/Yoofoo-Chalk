@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "chalk-coture",
+    "name": "chalk-couture",
     "description": "This project is really great.",
     "slug": "chalk-coture",
     "privacy": "public",
@@ -21,7 +21,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yoofoo.chalk"
+    },
+    "android": {
+      "package": "com.yoofoo.chalk"
     }
   }
 }

@@ -17,7 +17,7 @@ import {
 } from "native-base";
 import commonStyles from "../styles/styles";
 
-export default class Orders extends React.Component {
+export default class Inventory extends React.Component {
   render() {
     return (
       <Container>
@@ -32,7 +32,7 @@ export default class Orders extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Orders</Title>
+            <Title>Inventory</Title>
           </Body>
           <Right>
             <Button transparent>
@@ -45,7 +45,7 @@ export default class Orders extends React.Component {
         </Header>
         <Content>
           <Form>
-            <Label style={commonStyles.labelPos}>Welcome To Order Page</Label>
+            <Label style={commonStyles.labelPos}>Welcome To Inventory Page</Label>
           </Form>
         </Content>
       </Container>

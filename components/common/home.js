@@ -38,7 +38,7 @@ export default class Home extends React.Component {
         } else if (i === 3) {
           // this.props.navigation.navigate("LoginScreen");
           console.log(`${e} : ${i}`);
-        }else {
+        } else {
           console.log(`${e} : ${i}`);
           this.props.navigation.navigate("Customer");
         }
@@ -77,33 +77,49 @@ export default class Home extends React.Component {
           <ScrollView>
             <View style={styles.container}>
               <View>
-                <Image
-                  source={require("../../assets/customer.png")}
-                  style={commonStyles.imgDashboardIcon}
-                />
+                <TouchableNativeFeedback
+                  onPress={() => this.props.navigation.navigate("Customer")}
+                >
+                  <Image
+                    source={require("../../assets/customer.png")}
+                    style={commonStyles.imgDashboardIcon}
+                  />
+                </TouchableNativeFeedback>
                 <Text>Customer</Text>
               </View>
               <View>
-                <Image
-                  source={require("../../assets/inventory.png")}
-                  style={commonStyles.imgDashboardIcon}
-                />
+                <TouchableNativeFeedback
+                  onPress={() => this.props.navigation.navigate("Inventory")}
+                >
+                  <Image
+                    source={require("../../assets/inventory.png")}
+                    style={commonStyles.imgDashboardIcon}
+                  />
+                </TouchableNativeFeedback>
                 <Text>Inventory</Text>
               </View>
               <View>
-                <Image
-                  source={require("../../assets/transfer.png")}
-                  style={commonStyles.imgDashboardIcon}
-                />
+                <TouchableNativeFeedback
+                  onPress={() => this.props.navigation.navigate("Transfer")}
+                >
+                  <Image
+                    source={require("../../assets/transfer.png")}
+                    style={commonStyles.imgDashboardIcon}
+                  />
+                </TouchableNativeFeedback>
                 <Text>Transfer</Text>
               </View>
             </View>
             <View style={{ flex: 1, flexDirection: "row", marginLeft: 50 }}>
               <View>
-                <Image
-                  source={require("../../assets/orders.png")}
-                  style={commonStyles.imgDashboardIcon}
-                />
+                <TouchableNativeFeedback
+                  onPress={() => this.props.navigation.navigate("Order")}
+                >
+                  <Image
+                    source={require("../../assets/orders.png")}
+                    style={commonStyles.imgDashboardIcon}
+                  />
+                </TouchableNativeFeedback>
                 <Text>Order</Text>
               </View>
             </View>
