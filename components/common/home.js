@@ -40,7 +40,7 @@ export default class Home extends React.Component {
           console.log(`${e} : ${i}`);
         } else {
           console.log(`${e} : ${i}`);
-          this.props.navigation.navigate("Customer");
+          // this.props.navigation.navigate("Customer");
         }
       }
     );

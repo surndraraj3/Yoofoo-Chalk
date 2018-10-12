@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { View, TextInput } from "react-native";
+import React from "react";
+import { View, ActivityIndicator } from "react-native";
 import {
   Container,
   Content,
@@ -7,11 +7,11 @@ import {
   Item,
   Input,
   Label,
-  Button,
   Icon,
   Text
 } from "native-base";
 import commonStyles from "../styles/styles";
+import baseURL from "../common/url_config";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -19,7 +19,9 @@ export default class Login extends React.Component {
     this.state = {
       userName: "",
       userPassword: "",
-      errorDetails: false
+      errorDetails: false,
+      loginData: "",
+      spinnerStatus: false
     };
   }
   //Get the username from the textbox onchange
@@ -32,17 +34,41 @@ export default class Login extends React.Component {
   };
   //On sign click and validate user and pass
   onSignIn = (user, pass) => {
-    if (user === "exigo" && pass === "exigo") {
-      this.props.navigation.navigate("Dashboard");
-      //   this.props.navigation.navigate({ routeName: "Dashboard" });
-      // alert("Login Success");
-    } else {
-      this.setState({ errorDetails: true });
-      setTimeout(() => {
-        this.setState({ errorDetails: false });
-      }, 3000);
-      //   alert("Failed to login");
-    }
+    console.log("URL", baseURL);
+    this.setState({ spinnerStatus: true });
+    fetch(
+      // "http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/Login",
+      `${baseURL}Login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          UserName: user,
+          Password: pass
+        })
+      }
+    )
+      .then(response => response.json())
+      .then(responseJson => {
+        // console.log(responseJson);
+        this.setState({
+          loginData: responseJson
+        });
+        if (responseJson.message === "Success") {
+          this.setState({ spinnerStatus: false });
+          this.props.navigation.navigate("Dashboard");
+        } else {
+          this.setState({ errorDetails: true, spinnerStatus: false });
+          setTimeout(() => {
+            this.setState({ errorDetails: false });
+          }, 3000);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
   render() {
     return (
@@ -63,9 +89,11 @@ export default class Login extends React.Component {
               />
               <Icon active name="close-circle" />
             </Item>
+            {this.state.spinnerStatus && (<ActivityIndicator size="large" color="#0000ff" />)}
             {this.state.errorDetails && (
               <Label style={commonStyles.errorMsg}>
-                 Incorrect credentials were supplied
+                {/* Incorrect credentials were supplied */}
+                {this.state.loginData.message}
               </Label>
             )}
             <View style={commonStyles.buttonPos}>
