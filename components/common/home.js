@@ -71,6 +71,7 @@ export default class Home extends React.Component {
             >
               <Icon name="more" />
             </TouchableNativeFeedback>
+            <View style={{ paddingLeft: 30 }} />
           </Right>
         </Header>
         <Content>
