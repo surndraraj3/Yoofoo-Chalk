@@ -16,7 +16,8 @@ import Help from "../common/help";
 import Settings from '../common/settings';
 import Inventory from '../inventory/inventory';
 import Customers from '../customers/customers';
-import TransferOrder from '../transfer/transfer';
+import Transfer from '../transfer/transfer';
+import TransferOrder from '../orders/transfer-order';
 
 export default class Dashboard extends React.Component {
   render() {
@@ -48,7 +49,7 @@ const AppDrawerNavigator = createDrawerNavigator(
   {
     Home: Home,
     Order: Orders,
-    Transfer: TransferOrder,
+    Transfer: Transfer,
     Inventory: Inventory,
     Profile: {
       screen: CustomerProfile,
@@ -70,6 +71,12 @@ const AppDrawerNavigator = createDrawerNavigator(
     },
     Customer: {
       screen: Customers,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
+    TransferOrder: {
+      screen: TransferOrder,
       navigationOptions: {
         drawerLabel: () => null
       }

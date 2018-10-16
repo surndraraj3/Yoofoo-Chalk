@@ -17,7 +17,7 @@ import {
 } from "native-base";
 import commonStyles from "../styles/styles";
 
-export default class TransferOrder extends React.Component {
+export default class Transfer extends React.Component {
   render() {
     return (
       <Container>

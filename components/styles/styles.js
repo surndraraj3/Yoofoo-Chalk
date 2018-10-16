@@ -37,6 +37,30 @@ const commonStyles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between"
+  },
+  row: {
+    margin: 15,
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  nestedRow: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  column: {
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    flex: 4
+  },
+  iconCircle: {
+    borderWidth: 1,
+    borderColor: "#55e6f6",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 20,
+    height: 20,
+    backgroundColor: "#fff",
+    borderRadius: 100
   }
 });
 
