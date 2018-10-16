@@ -88,7 +88,7 @@ export default class TransferOrder extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Transfer</Title>
+            <Title>Transfer Order</Title>
           </Body>
           <Right>
             <Button transparent>
