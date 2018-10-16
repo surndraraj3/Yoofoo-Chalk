@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, ActivityIndicator } from "react-native";
 import {
   Container,
   Content,
@@ -11,11 +11,59 @@ import {
   Button,
   Header,
   Body,
-  Left, Right, Title
+  Left,
+  Right,
+  Title
 } from "native-base";
 import commonStyles from "../styles/styles";
+import { custPrflURL } from "../common/url_config";
 
 export default class CustomerProfile extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      customerProfileData: "",
+      loading: true
+    };
+  }
+  componentDidMount = () => {    
+    fetch(`${custPrflURL}261`, {
+      method: "GET"
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        // console.log(responseJson);
+        this.setState({
+          customerProfileData: responseJson
+        });
+        this.setState({ loading: false });
+      })
+      .catch(error => {
+        console.error(error);
+        this.setState({ loading: false });
+      });
+  };
+  renderLoading() {
+    if (this.state.loading) {
+      return (
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: 0,
+            // backgroundColor: 'red',
+            // opacity: 0.3            
+          }}
+        />
+      );
+    } else {
+      return null;
+    }
+  }
   render() {
     return (
       <Container>
@@ -25,7 +73,10 @@ export default class CustomerProfile extends React.Component {
         </Button> */}
         <Header>
           <Left>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="arrow-back" />
             </Button>
           </Left>
@@ -33,11 +84,11 @@ export default class CustomerProfile extends React.Component {
             <Title>Profile</Title>
           </Body>
           <Right>
-          <Button transparent>
-              <Icon name='home' />
+            <Button transparent>
+              <Icon name="home" />
             </Button>
             <Button transparent>
-              <Icon name='more' />
+              <Icon name="more" />
             </Button>
           </Right>
         </Header>
@@ -45,29 +96,40 @@ export default class CustomerProfile extends React.Component {
           <Form>
             <Label style={commonStyles.labelPos}>Designer Id</Label>
             <Item>
-              <Input disabled placeholder="12345" />
+              <Text style={{ padding: 10 }}>
+                {this.state.customerProfileData.customerIDField}
+              </Text>
             </Item>
             <Label style={commonStyles.labelPos}>First Name</Label>
             <Item>
-              <Input disabled placeholder="Jane" />
+              <Text style={{ padding: 10 }}>
+                {this.state.customerProfileData.firstNameField}
+              </Text>
             </Item>
             <Label style={commonStyles.labelPos}>Last Name</Label>
             <Item>
-              <Input disabled placeholder="smith" />
+              <Text style={{ padding: 10 }}>
+                {this.state.customerProfileData.lastNameField}
+              </Text>
             </Item>
             <Label style={commonStyles.labelPos}>Phone Number</Label>
             <Item>
-              <Input disabled placeholder="(619)255-2555" />
+              <Text style={{ padding: 10 }}>
+                {this.state.customerProfileData.phoneField}
+              </Text>
             </Item>
             <Label style={commonStyles.labelPos}>Email</Label>
             <Item>
-              <Input disabled placeholder="jsmith@email.com" />
+              <Text style={{ padding: 10 }}>
+                {this.state.customerProfileData.emailField}
+              </Text>
             </Item>
             {/* <View style={commonStyles.buttonCommonMargin}>
               <Button block>
                 <Text style={{ fontSize: 20, fontWeight: "bold" }}>Submit</Text>
               </Button>
-            </View> */}
+            </View> */}            
+            {this.renderLoading()}
           </Form>
         </Content>
       </Container>

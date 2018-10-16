@@ -11,7 +11,7 @@ import {
   Text
 } from "native-base";
 import commonStyles from "../styles/styles";
-import baseURL from "../common/url_config";
+import { baseURL } from "../common/url_config";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -34,7 +34,7 @@ export default class Login extends React.Component {
   };
   //On sign click and validate user and pass
   onSignIn = (user, pass) => {
-    console.log("URL", baseURL);
+    // console.log("URL", baseURL);
     this.setState({ spinnerStatus: true });
     fetch(
       // "http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/Login",
