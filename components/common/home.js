@@ -147,28 +147,33 @@ export default class Home extends React.Component {
             active={this.state.active}
             direction="up"
             containerStyle={{}}
-            style={{ backgroundColor: "#5067FF" }}
+            style={{
+              backgroundColor: "#4d4d4d",
+              position: "absolute",
+              right: 0,
+              bottom: 0
+            }}
             position="bottomRight"
             onPress={() => this.setState({ active: !this.state.active })}
           >
-            <Icon name="share" />
+            <Icon name="sun-o" type="FontAwesome" />
             <Button style={{ backgroundColor: "#34A34F" }}>
               {/* <Icon name="logo-whatsapp" /> */}
               <Image
                 source={require("../../assets/transfer.png")}
-                style={commonStyles.imgDashboardIcon}
+                style={commonStyles.fabIcon}
               />
             </Button>
             <Button style={{ backgroundColor: "#3B5998" }}>
               <Image
                 source={require("../../assets/cart.png")}
-                style={commonStyles.imgDashboardIcon}
+                style={commonStyles.fabIcon}
               />
             </Button>
             <Button disabled style={{ backgroundColor: "#DD5144" }}>
               <Image
                 source={require("../../assets/new_customer.png")}
-                style={commonStyles.imgDashboardIcon}
+                style={commonStyles.fabIcon}
               />
             </Button>
           </Fab>

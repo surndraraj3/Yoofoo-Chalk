@@ -40,7 +40,7 @@ export default class AddCutsomer extends React.Component {
           <Left>
             <Button
               transparent
-              onPress={() => this.props.navigation.navigate("Home")}
+              onPress={() => this.props.navigation.navigate("Customer")}
             >
               <Icon name="arrow-back" />
             </Button>

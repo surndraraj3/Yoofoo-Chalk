@@ -15,7 +15,9 @@ import {
   Body,
   Left,
   Right,
-  Title
+  Title,
+  Item,
+  Input
 } from "native-base";
 import commonStyles from "../styles/styles";
 
@@ -62,6 +64,25 @@ export default class Orders extends React.Component {
           </Right>
         </Header>
         <Content>
+        <View style={{ backgroundColor: "#e6e6e6" }}>
+            <Text style={{ margin: 15, fontSize: 20 }}> 1 Order</Text>
+            <View style={{ margin: 15, borderColor: "#595959" }}>
+              <Item rounded>
+                <Input
+                  placeholder="Order Number, Name or Designer Id"
+                  style={{
+                    textAlign: "center",
+                    height: 50,
+                    borderWidth: 2,
+                    borderColor: "#00e6e6",
+                    borderRadius: 20,
+                    backgroundColor: "#FFFFFF"
+                  }}
+                />
+                <Icon active name="search" />
+              </Item>
+            </View>
+          </View>
           <View style={commonStyles.row}>
             <Text>Order#</Text>
             <Text>Order Date</Text>

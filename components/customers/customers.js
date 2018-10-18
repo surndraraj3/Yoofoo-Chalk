@@ -6,7 +6,8 @@ import ReactNative, {
   ScrollView,
   View,
   UIManager,
-  TouchableNativeFeedback
+  TouchableNativeFeedback,
+  ActivityIndicator
 } from "react-native";
 import {
   Container,
@@ -23,11 +24,58 @@ import {
   Item,
   Input,
   Card,
-  CardItem
+  CardItem,
+  Fab
 } from "native-base";
 import commonStyles from "../styles/styles";
 
 export default class Customers extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      active: "true"
+    };
+  }
+  onChangeFab = fabitem => {
+    console.log("item", fabitem);
+  };
+  renderLoading() {
+    if (this.state.loading) {
+      return (
+        <Fab
+          active={this.state.active}
+          direction="up"
+          containerStyle={{}}
+          style={{
+            backgroundColor: "#4d4d4d",
+            position: "absolute",
+            right: 0,
+            bottom: 0
+          }}
+          position="bottomRight"
+          onPress={() => this.setState({ active: !this.state.active })}
+        >
+          <Icon name="sun-o" type="FontAwesome" />
+          <Button
+            style={{ backgroundColor: "#34A34F" }}
+            onPress={() => this.props.navigation.navigate("AddCutsomer")}
+          >
+            <Image
+              source={require("../../assets/new_customer.png")}
+              style={{
+                height: 40,
+                width: 40,
+                borderRadius: 40 / 2
+              }}
+            />
+          </Button>
+        </Fab>
+      );
+    } else {
+      return null;
+    }
+  }
   render() {
     const customersList = [
       {
@@ -114,10 +162,29 @@ export default class Customers extends React.Component {
           </Right>
         </Header>
         <Content>
+          <View style={{ backgroundColor: "#e6e6e6" }}>
+            <Text style={{ margin: 15, fontSize: 20 }}> 7 Customers</Text>
+            <View style={{ margin: 15, borderColor: "#595959" }}>
+              <Item rounded>
+                <Input
+                  placeholder="Search by Name or Email"
+                  style={{
+                    textAlign: "center",
+                    height: 50,
+                    borderWidth: 2,
+                    borderColor: "#00e6e6",
+                    borderRadius: 20,
+                    backgroundColor: "#FFFFFF"
+                  }}
+                />
+                <Icon active name="search" />
+              </Item>
+            </View>
+          </View>
           <ScrollView>
-            <Item inlineLabel>
-              <Input placeholder="Search Customer" />
-            </Item>
+            {/* <Item inlineLabel>
+              <Input placeholder="Search by Name or Email" />
+            </Item> */}
             <View style={{ padding: 10 }} />
             {customersList.map((customerItem, index) => (
               <View key={index}>
@@ -160,6 +227,7 @@ export default class Customers extends React.Component {
             </View>
           </ScrollView>
         </Content>
+        {this.renderLoading()}
       </Container>
     );
   }

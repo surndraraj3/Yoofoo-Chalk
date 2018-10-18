@@ -71,7 +71,7 @@ const commonStyles = StyleSheet.create({
   //   // color: "#841584"
   // },
   fixed: {
-    position: "absolute",    
+    position: "absolute",
     right: 0,
     bottom: 0
   },
@@ -79,6 +79,11 @@ const commonStyles = StyleSheet.create({
     alignSelf: "flex-end",
     flex: 1
     // color: "#841584"
+  },
+  fabIcon: {
+    height: 40,
+    width: 40,
+    borderRadius: 40 / 2
   }
 });
 
