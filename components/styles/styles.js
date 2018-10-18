@@ -61,6 +61,24 @@ const commonStyles = StyleSheet.create({
     height: 20,
     backgroundColor: "#fff",
     borderRadius: 100
+  },
+  addBottomIconRow: {
+    flex: 1,
+    justifyContent: "flex-end"
+  },
+  // alignEndIcon: {
+  //   alignSelf: "flex-end",
+  //   // color: "#841584"
+  // },
+  fixed: {
+    position: "absolute",    
+    right: 0,
+    bottom: 0
+  },
+  alignEndIcon: {
+    alignSelf: "flex-end",
+    flex: 1
+    // color: "#841584"
   }
 });
 

@@ -17,11 +17,18 @@ import {
   Right,
   Icon,
   Title,
-  Content
+  Content,
+  Fab
 } from "native-base";
 import commonStyles from "../styles/styles";
 
 export default class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      active: "true"
+    };
+  }
   onOpenMenu = () => {
     UIManager.showPopupMenu(
       ReactNative.findNodeHandle(this._button),
@@ -100,7 +107,7 @@ export default class Home extends React.Component {
                 <Text>Inventory</Text>
               </View>
               <View>
-                <TouchableNativeFeedback
+                {/* <TouchableNativeFeedback
                   onPress={() => this.props.navigation.navigate("Transfer")}
                 >
                   <Image
@@ -108,11 +115,7 @@ export default class Home extends React.Component {
                     style={commonStyles.imgDashboardIcon}
                   />
                 </TouchableNativeFeedback>
-                <Text>Transfer</Text>
-              </View>
-            </View>
-            <View style={{ flex: 1, flexDirection: "row", marginLeft: 50 }}>
-              <View>
+                <Text>Transfer</Text> */}
                 <TouchableNativeFeedback
                   onPress={() => this.props.navigation.navigate("Order")}
                 >
@@ -124,8 +127,52 @@ export default class Home extends React.Component {
                 <Text>Order</Text>
               </View>
             </View>
+            <View style={{ flex: 1, flexDirection: "row", marginLeft: 50 }}>
+              <View>
+                <TouchableNativeFeedback
+                  onPress={() => this.props.navigation.navigate("Checkout")}
+                >
+                  <Image
+                    source={require("../../assets/transaction.png")}
+                    style={commonStyles.imgDashboardIcon}
+                  />
+                </TouchableNativeFeedback>
+                <Text>C & T Fee</Text>
+              </View>
+            </View>
           </ScrollView>
         </Content>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
+          <Fab
+            active={this.state.active}
+            direction="up"
+            containerStyle={{}}
+            style={{ backgroundColor: "#5067FF" }}
+            position="bottomRight"
+            onPress={() => this.setState({ active: !this.state.active })}
+          >
+            <Icon name="share" />
+            <Button style={{ backgroundColor: "#34A34F" }}>
+              {/* <Icon name="logo-whatsapp" /> */}
+              <Image
+                source={require("../../assets/transfer.png")}
+                style={commonStyles.imgDashboardIcon}
+              />
+            </Button>
+            <Button style={{ backgroundColor: "#3B5998" }}>
+              <Image
+                source={require("../../assets/cart.png")}
+                style={commonStyles.imgDashboardIcon}
+              />
+            </Button>
+            <Button disabled style={{ backgroundColor: "#DD5144" }}>
+              <Image
+                source={require("../../assets/new_customer.png")}
+                style={commonStyles.imgDashboardIcon}
+              />
+            </Button>
+          </Fab>
+        </View>
       </Container>
     );
   }

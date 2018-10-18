@@ -148,11 +148,16 @@ export default class Customers extends React.Component {
                 />
               </View>
             ))}
-            {/* <View style={styles.addBottomIconRow}>
+            <View style={styles.addBottomIconRow}>
               <View style={styles.alignEndIcon}>
-                  <Icon name="add"/>
+                <Button
+                  transparent
+                  onPress={() => this.props.navigation.navigate("AddCutsomer")}
+                >
+                  <Icon name="add" />
+                </Button>
               </View>
-            </View> */}
+            </View>
           </ScrollView>
         </Content>
       </Container>
