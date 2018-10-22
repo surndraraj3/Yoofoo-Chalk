@@ -1,12 +1,13 @@
 import React from "react";
-import ReactNative, {
+import {
   StyleSheet,
   Text,
   Image,
   ScrollView,
   View,
   UIManager,
-  TouchableNativeFeedback,
+  findNodeHandle,
+  TouchableOpacity,  
   ActivityIndicator
 } from "react-native";
 import {
@@ -27,6 +28,7 @@ import {
   CardItem,
   Fab
 } from "native-base";
+import { getCustomerListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 export default class Customers extends React.Component {
@@ -34,109 +36,103 @@ export default class Customers extends React.Component {
     super(props);
     this.state = {
       loading: true,
-      active: "true"
+      active: "true",
+      customersListData: []
     };
   }
+  //get Customers list
+  componentDidMount = () => {
+    fetch(`${getCustomerListURL}`, {
+      method: "GET"
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        // console.log(responseJson);
+        this.setState({
+          customersListData: responseJson
+        });
+        this.setState({ loading: false });
+      })
+      .catch(error => {
+        console.error(error);
+        this.setState({ loading: false });
+      });
+  };
   onChangeFab = fabitem => {
     console.log("item", fabitem);
   };
+  //show spinner
   renderLoading() {
     if (this.state.loading) {
       return (
-        <Fab
-          active={this.state.active}
-          direction="up"
-          containerStyle={{}}
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
           style={{
-            backgroundColor: "#4d4d4d",
             position: "absolute",
+            left: 0,
             right: 0,
-            bottom: 0
+            bottom: 0,
+            top: 0
           }}
-          position="bottomRight"
-          onPress={() => this.setState({ active: !this.state.active })}
-        >
-          <Icon name="sun-o" type="FontAwesome" />
-          <Button
-            style={{ backgroundColor: "#34A34F" }}
-            onPress={() => this.props.navigation.navigate("AddCutsomer")}
-          >
-            <Image
-              source={require("../../assets/new_customer.png")}
-              style={{
-                height: 40,
-                width: 40,
-                borderRadius: 40 / 2
-              }}
-            />
-          </Button>
-        </Fab>
+        />
       );
     } else {
       return null;
     }
   }
-  render() {
-    const customersList = [
-      {
-        customerId: 1,
-        customerName: "Jeff",
-        customerEmail: "Jeff@yoofoo.com",
-        customerMobile: "8297132073"
-      },
-      {
-        customerId: 2,
-        customerName: "James",
-        customerEmail: "James@yoofoo.com",
-        customerMobile: "8297132074"
-      },
-      {
-        customerId: 3,
-        customerName: "Raj",
-        customerEmail: "Raj@yoofoo.com",
-        customerMobile: "8297132075"
-      },
-      {
-        customerId: 5,
-        customerName: "Joshua",
-        customerEmail: "Joshua@yoofoo.com",
-        customerMobile: "8297132076"
-      },
-      {
-        customerId: 6,
-        customerName: "Surendra",
-        customerEmail: "Surendra@yoofoo.com",
-        customerMobile: "8297132073"
-      },
-      {
-        customerId: 7,
-        customerName: "Kishore",
-        customerEmail: "Kishore@yoofoo.com",
-        customerMobile: "8297132074"
-      },
-      {
-        customerId: 8,
-        customerName: "Pavan",
-        customerEmail: "Pavan@yoofoo.com",
-        customerMobile: "8297132075"
-      },
-      {
-        customerId: 9,
-        customerName: "Rajesh",
-        customerEmail: "Rajesh@yoofoo.com",
-        customerMobile: "8297132076"
-      }
-    ];
-    onListMenu = () => {
-      UIManager.showPopupMenu(
-        ReactNative.findNodeHandle(this._button),
-        ["Create Order", "Edit Customer"],
-        () => console.log("something went wrong with the popup menu"),
-        (e, i) => {
+  //Show Floating Button
+  renderFloatingActionButton() {
+    return (
+      <Fab
+        active={this.state.active}
+        direction="up"
+        containerStyle={{}}
+        style={{
+          backgroundColor: "#4d4d4d",
+          position: "absolute",
+          right: 0,
+          bottom: 0
+        }}
+        position="bottomRight"
+        onPress={() => this.setState({ active: !this.state.active })}
+      >
+        <Icon name="sun-o" type="FontAwesome" />
+        <Button
+          style={{ backgroundColor: "#34A34F" }}
+          onPress={() => this.props.navigation.navigate("AddCutsomer")}
+        >
+          <Image
+            source={require("../../assets/new_customer.png")}
+            style={{
+              height: 40,
+              width: 40,
+              borderRadius: 40 / 2
+            }}
+          />
+        </Button>
+      </Fab>
+    );
+  }
+  onOpenMenu = openMenuid => {
+    console.log("Ids", openMenuid);
+    UIManager.showPopupMenu(
+      findNodeHandle(this._button),
+      ["Create Order"],
+      () => console.log("something went wrong with the popup menu"),
+      (e, i) => {
+        console.log(`${e} : ${i}`);
+        if (i === 0) {
+          this.props.navigation.navigate("TransferOrder", {
+            customerId: openMenuid
+          });
+        } else {
           console.log(`${e} : ${i}`);
         }
-      );
-    };
+      }
+    );
+  };
+  render() {
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -180,54 +176,50 @@ export default class Customers extends React.Component {
                 <Icon active name="search" />
               </Item>
             </View>
-          </View>
+          </View>          
           <ScrollView>
-            {/* <Item inlineLabel>
-              <Input placeholder="Search by Name or Email" />
-            </Item> */}
-            <View style={{ padding: 10 }} />
-            {customersList.map((customerItem, index) => (
-              <View key={index}>
-                <View style={styles.row}>
-                  <View style={styles.column}>
-                    <Text numberOfLines={1}>{customerItem.customerName}</Text>
-                    <Text numberOfLines={1}>{customerItem.customerEmail}</Text>
-                    <Text numberOfLines={1}>{customerItem.customerMobile}</Text>
-                  </View>
-                  <View style={styles.popupMenuColumn}>
-                    <TouchableNativeFeedback
-                      ref={e => {
-                        this._button = e;
-                      }}
-                      onPress={this.onListMenu}
-                      background={TouchableNativeFeedback.Ripple("#f2f2f2")}
-                    >
-                      <Icon name="more" />
-                    </TouchableNativeFeedback>
-                  </View>
-                </View>
-                {/* <Item itemDivider/> */}
-                <View
-                  style={{
-                    borderBottomColor: "blue",
-                    borderBottomWidth: 1
-                  }}
-                />
+            {this.state.customersListData.map((itm, i) => (
+              <View key={i}>
+                <Card>
+                  <CardItem>
+                    <Left>
+                      <Text>
+                        {itm.FirstName} {itm.LastName}
+                      </Text>
+                    </Left>
+                  </CardItem>
+                  <CardItem>
+                    <Left>
+                      <Text>{itm.Email}</Text>
+                    </Left>
+                    <Right>
+                      <TouchableOpacity
+                        ref={e => {
+                          this._button = e;
+                        }}
+                        onPress={() => this.onOpenMenu(itm.CustomerID)}
+                        style={commonStyles.iconCircle}
+                      >
+                        <Icon
+                          name="ellipsis-v"
+                          type="FontAwesome"
+                          style={{ fontSize: 20, color: "#55e6f6" }}
+                        />
+                      </TouchableOpacity>
+                    </Right>
+                  </CardItem>
+                  <CardItem>
+                    <Left>
+                      <Text>{itm.Phone}</Text>
+                    </Left>
+                  </CardItem>
+                </Card>
               </View>
             ))}
-            <View style={styles.addBottomIconRow}>
-              <View style={styles.alignEndIcon}>
-                <Button
-                  transparent
-                  onPress={() => this.props.navigation.navigate("AddCutsomer")}
-                >
-                  <Icon name="add" />
-                </Button>
-              </View>
-            </View>
-          </ScrollView>
+          </ScrollView>          
         </Content>
         {this.renderLoading()}
+        {this.renderFloatingActionButton()}
       </Container>
     );
   }
