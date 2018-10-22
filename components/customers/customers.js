@@ -8,7 +8,8 @@ import {
   UIManager,
   findNodeHandle,
   TouchableOpacity,  
-  ActivityIndicator
+  ActivityIndicator,
+  AsyncStorage
 } from "react-native";
 import {
   Container,
@@ -37,21 +38,34 @@ export default class Customers extends React.Component {
     this.state = {
       loading: true,
       active: "true",
-      customersListData: []
+      customersListData: [],
+      distributorId: "",
+      customerCount: 0
     };
   }
   //get Customers list
-  componentDidMount = () => {
-    fetch(`${getCustomerListURL}`, {
+  componentDidMount = async () => {    
+   
+    await AsyncStorage.getItem('LoginDetails')
+    // .then(response => response.json())
+    .then(responseJson => {
+      responseJson = JSON.parse(responseJson);
+      console.log(responseJson.message, responseJson.DistributorID);
+      this.setState({distributorId: responseJson.DistributorID})
+    })
+   
+    console.log('url', `${getCustomerListURL}${this.state.distributorId}`);
+    fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET"
     })
       .then(response => response.json())
       .then(responseJson => {
         // console.log(responseJson);
         this.setState({
-          customersListData: responseJson
+          customersListData: responseJson,
+          customerCount: responseJson.length
         });
-        this.setState({ loading: false });
+        this.setState({ loading: false, });
       })
       .catch(error => {
         console.error(error);
@@ -159,7 +173,7 @@ export default class Customers extends React.Component {
         </Header>
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}> 7 Customers</Text>
+            <Text style={{ margin: 15, fontSize: 20 }}>{this.state.customerCount}Customers</Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input

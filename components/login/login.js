@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, AsyncStorage } from "react-native";
 import {
   Container,
   Content,
@@ -21,7 +21,8 @@ export default class Login extends React.Component {
       userPassword: "",
       errorDetails: false,
       loginData: "",
-      spinnerStatus: false
+      spinnerStatus: false,
+      distributorId: ""
     };
   }
   //Get the username from the textbox onchange
@@ -59,6 +60,7 @@ export default class Login extends React.Component {
         if (responseJson.message === "Success") {
           this.setState({ spinnerStatus: false });
           this.props.navigation.navigate("Dashboard");
+          AsyncStorage.setItem('LoginDetails', JSON.stringify(this.state.loginData))
         } else {
           this.setState({ errorDetails: true, spinnerStatus: false });
           setTimeout(() => {

@@ -6,7 +6,8 @@ import ReactNative, {
   ScrollView,
   View,
   UIManager,
-  TouchableNativeFeedback
+  TouchableNativeFeedback,
+  AsyncStorage
 } from "react-native";
 import {
   Container,
@@ -28,7 +29,7 @@ export default class Home extends React.Component {
     this.state = {
       active: "true"
     };
-  }
+  } 
   onOpenMenu = () => {
     UIManager.showPopupMenu(
       ReactNative.findNodeHandle(this._button),
