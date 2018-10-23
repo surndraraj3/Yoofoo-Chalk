@@ -173,7 +173,7 @@ export default class Customers extends React.Component {
         </Header>
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}>{this.state.customerCount}Customers</Text>
+            <Text style={{ margin: 15, fontSize: 20 }}>{this.state.customerCount} Customers</Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input

@@ -4,7 +4,8 @@ import {
   Text,
   Switch,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  AsyncStorage
 } from "react-native";
 import {
   Container,
@@ -36,13 +37,28 @@ export default class AddCutsomer extends React.Component {
       customerFirstName: "",
       customerLastName: "",
       customerPhoneNUmber: "",
+      customerStreet: "",
+      customerCity: "",
+      customerState: "",
+      customerZipCode: "",
       validateEmail: "",
       errorEmail: false,
       loadSpinner: false,
       loadFormMessage: false,
-      customerData: ""
+      customerData: "",
+      distributorId: ""
     };
   }
+  //Get Distributor Id from sync storage
+  componentDidMount = async () => {
+    await AsyncStorage.getItem("LoginDetails")
+      // .then(response => response.json())
+      .then(responseJson => {
+        responseJson = JSON.parse(responseJson);
+        console.log(responseJson.message, responseJson.DistributorID);
+        this.setState({ distributorId: responseJson.DistributorID });
+      });
+  };
   //Display Billing Address form based on condition
   onBillingAddressChange = itm => {
     // console.log("itm", itm);
@@ -79,8 +95,7 @@ export default class AddCutsomer extends React.Component {
   };
 
   //Save Customer Form
-  saveCustomerDetails = (email, firstNm, lastNm, phoneNum) => {
-    console.log("Cust Details", email, firstNm, lastNm, phoneNum);
+  saveCustomerDetails = (email, firstNm, lastNm, phoneNum) => {    
     this.setState({ loadSpinner: true });
     fetch(`${add_customerURL}`, {
       method: "POST",
@@ -91,8 +106,12 @@ export default class AddCutsomer extends React.Component {
         Email: email,
         FirstName: firstNm,
         LastName: lastNm,
-        DistributorID: "14711",
-        Phone: phoneNum
+        DistributorID: this.state.distributorId,
+        Phone: phoneNum,
+        BillingAddress: this.state.customerStreet,
+        BillingCity: this.state.customerCity,
+        BillingState: "UT",
+        BillingZip: this.state.customerZipCode
       })
     })
       .then(response => response.json())
@@ -104,7 +123,7 @@ export default class AddCutsomer extends React.Component {
         console.log("Data", this.state.customerData);
         this.setState({ loadFormMessage: true, loadSpinner: false });
         if (this.state.customerData.Result !== "Failure") {
-          console.log('Success');
+          console.log("Success");
           this.setState({
             customerEmail: "",
             customerFirstName: "",
@@ -112,7 +131,7 @@ export default class AddCutsomer extends React.Component {
             customerPhoneNUmber: ""
           });
         } else {
-          console.log('Fail');
+          console.log("Fail");
           this.setState({
             customerEmail: email,
             customerFirstName: firstNm,
@@ -160,7 +179,10 @@ export default class AddCutsomer extends React.Component {
               <CardItem>
                 <Item stackedLabel>
                   <Label>Email</Label>
-                  <Input onChangeText={this.onEmailChange} value={this.state.customerEmail} />
+                  <Input
+                    onChangeText={this.onEmailChange}
+                    value={this.state.customerEmail}
+                  />
                 </Item>
               </CardItem>
               {this.state.errorEmail && (
@@ -171,13 +193,19 @@ export default class AddCutsomer extends React.Component {
               <CardItem>
                 <Item stackedLabel>
                   <Label>First Name</Label>
-                  <Input onChangeText={this.onFirstNameChange} value={this.state.customerFirstName} />
+                  <Input
+                    onChangeText={this.onFirstNameChange}
+                    value={this.state.customerFirstName}
+                  />
                 </Item>
               </CardItem>
               <CardItem>
                 <Item stackedLabel>
                   <Label>Last Name</Label>
-                  <Input onChangeText={this.onLastNameChange} value={this.state.customerLastName} />
+                  <Input
+                    onChangeText={this.onLastNameChange}
+                    value={this.state.customerLastName}
+                  />
                 </Item>
               </CardItem>
               <CardItem>
@@ -186,8 +214,8 @@ export default class AddCutsomer extends React.Component {
                   <Input
                     onChangeText={this.onPhoneNumberChange}
                     keyboardType="numeric"
-                    maxLength={10}   
-                    value={this.state.customerPhoneNUmber}                
+                    maxLength={10}
+                    value={this.state.customerPhoneNUmber}
                   />
                 </Item>
               </CardItem>
@@ -213,25 +241,25 @@ export default class AddCutsomer extends React.Component {
                   <CardItem>
                     <Item stackedLabel>
                       <Label>Street</Label>
-                      <Input />
+                      <Input onChangeText={(text) => this.setState({ customerStreet: text})}/>
                     </Item>
                   </CardItem>
                   <CardItem>
                     <Item stackedLabel>
                       <Label>City</Label>
-                      <Input />
+                      <Input onChangeText={(city) => this.setState({ customerCity: city })} />
                     </Item>
                   </CardItem>
                   <CardItem>
                     <Item stackedLabel>
                       <Label>State</Label>
-                      <Input />
+                      <Input onChangeText={(custState) => this.setState({ customerState: custState })} />
                     </Item>
                   </CardItem>
                   <CardItem>
                     <Item stackedLabel>
                       <Label>Zip</Label>
-                      <Input />
+                      <Input onChangeText={(zipCode) => this.setState({ customerZipCode: zipCode })} />
                     </Item>
                   </CardItem>
                 </View>
