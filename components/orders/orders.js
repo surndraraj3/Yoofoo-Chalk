@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   UIManager,
   findNodeHandle,
+  ActivityIndicator,
+  AsyncStorage
 } from "react-native";
 import {
   Container,
@@ -19,19 +21,61 @@ import {
   Item,
   Input
 } from "native-base";
+import {getOrdersListURL} from '../common/url_config';
 import commonStyles from "../styles/styles";
 
-export default class Orders extends React.Component {  
-  onOpenMenu = (openMenuid) => {
-    console.log('Ids', openMenuid);
+export default class Orders extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      dataSource: [],
+      orderCount: 0,
+      distributorId: ""
+    };
+  }
+  componentDidMount = async () => {
+    this.setState({ loading: true });
+    await AsyncStorage.getItem("LoginDetails")
+      // .then(response => response.json())
+      .then(responseJson => {
+        responseJson = JSON.parse(responseJson);
+        console.log(responseJson.message, responseJson.DistributorID);
+        this.setState({ distributorId: responseJson.DistributorID });
+      });
+      console.log('Order URL', `${getOrdersListURL}${this.state.distributorId}`);
+    fetch(
+      // "http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/14711",
+      `${getOrdersListURL}${this.state.distributorId}`,
+      {
+        method: "GET"
+      }
+    )
+      .then(response => response.json())
+      .then(responseJson => {
+        // console.log("Data", responseJson);
+        this.setState({
+          dataSource: responseJson,
+          orderCount: responseJson.length
+        });
+        this.setState({ loading: false });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+  onOpenMenu = openMenuid => {
+    console.log("Ids", openMenuid);
     UIManager.showPopupMenu(
       findNodeHandle(this._button),
-      ['Open', 'Ressend'],
-      () => console.log('something went wrong with the popup menu'),
+      ["Open", "Ressend"],
+      () => console.log("something went wrong with the popup menu"),
       (e, i) => {
         console.log(`${e} : ${i}`);
-        if(i === 0) {
-          this.props.navigation.navigate("TransferOrder", { customerId: openMenuid })
+        if (i === 0) {
+          this.props.navigation.navigate("TransferOrder", {
+            customerId: openMenuid
+          });
         } else {
           console.log(`${e} : ${i}`);
         }
@@ -64,8 +108,8 @@ export default class Orders extends React.Component {
           </Right>
         </Header>
         <Content>
-        <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}> 1 Order</Text>
+          <View style={{ backgroundColor: "#e6e6e6" }}>
+            <Text style={{ margin: 15, fontSize: 20 }}> {this.state.orderCount} Order</Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
@@ -84,24 +128,69 @@ export default class Orders extends React.Component {
             </View>
           </View>
           <View style={commonStyles.row}>
-            <Text>Order#</Text>
-            <Text>Order Date</Text>
             <Text>Customer</Text>
+            <Text>Order Date</Text>
+            <Text>Order #</Text>
             <Text>Action</Text>
           </View>
-          <View style={commonStyles.row}>
+          {/* <View style={commonStyles.row}>
             <Text>11</Text>
             <Text>7/12/2018</Text>
-            <Text>Lisa Barton</Text>                       
+            <Text>Lisa Barton</Text>
             <TouchableOpacity
-              ref={e => {this._button = e;}}
-              onPress={() => this.onOpenMenu('261')}
+              ref={e => {
+                this._button = e;
+              }}
+              onPress={() => this.onOpenMenu("261")}
               style={commonStyles.iconCircle}
             >
-              <Icon name="ellipsis-h" type="FontAwesome" style={{fontSize: 20, color: '#55e6f6'}}/>
-            </TouchableOpacity>    
-          </View>
+              <Icon
+                name="ellipsis-h"
+                type="FontAwesome"
+                style={{ fontSize: 20, color: "#55e6f6" }}
+              />
+            </TouchableOpacity>
+          </View> */}          
+          <Text style={commonStyles.warningMessage}>{(this.state.orderCount === 0 ? 'No Orders Found': '')} </Text>
+          {this.state.dataSource.map((orderItem, indx) => (
+            <View key={indx}>
+              <Text style={commonStyles.warningMessage}>{(orderItem.length === 0 ? 'No Orders Found': '')}</Text>
+              <View style={commonStyles.row}>
+                <Text>{orderItem.Customer}</Text>
+                <Text>{orderItem.OrderDate}</Text>
+                <Text>{orderItem.OrderNum}</Text>
+                <TouchableOpacity
+                  ref={e => {
+                    this._button = e;
+                  }}
+                  onPress={() => this.onOpenMenu("261")}
+                  style={commonStyles.iconCircle}
+                >
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ fontSize: 20, color: "#55e6f6" }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
         </Content>
+        {this.state.loading && (
+          <ActivityIndicator
+            size="large"
+            color="#0000ff"
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              top: 0
+              // backgroundColor: 'red',
+              // opacity: 0.3
+            }}
+          />
+        )}
       </Container>
     );
   }

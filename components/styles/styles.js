@@ -84,6 +84,10 @@ const commonStyles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 40 / 2
+  },
+  warningMessage: {
+    color: "#e60000",
+    textAlign: "center"
   }
 });
 

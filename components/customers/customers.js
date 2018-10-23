@@ -192,8 +192,10 @@ export default class Customers extends React.Component {
             </View>
           </View>          
           <ScrollView>
+          <Text style={commonStyles.warningMessage}>{(this.state.customerCount === 0 ? 'No Customers Found': '')} </Text>
             {this.state.customersListData.map((itm, i) => (
               <View key={i}>
+                <Text style={commonStyles.warningMessage}>{(itm.length === 0 ? 'No Customers Found': '')}</Text>
                 <Card>
                   <CardItem>
                     <Left>
