@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ActivityIndicator, AsyncStorage } from "react-native";
+import { View, ActivityIndicator, AsyncStorage, TouchableOpacity } from "react-native";
 import {
   Container,
   Content,
@@ -33,6 +33,11 @@ export default class Login extends React.Component {
   handleUserPass = txtUserPass => {
     this.setState({ userPassword: txtUserPass });
   };
+  //clearUsername
+  clearUsername = () => {
+    console.log('User Name');
+    this.setState({ userName: "" });
+  }
   //On sign click and validate user and pass
   onSignIn = (user, pass) => {
     // console.log("URL", baseURL);
@@ -72,6 +77,7 @@ export default class Login extends React.Component {
         console.error(error);
       });
   };
+
   render() {
     return (
       <Container>
@@ -81,7 +87,9 @@ export default class Login extends React.Component {
             <Label style={commonStyles.labelPos}>Username/Email</Label>
             <Item>
               <Input onChangeText={this.handleUsername} />
-              <Icon active name="close-circle" />
+              <TouchableOpacity onPress={this.clearUsername}>
+                <Icon active name="close-circle" />
+              </TouchableOpacity>              
             </Item>
             <Label style={commonStyles.labelPos}>Password</Label>
             <Item>

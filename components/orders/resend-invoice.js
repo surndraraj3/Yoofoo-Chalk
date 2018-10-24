@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Dimensions, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity
+} from "react-native";
 import {
   Container,
   Content,
@@ -14,8 +20,10 @@ import {
   Input,
   Text,
   Card,
-  CardItem
+  CardItem,
+  Label
 } from "native-base";
+import Modal from "react-native-modal";
 import commonStyles from "../styles/styles";
 
 const deviceWidth = Dimensions.get("window").width;
@@ -24,9 +32,13 @@ export default class ResendInvoice extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false
+      loading: false,
+      isModalVisible: false
     };
   }
+  _toggleModal = () =>
+    this.setState({ isModalVisible: !this.state.isModalVisible });
+
   render() {
     return (
       <Container>
@@ -182,17 +194,39 @@ export default class ResendInvoice extends React.Component {
                   Resend Invoice
                 </Text>
               </Button>
+
               <Button bordered style={{ backgroundColor: "#00ffff" }}>
-                <Text
-                  style={{
-                    color: "#ffffff",
-                    fontSize: 20,
-                    fontWeight: "bold"
-                  }}
-                >
-                  Change Email
-                </Text>
+                <TouchableOpacity onPress={this._toggleModal}>
+                  <Text
+                    style={{
+                      color: "#ffffff",
+                      fontSize: 20,
+                      fontWeight: "bold"
+                    }}
+                  >
+                    Change Email
+                  </Text>
+                </TouchableOpacity>
               </Button>
+            </View>
+            <View style={{ flex: 1 }}>
+              {/* <TouchableOpacity onPress={this._toggleModal}>
+                <Text>Show Modal</Text>
+              </TouchableOpacity> */}
+              <Modal
+                isVisible={this.state.isModalVisible}
+                style={{ width: deviceWidth, height: 40, backgroundColor: "#ffffff" }}
+              >
+                <View style={{ flex: 1 }}>
+                  <Item stackedLabel>
+                    <Label>Email</Label>
+                    <Input placeholder="Enter Email" />
+                  </Item>
+                  <TouchableOpacity onPress={this._toggleModal}>
+                    <Text> Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
             </View>
           </ScrollView>
         </Content>

@@ -194,7 +194,7 @@ export default class Orders extends React.Component {
                   <Text>{orderItem.Customer}</Text>
                   <Text>{orderItem.OrderDate}</Text>
                   <Text>{orderItem.OrderNum}</Text>
-                  <View>
+                  <TouchableOpacity>
                     <MenuProvider
                       style={{ flexDirection: "column", padding: 20 }}
                     >
@@ -224,7 +224,7 @@ export default class Orders extends React.Component {
                         </MenuOptions>
                       </Menu>
                     </MenuProvider>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
             ))
@@ -238,7 +238,7 @@ export default class Orders extends React.Component {
                   <Text>{orderItem.Customer}</Text>
                   <Text>{orderItem.OrderDate}</Text>
                   <Text>{orderItem.OrderNum}</Text>
-                  <View>
+                  <TouchableOpacity>
                     <MenuProvider
                       style={{ flexDirection: "column", padding: 20 }}
                     >
@@ -268,7 +268,7 @@ export default class Orders extends React.Component {
                         </MenuOptions>
                       </Menu>
                     </MenuProvider>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
             ))
