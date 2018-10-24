@@ -40,7 +40,9 @@ export default class Orders extends React.Component {
       loading: false,
       dataSource: [],
       orderCount: 0,
-      distributorId: ""
+      distributorId: "",
+      txtSearchBox: "",
+      searchOrdersList: []
     };
   }
   componentDidMount = async () => {
@@ -91,6 +93,22 @@ export default class Orders extends React.Component {
       }
     );
   };
+  // Filter by text box search
+  onChangeOrder = txtSrchFild => {
+    //txtSearchBox
+    console.log("Search Field", txtSrchFild);
+    const res = this.state.dataSource.filter(v =>
+      v.Customer.includes(txtSrchFild)
+    );
+    this.setState({ searchOrdersList: res, orderCount: res.length });
+    if (res.length === 0) {
+      console.log("length zero");
+    } else {
+      console.log("Lent count");
+    }
+    console.log("Response", res);
+  };
+
   render() {
     return (
       <Container>
@@ -133,9 +151,10 @@ export default class Orders extends React.Component {
                     borderRadius: 20,
                     backgroundColor: "#FFFFFF"
                   }}
+                  onChangeText={this.onChangeOrder}
                 />
                 <Icon active name="search" />
-              </Item>
+              </Item>              
             </View>
           </View>
           <View style={commonStyles.row}>
@@ -165,7 +184,96 @@ export default class Orders extends React.Component {
           <Text style={commonStyles.warningMessage}>
             {this.state.orderCount === 0 ? "No Orders Found" : ""}
           </Text>
-          {this.state.dataSource.map((orderItem, indx) => (
+          {this.state.searchOrdersList.length === 0 ? (
+            this.state.dataSource.map((orderItem, indx) => (
+              <View key={indx}>
+                <Text style={commonStyles.warningMessage}>
+                  {orderItem.length === 0 ? "No Orders Found" : ""}
+                </Text>
+                <View style={commonStyles.row}>
+                  <Text>{orderItem.Customer}</Text>
+                  <Text>{orderItem.OrderDate}</Text>
+                  <Text>{orderItem.OrderNum}</Text>
+                  <View>
+                    <MenuProvider
+                      style={{ flexDirection: "column", padding: 20 }}
+                    >
+                      <Menu
+                        onSelect={value => alert(`Selected number: ${value}`)}
+                        style={commonStyles.iconCircle}
+                      >
+                        <MenuTrigger>
+                          <Icon
+                            name="ellipsis-v"
+                            type="FontAwesome"
+                            style={{ fontSize: 20, color: "#55e6f6" }}
+                          />
+                        </MenuTrigger>
+                        <MenuOptions>
+                          <MenuOption
+                            value={1}
+                            onSelect={() =>
+                              this.props.navigation.navigate("ResendInvoice")
+                            }
+                          >
+                            <Text style={{ color: "#000000" }}>
+                              View Invoice
+                            </Text>
+                          </MenuOption>
+                          <MenuOption value={3} disabled={true} text="Three" />
+                        </MenuOptions>
+                      </Menu>
+                    </MenuProvider>
+                  </View>
+                </View>
+              </View>
+            ))
+          ) : (
+            this.state.searchOrdersList.map((orderItem, indx) => (
+              <View key={indx}>
+                <Text style={commonStyles.warningMessage}>
+                  {orderItem.length === 0 ? "No Orders Found" : ""}
+                </Text>
+                <View style={commonStyles.row}>
+                  <Text>{orderItem.Customer}</Text>
+                  <Text>{orderItem.OrderDate}</Text>
+                  <Text>{orderItem.OrderNum}</Text>
+                  <View>
+                    <MenuProvider
+                      style={{ flexDirection: "column", padding: 20 }}
+                    >
+                      <Menu
+                        onSelect={value => alert(`Selected number: ${value}`)}
+                        style={commonStyles.iconCircle}
+                      >
+                        <MenuTrigger>
+                          <Icon
+                            name="ellipsis-v"
+                            type="FontAwesome"
+                            style={{ fontSize: 20, color: "#55e6f6" }}
+                          />
+                        </MenuTrigger>
+                        <MenuOptions>
+                          <MenuOption
+                            value={1}
+                            onSelect={() =>
+                              this.props.navigation.navigate("ResendInvoice")
+                            }
+                          >
+                            <Text style={{ color: "#000000" }}>
+                              View Invoice
+                            </Text>
+                          </MenuOption>
+                          <MenuOption value={3} disabled={true} text="Three" />
+                        </MenuOptions>
+                      </Menu>
+                    </MenuProvider>
+                  </View>
+                </View>
+              </View>
+            ))
+          )}
+          {/* {this.state.dataSource.map((orderItem, indx) => (
             <View key={indx}>
               <Text style={commonStyles.warningMessage}>
                 {orderItem.length === 0 ? "No Orders Found" : ""}
@@ -189,13 +297,14 @@ export default class Orders extends React.Component {
                           style={{ fontSize: 20, color: "#55e6f6" }}
                         />
                       </MenuTrigger>
-                      <MenuOptions>                        
-                        <MenuOption value={1} onSelect={() =>
-                            this.props.navigation.navigate(
-                              "ResendInvoice"
-                            )
-                          }>
-                          <Text style={{ color: "#000000"}}>View Invoice</Text>
+                      <MenuOptions>
+                        <MenuOption
+                          value={1}
+                          onSelect={() =>
+                            this.props.navigation.navigate("ResendInvoice")
+                          }
+                        >
+                          <Text style={{ color: "#000000" }}>View Invoice</Text>
                         </MenuOption>
                         <MenuOption value={3} disabled={true} text="Three" />
                       </MenuOptions>
@@ -204,7 +313,7 @@ export default class Orders extends React.Component {
                 </View>
               </View>
             </View>
-          ))}
+          ))} */}
         </Content>
         {this.state.loading && (
           <ActivityIndicator
