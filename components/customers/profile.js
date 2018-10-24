@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, ActivityIndicator } from "react-native";
+import { Text, View, ActivityIndicator, AsyncStorage } from "react-native";
 import {
   Container,
   Content,
@@ -23,11 +23,20 @@ export default class CustomerProfile extends React.Component {
     super(props);
     this.state = {
       customerProfileData: "",
-      loading: true
+      loading: true,
+      distributorId: "",
     };
   }
-  componentDidMount = () => {    
-    fetch(`${custPrflURL}261`, {
+  componentDidMount = async () => {   
+    await AsyncStorage.getItem('LoginDetails')
+    // .then(response => response.json())
+    .then(responseJson => {
+      responseJson = JSON.parse(responseJson);
+      // console.log(responseJson.message, responseJson.DistributorID);
+      this.setState({distributorId: responseJson.DistributorID})
+    }) 
+    // console.log(`${custPrflURL}${this.state.distributorId}`);
+    fetch(`${custPrflURL}${this.state.distributorId}`, {
       method: "GET"
     })
       .then(response => response.json())
@@ -36,6 +45,7 @@ export default class CustomerProfile extends React.Component {
         this.setState({
           customerProfileData: responseJson
         });
+        // console.log(this.state.customerProfileData);
         this.setState({ loading: false });
       })
       .catch(error => {
