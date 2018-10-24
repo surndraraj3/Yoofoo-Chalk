@@ -128,7 +128,11 @@ export default class AddCutsomer extends React.Component {
             customerEmail: "",
             customerFirstName: "",
             customerLastName: "",
-            customerPhoneNUmber: ""
+            customerPhoneNUmber: "",
+            customerStreet: "",
+            customerCity: "",
+            customerState: "",
+            customerZipCode: ""
           });
         } else {
           console.log("Fail");
@@ -136,7 +140,11 @@ export default class AddCutsomer extends React.Component {
             customerEmail: email,
             customerFirstName: firstNm,
             customerLastName: lastNm,
-            customerPhoneNUmber: phoneNum
+            customerPhoneNUmber: phoneNum,
+            customerStreet: this.state.customerStreet,
+            customerCity: this.state.customerCity,
+            customerState: this.state.customerState,
+            customerZipCode: this.state.customerZipCode
           });
         }
         setTimeout(() => {

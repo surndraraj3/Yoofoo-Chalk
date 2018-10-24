@@ -17,7 +17,7 @@ import Settings from '../common/settings';
 import Inventory from '../inventory/inventory';
 import Customers from '../customers/customers';
 import Transfer from '../transfer/transfer';
-import TransferOrder from '../orders/transfer-order';
+import ResendInvoice from '../orders/resend-invoice';
 import AddCutsomer from '../customers/add_customer';
 import Checkout from '../transfer/checkout';
 
@@ -77,8 +77,8 @@ const AppDrawerNavigator = createDrawerNavigator(
         drawerLabel: () => null
       }
     },
-    TransferOrder: {
-      screen: TransferOrder,
+    ResendInvoice: {
+      screen: ResendInvoice,
       navigationOptions: {
         drawerLabel: () => null
       }

@@ -7,7 +7,8 @@ import ReactNative, {
   View,
   UIManager,
   TouchableNativeFeedback,
-  AsyncStorage
+  AsyncStorage,
+  TouchableOpacity
 } from "react-native";
 import {
   Container,
@@ -29,7 +30,7 @@ export default class Home extends React.Component {
     this.state = {
       active: "true"
     };
-  } 
+  }
   onOpenMenu = () => {
     UIManager.showPopupMenu(
       ReactNative.findNodeHandle(this._button),
@@ -70,16 +71,21 @@ export default class Home extends React.Component {
             <Title>Home</Title>
           </Body>
           <Right>
-            <TouchableNativeFeedback
+            <TouchableOpacity
               ref={e => {
                 this._button = e;
               }}
               onPress={this.onOpenMenu}
-              background={TouchableNativeFeedback.Ripple("#f2f2f2")}
+              // background={TouchableNativeFeedback.Ripple("#f2f2f2")}
+              style={commonStyles.ellipseCircle}
             >
-              <Icon name="more" />
-            </TouchableNativeFeedback>
-            <View style={{ paddingLeft: 30 }} />
+              <Icon
+                name="ellipsis-v"
+                type="FontAwesome"
+                style={{ fontSize: 30, color: "#55e6f6" }}
+              />
+            </TouchableOpacity>
+            <View style={{ paddingLeft: 20 }} />
           </Right>
         </Header>
         <Content>

@@ -88,6 +88,16 @@ const commonStyles = StyleSheet.create({
   warningMessage: {
     color: "#e60000",
     textAlign: "center"
+  },
+  ellipseCircle: {
+    borderWidth: 1,
+    borderColor: "#55e6f6",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 40,
+    height: 40,
+    backgroundColor: "#fff",
+    borderRadius: 100
   }
 });
 

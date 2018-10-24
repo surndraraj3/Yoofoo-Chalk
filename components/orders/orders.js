@@ -6,7 +6,8 @@ import {
   UIManager,
   findNodeHandle,
   ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,
+  StyleSheet
 } from "react-native";
 import {
   Container,
@@ -21,7 +22,15 @@ import {
   Item,
   Input
 } from "native-base";
-import {getOrdersListURL} from '../common/url_config';
+import { Constants } from "expo";
+import {
+  Menu,
+  MenuProvider,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger
+} from "react-native-popup-menu";
+import { getOrdersListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 export default class Orders extends React.Component {
@@ -43,7 +52,7 @@ export default class Orders extends React.Component {
         console.log(responseJson.message, responseJson.DistributorID);
         this.setState({ distributorId: responseJson.DistributorID });
       });
-      console.log('Order URL', `${getOrdersListURL}${this.state.distributorId}`);
+    console.log("Order URL", `${getOrdersListURL}${this.state.distributorId}`);
     fetch(
       // "http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/14711",
       `${getOrdersListURL}${this.state.distributorId}`,
@@ -109,7 +118,9 @@ export default class Orders extends React.Component {
         </Header>
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}> {this.state.orderCount} Order</Text>
+            <Text style={{ margin: 15, fontSize: 20 }}>
+              {this.state.orderCount} Order
+            </Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
@@ -150,28 +161,47 @@ export default class Orders extends React.Component {
                 style={{ fontSize: 20, color: "#55e6f6" }}
               />
             </TouchableOpacity>
-          </View> */}          
-          <Text style={commonStyles.warningMessage}>{(this.state.orderCount === 0 ? 'No Orders Found': '')} </Text>
+          </View> */}
+          <Text style={commonStyles.warningMessage}>
+            {this.state.orderCount === 0 ? "No Orders Found" : ""}
+          </Text>
           {this.state.dataSource.map((orderItem, indx) => (
             <View key={indx}>
-              <Text style={commonStyles.warningMessage}>{(orderItem.length === 0 ? 'No Orders Found': '')}</Text>
+              <Text style={commonStyles.warningMessage}>
+                {orderItem.length === 0 ? "No Orders Found" : ""}
+              </Text>
               <View style={commonStyles.row}>
                 <Text>{orderItem.Customer}</Text>
                 <Text>{orderItem.OrderDate}</Text>
                 <Text>{orderItem.OrderNum}</Text>
-                <TouchableOpacity
-                  ref={e => {
-                    this._button = e;
-                  }}
-                  onPress={() => this.onOpenMenu("261")}
-                  style={commonStyles.iconCircle}
-                >
-                  <Icon
-                    name="ellipsis-v"
-                    type="FontAwesome"
-                    style={{ fontSize: 20, color: "#55e6f6" }}
-                  />
-                </TouchableOpacity>
+                <View>
+                  <MenuProvider
+                    style={{ flexDirection: "column", padding: 20 }}
+                  >
+                    <Menu
+                      onSelect={value => alert(`Selected number: ${value}`)}
+                      style={commonStyles.iconCircle}
+                    >
+                      <MenuTrigger>
+                        <Icon
+                          name="ellipsis-v"
+                          type="FontAwesome"
+                          style={{ fontSize: 20, color: "#55e6f6" }}
+                        />
+                      </MenuTrigger>
+                      <MenuOptions>                        
+                        <MenuOption value={1} onSelect={() =>
+                            this.props.navigation.navigate(
+                              "ResendInvoice"
+                            )
+                          }>
+                          <Text style={{ color: "#000000"}}>View Invoice</Text>
+                        </MenuOption>
+                        <MenuOption value={3} disabled={true} text="Three" />
+                      </MenuOptions>
+                    </Menu>
+                  </MenuProvider>
+                </View>
               </View>
             </View>
           ))}
@@ -195,3 +225,20 @@ export default class Orders extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: "#ecf0f1"
+  },
+  paragraph: {
+    margin: 24,
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#34495e"
+  }
+});
