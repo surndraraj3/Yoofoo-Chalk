@@ -1,5 +1,11 @@
 import React from "react";
-import { View, ActivityIndicator, AsyncStorage, TouchableOpacity } from "react-native";
+import {
+  View,
+  ActivityIndicator,
+  AsyncStorage,
+  TouchableOpacity,
+  TextInput
+} from "react-native";
 import {
   Container,
   Content,
@@ -22,7 +28,10 @@ export default class Login extends React.Component {
       errorDetails: false,
       loginData: "",
       spinnerStatus: false,
-      distributorId: ""
+      distributorId: "",
+      searchInput: "",
+      clearInput: false,
+      clearInputPass: false
     };
   }
   //Get the username from the textbox onchange
@@ -33,17 +42,11 @@ export default class Login extends React.Component {
   handleUserPass = txtUserPass => {
     this.setState({ userPassword: txtUserPass });
   };
-  //clearUsername
-  clearUsername = () => {
-    console.log('User Name');
-    this.setState({ userName: "" });
-  }
+
   //On sign click and validate user and pass
   onSignIn = (user, pass) => {
-    // console.log("URL", baseURL);
     this.setState({ spinnerStatus: true });
-    fetch(
-      // "http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/Login",
+    fetch(      
       `${baseURL}Login`,
       {
         method: "POST",
@@ -65,7 +68,10 @@ export default class Login extends React.Component {
         if (responseJson.message === "Success") {
           this.setState({ spinnerStatus: false });
           this.props.navigation.navigate("Dashboard");
-          AsyncStorage.setItem('LoginDetails', JSON.stringify(this.state.loginData))
+          AsyncStorage.setItem(
+            "LoginDetails",
+            JSON.stringify(this.state.loginData)
+          );
         } else {
           this.setState({ errorDetails: true, spinnerStatus: false });
           setTimeout(() => {
@@ -77,6 +83,20 @@ export default class Login extends React.Component {
         console.error(error);
       });
   };
+  // Reset Username
+  clearUsername = () => {    
+    this.setState({ userName: "" });
+    this.setState({
+      clearInput: !this.state.clearInput
+    });
+  };
+  // Reset Password
+  clearPassword = () => {
+    this.setState({ userPassword: "" });
+    this.setState({
+      clearInputPass: !this.state.clearInputPass
+    });
+  }
 
   render() {
     return (
@@ -86,20 +106,28 @@ export default class Login extends React.Component {
           <Form>
             <Label style={commonStyles.labelPos}>Username/Email</Label>
             <Item>
-              <Input onChangeText={this.handleUsername} />
+              <Input
+                onChangeText={this.handleUsername}
+                value={!this.state.clearInput ? this.state.userName : null}
+              />
               <TouchableOpacity onPress={this.clearUsername}>
                 <Icon active name="close-circle" />
-              </TouchableOpacity>              
+              </TouchableOpacity>
             </Item>
             <Label style={commonStyles.labelPos}>Password</Label>
             <Item>
               <Input
                 secureTextEntry={true}
                 onChangeText={this.handleUserPass}
+                value={!this.state.clearInputPass ? this.state.userPassword : null}
               />
-              <Icon active name="close-circle" />
-            </Item>
-            {this.state.spinnerStatus && (<ActivityIndicator size="large" color="#0000ff" />)}
+              <TouchableOpacity onPress={this.clearPassword}>
+                <Icon active name="close-circle" />
+              </TouchableOpacity>
+            </Item>            
+            {this.state.spinnerStatus && (
+              <ActivityIndicator size="large" color="#0000ff" />
+            )}
             {this.state.errorDetails && (
               <Label style={commonStyles.errorMsg}>
                 {/* Incorrect credentials were supplied */}
