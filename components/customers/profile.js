@@ -25,6 +25,7 @@ export default class CustomerProfile extends React.Component {
       customerProfileData: "",
       loading: true,
       distributorId: "",
+      authToken:""
     };
   }
   componentDidMount = async () => {   
@@ -33,11 +34,16 @@ export default class CustomerProfile extends React.Component {
     .then(responseJson => {
       responseJson = JSON.parse(responseJson);
       // console.log(responseJson.message, responseJson.DistributorID);
-      this.setState({distributorId: responseJson.DistributorID})
+      this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token })
     }) 
     // console.log(`${custPrflURL}${this.state.distributorId}`);
     fetch(`${custPrflURL}${this.state.distributorId}`, {
-      method: "GET"
+      method: "GET",
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.state.authToken}`
+      }
     })
       .then(response => response.json())
       .then(responseJson => {

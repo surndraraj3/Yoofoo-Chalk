@@ -41,6 +41,7 @@ export default class Orders extends React.Component {
       dataSource: [],
       orderCount: 0,
       distributorId: "",
+      authToken:"",
       txtSearchBox: "",
       searchOrdersList: []
     };
@@ -52,14 +53,19 @@ export default class Orders extends React.Component {
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         console.log(responseJson.message, responseJson.DistributorID);
-        this.setState({ distributorId: responseJson.DistributorID });
+        this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token });
       });
     console.log("Order URL", `${getOrdersListURL}${this.state.distributorId}`);
     fetch(
       // "http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/14711",
       `${getOrdersListURL}${this.state.distributorId}`,
       {
-        method: "GET"
+        method: "GET",
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.state.authToken}`
+        }
       }
     )
       .then(response => response.json())

@@ -1,5 +1,10 @@
 import React from "react";
-import { Text, View } from "react-native";
+import {
+  TextInput,
+  View,
+  ScrollView,
+  KeyboardAvoidingView
+} from "react-native";
 import {
   Container,
   Content,
@@ -21,7 +26,7 @@ export default class Transfer extends React.Component {
   render() {
     return (
       <Container>
-          <View style={{ padding: 10 }} />
+        <View style={{ padding: 10 }} />
         <Header>
           <Left>
             <Button
@@ -32,7 +37,7 @@ export default class Transfer extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Transfer</Title>
+            <Title>Help</Title>
           </Body>
           <Right>
             <Button transparent>
@@ -44,9 +49,28 @@ export default class Transfer extends React.Component {
           </Right>
         </Header>
         <Content>
-          <Form>
-            <Label style={commonStyles.labelPos}>Welcome To Transfer Page</Label>
-          </Form>
+          <ScrollView>
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              keyboardVerticalOffset={100}
+              behavior={"position"}
+            >
+              <TextInput placeholder="Email" style={commonStyles.input} />
+              <TextInput placeholder="Username" style={commonStyles.input} />
+              <TextInput placeholder="Password" style={commonStyles.input} />
+              <TextInput
+                placeholder="Confirm Password"
+                style={commonStyles.input}
+              />
+              <TextInput placeholder="Email" style={commonStyles.input} />
+              <TextInput placeholder="Username" style={commonStyles.input} />
+              <TextInput placeholder="Password" style={commonStyles.input} />
+              <TextInput
+                placeholder="Confirm Password"
+                style={commonStyles.input}
+              />
+            </KeyboardAvoidingView>
+          </ScrollView>
         </Content>
       </Container>
     );

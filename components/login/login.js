@@ -58,7 +58,7 @@ export default class Login extends React.Component {
     )
       .then(response => response.json())
       .then(responseJson => {
-        // console.log(responseJson);
+        //console.log(responseJson);
         this.setState({
           loginData: responseJson
         });

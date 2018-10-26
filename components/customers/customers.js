@@ -40,7 +40,8 @@ export default class Customers extends React.Component {
       active: "true",
       customersListData: [],
       distributorId: "",
-      customerCount: 0
+      customerCount: 0,
+      authToken:""
     };
   }
   //get Customers list
@@ -50,13 +51,18 @@ export default class Customers extends React.Component {
     // .then(response => response.json())
     .then(responseJson => {
       responseJson = JSON.parse(responseJson);
-      console.log(responseJson.message, responseJson.DistributorID);
-      this.setState({distributorId: responseJson.DistributorID})
+      // console.log(responseJson.message, responseJson.DistributorID);
+      this.setState({distributorId: responseJson.DistributorID, authToken: responseJson.Token})
     })
    
     console.log('url', `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
-      method: "GET"
+      method: "GET",
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.state.authToken}`
+      }
     })
       .then(response => response.json())
       .then(responseJson => {

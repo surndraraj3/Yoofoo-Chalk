@@ -46,7 +46,8 @@ export default class AddCutsomer extends React.Component {
       loadSpinner: false,
       loadFormMessage: false,
       customerData: "",
-      distributorId: ""
+      distributorId: "",
+      authToken:""
     };
   }
   //Get Distributor Id from sync storage
@@ -56,7 +57,7 @@ export default class AddCutsomer extends React.Component {
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         console.log(responseJson.message, responseJson.DistributorID);
-        this.setState({ distributorId: responseJson.DistributorID });
+        this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token });
       });
   };
   //Display Billing Address form based on condition
@@ -100,7 +101,9 @@ export default class AddCutsomer extends React.Component {
     fetch(`${add_customerURL}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.state.authToken}`
       },
       body: JSON.stringify({
         Email: email,
