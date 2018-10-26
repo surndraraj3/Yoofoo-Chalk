@@ -7,7 +7,9 @@ import {
   findNodeHandle,
   ActivityIndicator,
   AsyncStorage,
-  StyleSheet
+  StyleSheet,
+  Picker,
+  TouchableHighlight
 } from "react-native";
 import {
   Container,
@@ -22,14 +24,13 @@ import {
   Item,
   Input
 } from "native-base";
-import { Constants } from "expo";
-import {
-  Menu,
-  MenuProvider,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger
-} from "react-native-popup-menu";
+// import {
+//   Menu,
+//   MenuProvider,
+//   MenuOptions,
+//   MenuOption,
+//   MenuTrigger
+// } from "react-native-popup-menu";
 import { getOrdersListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
@@ -41,9 +42,11 @@ export default class Orders extends React.Component {
       dataSource: [],
       orderCount: 0,
       distributorId: "",
-      authToken:"",
+      authToken: "",
       txtSearchBox: "",
-      searchOrdersList: []
+      searchOrdersList: [],
+      pickerModalState: false,
+      language: ""
     };
   }
   componentDidMount = async () => {
@@ -53,7 +56,10 @@ export default class Orders extends React.Component {
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         console.log(responseJson.message, responseJson.DistributorID);
-        this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token });
+        this.setState({
+          distributorId: responseJson.DistributorID,
+          authToken: responseJson.Token
+        });
       });
     console.log("Order URL", `${getOrdersListURL}${this.state.distributorId}`);
     fetch(
@@ -62,9 +68,9 @@ export default class Orders extends React.Component {
       {
         method: "GET",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.state.authToken}`
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.state.authToken}`
         }
       }
     )
@@ -116,6 +122,7 @@ export default class Orders extends React.Component {
   };
 
   render() {
+    // console.log("Lang", this.state.language);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -160,7 +167,7 @@ export default class Orders extends React.Component {
                   onChangeText={this.onChangeOrder}
                 />
                 <Icon active name="search" />
-              </Item>              
+              </Item>
             </View>
           </View>
           <View style={commonStyles.row}>
@@ -190,136 +197,140 @@ export default class Orders extends React.Component {
           <Text style={commonStyles.warningMessage}>
             {this.state.orderCount === 0 ? "No Orders Found" : ""}
           </Text>
-          {this.state.searchOrdersList.length === 0 ? (
-            this.state.dataSource.map((orderItem, indx) => (
-              <View key={indx}>
-                <Text style={commonStyles.warningMessage}>
-                  {orderItem.length === 0 ? "No Orders Found" : ""}
-                </Text>
-                <View style={commonStyles.row}>
-                  <Text>{orderItem.Customer}</Text>
-                  <Text>{orderItem.OrderDate}</Text>
-                  <Text>{orderItem.OrderNum}</Text>
-                  <TouchableOpacity>
-                    <MenuProvider
-                      style={{ flexDirection: "column", padding: 20 }}
+          {this.state.searchOrdersList.length === 0
+            ? this.state.dataSource.map((orderItem, indx) => (
+                <View key={indx}>
+                  <Text style={commonStyles.warningMessage}>
+                    {orderItem.length === 0 ? "No Orders Found" : ""}
+                  </Text>
+                  <View style={commonStyles.row}>
+                    <Text>{orderItem.Customer}</Text>
+                    <Text>{orderItem.OrderDate}</Text>
+                    <Text>{orderItem.OrderNum}</Text>
+                    <Picker
+                      selectedValue={this.state.language}
+                      mode="dropdown"
+                      style={{
+                        height: 20,
+                        width: 20,
+                        backgroundColor: "#55e6f6",
+                        borderRadius: 15,
+                        borderWidth: 1
+                      }}
+                      onValueChange={(itemValue, itemIndex) => {
+                        console.log("221", itemValue, itemIndex);
+                        this.setState({ language: itemValue });
+                        this.props.navigation.navigate("ResendInvoice")
+                      }}
                     >
-                      <Menu
-                        onSelect={value => alert(`Selected number: ${value}`)}
-                        style={commonStyles.iconCircle}
+                      <Picker.Item label="" value="" />
+                      <Picker.Item label="View Invoice" value="ViewInvoice" />
+                    </Picker>
+                    {/* <TouchableOpacity>
+                      <MenuProvider
+                        style={{ flexDirection: "column", padding: 20 }}
                       >
-                        <MenuTrigger>
-                          <Icon
-                            name="ellipsis-v"
-                            type="FontAwesome"
-                            style={{ fontSize: 20, color: "#55e6f6" }}
-                          />
-                        </MenuTrigger>
-                        <MenuOptions>
-                          <MenuOption
-                            value={1}
-                            onSelect={() =>
-                              this.props.navigation.navigate("ResendInvoice")
-                            }
-                          >
-                            <Text style={{ color: "#000000" }}>
-                              View Invoice
-                            </Text>
-                          </MenuOption>
-                          <MenuOption value={3} disabled={true} text="Three" />
-                        </MenuOptions>
-                      </Menu>
-                    </MenuProvider>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))
-          ) : (
-            this.state.searchOrdersList.map((orderItem, indx) => (
-              <View key={indx}>
-                <Text style={commonStyles.warningMessage}>
-                  {orderItem.length === 0 ? "No Orders Found" : ""}
-                </Text>
-                <View style={commonStyles.row}>
-                  <Text>{orderItem.Customer}</Text>
-                  <Text>{orderItem.OrderDate}</Text>
-                  <Text>{orderItem.OrderNum}</Text>
-                  <TouchableOpacity>
-                    <MenuProvider
-                      style={{ flexDirection: "column", padding: 20 }}
-                    >
-                      <Menu
-                        onSelect={value => alert(`Selected number: ${value}`)}
-                        style={commonStyles.iconCircle}
-                      >
-                        <MenuTrigger>
-                          <Icon
-                            name="ellipsis-v"
-                            type="FontAwesome"
-                            style={{ fontSize: 20, color: "#55e6f6" }}
-                          />
-                        </MenuTrigger>
-                        <MenuOptions>
-                          <MenuOption
-                            value={1}
-                            onSelect={() =>
-                              this.props.navigation.navigate("ResendInvoice")
-                            }
-                          >
-                            <Text style={{ color: "#000000" }}>
-                              View Invoice
-                            </Text>
-                          </MenuOption>
-                          <MenuOption value={3} disabled={true} text="Three" />
-                        </MenuOptions>
-                      </Menu>
-                    </MenuProvider>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))
-          )}
-          {/* {this.state.dataSource.map((orderItem, indx) => (
-            <View key={indx}>
-              <Text style={commonStyles.warningMessage}>
-                {orderItem.length === 0 ? "No Orders Found" : ""}
-              </Text>
-              <View style={commonStyles.row}>
-                <Text>{orderItem.Customer}</Text>
-                <Text>{orderItem.OrderDate}</Text>
-                <Text>{orderItem.OrderNum}</Text>
-                <View>
-                  <MenuProvider
-                    style={{ flexDirection: "column", padding: 20 }}
-                  >
-                    <Menu
-                      onSelect={value => alert(`Selected number: ${value}`)}
-                      style={commonStyles.iconCircle}
-                    >
-                      <MenuTrigger>
-                        <Icon
-                          name="ellipsis-v"
-                          type="FontAwesome"
-                          style={{ fontSize: 20, color: "#55e6f6" }}
-                        />
-                      </MenuTrigger>
-                      <MenuOptions>
-                        <MenuOption
-                          value={1}
-                          onSelect={() =>
-                            this.props.navigation.navigate("ResendInvoice")
-                          }
+                        <Menu
+                          onSelect={value => alert(`Selected number: ${value}`)}
+                          style={commonStyles.iconCircle}
                         >
-                          <Text style={{ color: "#000000" }}>View Invoice</Text>
-                        </MenuOption>
-                        <MenuOption value={3} disabled={true} text="Three" />
-                      </MenuOptions>
-                    </Menu>
-                  </MenuProvider>
+                          <MenuTrigger>
+                            <Icon
+                              name="ellipsis-v"
+                              type="FontAwesome"
+                              style={{ fontSize: 20, color: "#55e6f6" }}
+                            />
+                          </MenuTrigger>
+                          <MenuOptions>
+                            <MenuOption
+                              value={1}
+                              onSelect={() =>
+                                this.props.navigation.navigate("ResendInvoice")
+                              }
+                            >
+                              <Text style={{ color: "#000000" }}>
+                                View Invoice
+                              </Text>
+                            </MenuOption>
+                            <MenuOption
+                              value={3}
+                              disabled={true}
+                              text="Three"
+                            />
+                          </MenuOptions>
+                        </Menu>
+                      </MenuProvider>
+                    </TouchableOpacity> */}
+                  </View>
                 </View>
-              </View>
-            </View>
-          ))} */}
+              ))
+            : this.state.searchOrdersList.map((orderItem, indx) => (
+                <View key={indx}>
+                  <Text style={commonStyles.warningMessage}>
+                    {orderItem.length === 0 ? "No Orders Found" : ""}
+                  </Text>
+                  <View style={commonStyles.row}>
+                    <Text>{orderItem.Customer}</Text>
+                    <Text>{orderItem.OrderDate}</Text>
+                    <Text>{orderItem.OrderNum}</Text>
+                    <Picker
+                      selectedValue={this.state.language}
+                      mode="dropdown"
+                      style={{
+                        height: 20,
+                        width: 20,
+                        backgroundColor: "#55e6f6",
+                        borderRadius: 15,
+                        borderWidth: 1
+                      }}
+                      onValueChange={(itemValue, itemIndex) => {
+                        console.log("221", itemValue);
+                        this.setState({ language: itemValue });
+                        this.props.navigation.navigate("ResendInvoice");
+                      }}
+                    >
+                      <Picker.Item label="" value="" />
+                      <Picker.Item label="View Invoice" value="ViewInvoice" />
+                    </Picker>
+
+                    {/* <TouchableOpacity>
+                      <MenuProvider
+                        style={{ flexDirection: "column", padding: 20 }}
+                      >
+                        <Menu
+                          onSelect={value => alert(`Selected number: ${value}`)}
+                          style={commonStyles.iconCircle}
+                        >
+                          <MenuTrigger>
+                            <Icon
+                              name="ellipsis-v"
+                              type="FontAwesome"
+                              style={{ fontSize: 20, color: "#55e6f6" }}
+                            />
+                          </MenuTrigger>
+                          <MenuOptions>
+                            <MenuOption
+                              value={1}
+                              onSelect={() =>
+                                this.props.navigation.navigate("ResendInvoice")
+                              }
+                            >
+                              <Text style={{ color: "#000000" }}>
+                                View Invoice
+                              </Text>
+                            </MenuOption>
+                            <MenuOption
+                              value={3}
+                              disabled={true}
+                              text="Three"
+                            />
+                          </MenuOptions>
+                        </Menu>
+                      </MenuProvider>
+                    </TouchableOpacity> */}
+                  </View>
+                </View>
+              ))}
         </Content>
         {this.state.loading && (
           <ActivityIndicator
@@ -341,19 +352,3 @@ export default class Orders extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: "#ecf0f1"
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#34495e"
-  }
-});
