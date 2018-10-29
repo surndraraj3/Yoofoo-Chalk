@@ -133,6 +133,9 @@ const commonStyles = StyleSheet.create({
     justifyContent: "center",
     height: 50,
     backgroundColor: "#ffae"
+  },
+  setMargin: {
+    margin: 10
   }
 });
 

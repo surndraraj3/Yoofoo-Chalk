@@ -3,9 +3,12 @@ import {
   View,
   Text,
   Switch,
+  TextInput,
   ScrollView,
   ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,
+  Keyboard,
+  KeyboardAvoidingView
 } from "react-native";
 import {
   Container,
@@ -47,7 +50,7 @@ export default class AddCutsomer extends React.Component {
       loadFormMessage: false,
       customerData: "",
       distributorId: "",
-      authToken:""
+      authToken: ""
     };
   }
   //Get Distributor Id from sync storage
@@ -57,7 +60,10 @@ export default class AddCutsomer extends React.Component {
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         console.log(responseJson.message, responseJson.DistributorID);
-        this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token });
+        this.setState({
+          distributorId: responseJson.DistributorID,
+          authToken: responseJson.Token
+        });
       });
   };
   //Display Billing Address form based on condition
@@ -96,14 +102,14 @@ export default class AddCutsomer extends React.Component {
   };
 
   //Save Customer Form
-  saveCustomerDetails = (email, firstNm, lastNm, phoneNum) => {    
+  saveCustomerDetails = (email, firstNm, lastNm, phoneNum) => {
     this.setState({ loadSpinner: true });
     fetch(`${add_customerURL}`, {
       method: "POST",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.state.authToken}`
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
       },
       body: JSON.stringify({
         Email: email,
@@ -186,96 +192,206 @@ export default class AddCutsomer extends React.Component {
         </Header>
         <Content>
           <ScrollView>
-            <Card>
-              <CardItem>
-                <Item stackedLabel>
-                  <Label>Email</Label>
-                  <Input
-                    onChangeText={this.onEmailChange}
-                    value={this.state.customerEmail}
-                  />
-                </Item>
-              </CardItem>
+            <View style={commonStyles.setMargin}>
+              <Text style={commonStyles.setMargin}>Email</Text>
+              <Item>
+                <TextInput
+                  style={{ flex: 1, color: "#413E4F" }}
+                  onChangeText={this.onEmailChange}
+                  value={this.state.customerEmail}
+                  placeholderTextColor="#413E4F"
+                  autoCapitalize="sentences"
+                  selectTextOnFocus={true}
+                  ref={ref => {
+                    this._emailInput = ref;
+                  }}
+                  returnKeyType="next"
+                  onSubmitEditing={() =>
+                    this._firstNameInput && this._firstNameInput.focus()
+                  }
+                  blurOnSubmit={false}
+                />
+              </Item>
+            </View>
+            <View>
               {this.state.errorEmail && (
                 <Label style={commonStyles.errorMsg}>
                   {this.state.validateEmail}
                 </Label>
               )}
-              <CardItem>
-                <Item stackedLabel>
-                  <Label>First Name</Label>
-                  <Input
+            </View>
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+             // keyboardVerticalOffset={65}
+              behavior={"position"}
+              enabled
+            >
+              <View style={commonStyles.setMargin}>
+                <Text style={commonStyles.setMargin}>First Name</Text>
+                <Item>
+                  <TextInput
+                    style={{ flex: 1, color: "#413E4F" }}
                     onChangeText={this.onFirstNameChange}
                     value={this.state.customerFirstName}
+                    placeholderTextColor="#413E4F"
+                    autoCapitalize="sentences"
+                    ref={ref => {
+                      this._firstNameInput = ref;
+                    }}
+                    returnKeyType="next"
+                    onSubmitEditing={() =>
+                      this._lastNameInput && this._lastNameInput.focus()
+                    }
+                    blurOnSubmit={false}
                   />
                 </Item>
-              </CardItem>
-              <CardItem>
-                <Item stackedLabel>
-                  <Label>Last Name</Label>
-                  <Input
+              </View>
+              <View style={commonStyles.setMargin}>
+                <Text style={commonStyles.setMargin}>Last Name</Text>
+                <Item>
+                  <TextInput
+                    style={{ flex: 1, color: "#413E4F" }}
                     onChangeText={this.onLastNameChange}
                     value={this.state.customerLastName}
+                    placeholderTextColor="#413E4F"
+                    autoCapitalize="sentences"
+                    ref={ref => {
+                      this._lastNameInput = ref;
+                    }}
+                    returnKeyType="next"
+                    onSubmitEditing={() =>
+                      this._phoneNumberInput && this._phoneNumberInput.focus()
+                    }
+                    blurOnSubmit={false}
                   />
                 </Item>
-              </CardItem>
-              <CardItem>
-                <Item stackedLabel>
-                  <Label>Phone Number</Label>
-                  <Input
+              </View>
+              <View style={commonStyles.setMargin}>
+                <Text style={commonStyles.setMargin}>Phone Number</Text>
+                <Item>
+                  <TextInput
+                    style={{ flex: 1, color: "#413E4F" }}
                     onChangeText={this.onPhoneNumberChange}
-                    keyboardType="numeric"
-                    maxLength={10}
                     value={this.state.customerPhoneNUmber}
+                    placeholderTextColor="#413E4F"
+                    autoCapitalize="sentences"
+                    keyboardType="numeric"
+                    ref={ref => {
+                      this._phoneNumberInput = ref;
+                    }}
+                    returnKeyType="done"
+                    onSubmitEditing={Keyboard.dismiss}
+                    blurOnSubmit={false}
                   />
                 </Item>
-              </CardItem>
-            </Card>
-            <Card>
-              <CardItem>
-                <Left>
-                  <Label>Billing Address</Label>
-                </Left>
-                <Right>
-                  <Switch
-                    value={this.state.valBillingAddress}
-                    onValueChange={this.onBillingAddressChange}
-                  />
-                  {/* <Switch 
-                    onValueChange={(this.state.valBillingAddress) ? this.setState({ valBillingAddress: true }) : this.setState({ valBillingAddress: false })}
-                    value={this.state.valBillingAddress} 
-                    />  */}
-                </Right>
-              </CardItem>
+              </View>
+              <View style={commonStyles.setMargin}>
+                <Card>
+                  <CardItem>
+                    <Left>
+                      <Label>Billing Address</Label>
+                    </Left>
+                    <Right>
+                      <Switch
+                        value={this.state.valBillingAddress}
+                        onValueChange={this.onBillingAddressChange}
+                      />
+                    </Right>
+                  </CardItem>
+                </Card>
+              </View>
               {this.state.valBillingAddress && (
                 <View>
-                  <CardItem>
-                    <Item stackedLabel>
-                      <Label>Street</Label>
-                      <Input onChangeText={(text) => this.setState({ customerStreet: text})}/>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Street</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={text =>
+                          this.setState({ customerStreet: text })
+                        }
+                        value={this.state.customerStreet}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        ref={ref => {
+                          this._streetInput = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._cityInput && this._cityInput.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
                     </Item>
-                  </CardItem>
-                  <CardItem>
-                    <Item stackedLabel>
-                      <Label>City</Label>
-                      <Input onChangeText={(city) => this.setState({ customerCity: city })} />
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>City</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={city =>
+                          this.setState({ customerCity: city })
+                        }
+                        value={this.state.customerCity}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        ref={ref => {
+                          this._cityInput = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._stateInput && this._stateInput.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
                     </Item>
-                  </CardItem>
-                  <CardItem>
-                    <Item stackedLabel>
-                      <Label>State</Label>
-                      <Input onChangeText={(custState) => this.setState({ customerState: custState })} />
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>State</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={custState =>
+                          this.setState({ customerState: custState })
+                        }
+                        value={this.state.customerState}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        ref={ref => {
+                          this._stateInput = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._zipCodeInput && this._zipCodeInput.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
                     </Item>
-                  </CardItem>
-                  <CardItem>
-                    <Item stackedLabel>
-                      <Label>Zip</Label>
-                      <Input onChangeText={(zipCode) => this.setState({ customerZipCode: zipCode })} />
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Zip</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={zipCode =>
+                          this.setState({ customerZipCode: zipCode })
+                        }
+                        value={this.state.customerZipCode}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        keyboardType="numeric"
+                        ref={ref => {
+                          this._zipCodeInput = ref;
+                        }}
+                        returnKeyType="done"
+                        onSubmitEditing={Keyboard.dismiss}
+                        blurOnSubmit={false}
+                      />
                     </Item>
-                  </CardItem>
+                  </View>
                 </View>
               )}
-            </Card>
+            </KeyboardAvoidingView>
             {this.state.loadSpinner && (
               <ActivityIndicator size="large" color="#0000ff" />
             )}
