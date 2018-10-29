@@ -4,7 +4,9 @@ import {
   View,
   ActivityIndicator,
   ScrollView,
-  TextInput
+  TextInput,
+  AsyncStorage,
+  Image
 } from "react-native";
 import {
   Container,
@@ -21,8 +23,10 @@ import {
   Right,
   Title,
   Card,
-  CardItem
+  CardItem,
+  Fab
 } from "native-base";
+import { getInventoryListURL } from '../common/url_config';
 import commonStyles from "../styles/styles";
 
 const inventoryModel = [
@@ -81,9 +85,45 @@ export default class Inventory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true
+      loading: true,
+      active: "true",
+      distributorId: "",
+      authToken:"",
+      inventoryList: [],
+      inventoryCount: 0
     };
   }
+  //get the token and pass it to end point, fetch respose and assign it to an array
+  componentDidMount = async () => {
+    await AsyncStorage.getItem('LoginDetails')
+    .then(resLoginDtls => {
+      resLoginDtls = JSON.parse(resLoginDtls)
+      this.setState({ distributorId: resLoginDtls.DistributorID, authToken: resLoginDtls.Token })
+    })
+    //Get Inventory List
+    fetch(`${getInventoryListURL}${this.state.distributorId}`, {
+      method: "GET",
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.state.authToken}`
+      }
+    })
+    .then(response => response.json())
+    .then(responseJson => {
+      //console.log(responseJson);
+      this.setState({
+        inventoryList: responseJson,
+        inventoryCount: responseJson.length
+      });      
+      this.setState({ loading: false });
+    })
+    .catch(error => {
+      console.error(error);
+      this.setState({ loading: false });
+    });
+  }
+ // Loading Spinner
   renderLoading() {
     if (this.state.loading) {
       return (
@@ -105,6 +145,39 @@ export default class Inventory extends React.Component {
       return null;
     }
   }
+  //Render FAB
+  renderInventoryFloatingActionButton(){
+    return (
+      <Fab
+        active={this.state.active}
+        direction="up"
+        containerStyle={{}}
+        style={{
+          backgroundColor: "#4d4d4d",
+          position: "absolute",
+          right: 0,
+          bottom: 0
+        }}
+        position="bottomRight"
+        onPress={() => this.setState({ active: !this.state.active })}
+      >
+        <Icon name="sun-o" type="FontAwesome" />
+        <Button
+          style={{ backgroundColor: "#34A34F" }}
+          // onPress={() => this.props.navigation.navigate("AddCutsomer")}
+        >
+          <Image
+            source={require("../../assets/new_customer.png")}
+            style={{
+              height: 40,
+              width: 40,
+              borderRadius: 40 / 2
+            }}
+          />
+        </Button>
+      </Fab>
+    );
+  }
   render() {
     return (
       <Container>
@@ -119,7 +192,7 @@ export default class Inventory extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Inventory</Title>
+            <Title>{this.state.inventoryCount} Inventory</Title>
           </Body>
           <Right>
             <Button transparent>
@@ -151,7 +224,7 @@ export default class Inventory extends React.Component {
             </View>            
           </View>
           <ScrollView>
-            {inventoryModel.map((itm, i) => (
+            {this.state.inventoryList.map((itm, i) => (
               <View key={i}>
                 <Card>
                   <CardItem bordered>
@@ -165,13 +238,13 @@ export default class Inventory extends React.Component {
                         />
                       </View>
                       <View style={commonStyles.column}>
-                        <Text style={{ fontWeight: "bold" }}>{itm.title}</Text>
-                        <Text>{itm.name}</Text>
+                        <Text style={{ fontWeight: "bold" }}>{itm.Description}</Text>
+                        <Text>{itm.Description}</Text>
                         <View style={commonStyles.nestedRow}>
                           <Text>Size </Text>
-                          <Text>{itm.size}</Text>
+                          <Text>{itm.ItemID}</Text>
                           <Text>Count</Text>
-                          <Text>{itm.count}</Text>
+                          <Text>{itm.Quantity}</Text>
                         </View>
                       </View>
                     </View>
@@ -179,9 +252,10 @@ export default class Inventory extends React.Component {
                 </Card>
               </View>
             ))}
-          </ScrollView>
-          {this.renderLoading()}
+          </ScrollView> 
         </Content>
+        {this.renderLoading()}
+        {this.renderInventoryFloatingActionButton()}
       </Container>
     );
   }
