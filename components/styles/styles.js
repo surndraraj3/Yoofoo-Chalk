@@ -57,6 +57,11 @@ const commonStyles = StyleSheet.create({
     justifyContent: "flex-start",
     flex: 4
   },
+  iconColumn: {
+    flexDirection: "column",
+    justifyContent: "center",
+    flex: 1
+  },
   iconCircle: {
     borderWidth: 1,
     borderColor: "#55e6f6",

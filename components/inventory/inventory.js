@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   AsyncStorage,
+  TouchableHighlight,
   Image
 } from "react-native";
 import {
@@ -29,58 +30,6 @@ import {
 import { getInventoryListURL } from '../common/url_config';
 import commonStyles from "../styles/styles";
 
-const inventoryModel = [
-  {
-    inventoryId: 1,
-    distributorId: 100,
-    customerId: 1,
-    name: "Chalk",
-    imageUrl: "",
-    count: 12,
-    size: 5,
-    title: "Couture"
-  },
-  {
-    inventoryId: 2,
-    distributorId: 100,
-    customerId: 1,
-    name: "Chalklogy Paste",
-    imageUrl: "",
-    count: 12,
-    size: 5,
-    title: "Chalklogy Paste"
-  },
-  {
-    inventoryId: 3,
-    distributorId: 100,
-    customerId: 1,
-    name: "Pastry",
-    imageUrl: "",
-    count: 12,
-    size: 5,
-    title: "Pastry"
-  },
-  {
-    inventoryId: 4,
-    distributorId: 100,
-    customerId: 1,
-    name: "Cookie Butter",
-    imageUrl: "",
-    count: 12,
-    size: 5,
-    title: "Cookie"
-  },
-  {
-    inventoryId: 5,
-    distributorId: 100,
-    customerId: 1,
-    name: "Cookie",
-    imageUrl: "",
-    count: 12,
-    size: 5,
-    title: "Cookie"
-  }
-];
 export default class Inventory extends React.Component {
   constructor(props) {
     super(props);
@@ -159,10 +108,10 @@ export default class Inventory extends React.Component {
           bottom: 0
         }}
         position="bottomRight"
-        onPress={() => this.setState({ active: !this.state.active })}
+        onPress={() => this.props.navigation.navigate("InventoryOrder")}
       >
         <Icon name="sun-o" type="FontAwesome" />
-        <Button
+        {/* <Button
           style={{ backgroundColor: "#34A34F" }}
           // onPress={() => this.props.navigation.navigate("AddCutsomer")}
         >
@@ -174,7 +123,7 @@ export default class Inventory extends React.Component {
               borderRadius: 40 / 2
             }}
           />
-        </Button>
+        </Button> */}
       </Fab>
     );
   }
@@ -192,7 +141,7 @@ export default class Inventory extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>{this.state.inventoryCount} Inventory</Title>
+            <Title>Inventory</Title>
           </Body>
           <Right>
             <Button transparent>
@@ -205,7 +154,7 @@ export default class Inventory extends React.Component {
         </Header>
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}> Inventory</Text>
+            <Text style={{ margin: 15, fontSize: 20 }}> {this.state.inventoryCount} Inventory</Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input

@@ -13,13 +13,14 @@ import Home from "../common/home";
 import Orders from "../orders/orders";
 import CustomerProfile from "../customers/profile";
 import Help from "../common/help";
-import Settings from '../common/settings';
-import Inventory from '../inventory/inventory';
-import Customers from '../customers/customers';
-import Transfer from '../transfer/transfer';
-import ResendInvoice from '../orders/resend-invoice';
-import AddCutsomer from '../customers/add_customer';
-import Checkout from '../transfer/checkout';
+import Settings from "../common/settings";
+import Inventory from "../inventory/inventory";
+import InventoryOrder from "../inventory/inventory-order";
+import Customers from "../customers/customers";
+import Transfer from "../transfer/transfer";
+import ResendInvoice from "../orders/resend-invoice";
+import AddCutsomer from "../customers/add_customer";
+import Checkout from "../transfer/checkout";
 
 export default class Dashboard extends React.Component {
   render() {
@@ -53,6 +54,12 @@ const AppDrawerNavigator = createDrawerNavigator(
     Order: Orders,
     Transfer: Transfer,
     Inventory: Inventory,
+    InventoryOrder: {
+      screen: InventoryOrder,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
     Profile: {
       screen: CustomerProfile,
       navigationOptions: {
