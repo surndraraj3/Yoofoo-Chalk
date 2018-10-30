@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "chalk-couture",
+    "name": "chalk",
     "description": "This project is really great.",
-    "slug": "chalk-coture",
+    "slug": "chalk",
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": ["ios", "android"],
@@ -22,10 +22,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yoofoo.chalk"
+      "bundleIdentifier": "com.chalk.yoofoo"
     },
     "android": {
-      "package": "com.yoofoo.chalk"
+      "package": "com.chalk.yoofoo"
     }
   }
 }

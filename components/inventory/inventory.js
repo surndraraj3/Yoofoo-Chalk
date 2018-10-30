@@ -239,7 +239,12 @@ export default class Inventory extends React.Component {
                       </View>
                       <View style={commonStyles.column}>
                         <Text style={{ fontWeight: "bold" }}>{itm.Description}</Text>
-                        <Text>{itm.Description}</Text>
+                        <View style={commonStyles.nestedRow}>
+                          <Text>SKU</Text>
+                          <Text>{itm.ItemID}</Text>
+                          <Text>MSRP</Text>
+                          <Text>10</Text>
+                        </View>
                         <View style={commonStyles.nestedRow}>
                           <Text>Size </Text>
                           <Text>{itm.ItemID}</Text>
