@@ -141,6 +141,15 @@ const commonStyles = StyleSheet.create({
   },
   setMargin: {
     margin: 10
+  },
+  buttomMaincontainer: {
+    flex: 1, flexDirection: 'row', justifyContent: 'space-around', margin: 10 
+  },
+  buttonNestedContainer: {
+    width: 50, height: 50, backgroundColor: '#00e6e6'
+  },
+  textDiscount: {
+    alignContent: 'center', alignItems: 'center', margin: 15
   }
 });
 

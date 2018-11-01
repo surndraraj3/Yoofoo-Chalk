@@ -7,7 +7,7 @@ import {
   TextInput,
   AsyncStorage,
   TouchableOpacity,
-  Image
+  Image, Dimensions
 } from "react-native";
 import {
   Container,
@@ -31,9 +31,11 @@ import {
 import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
+const deviceWidth = Dimensions.get("window").width;
 export default class InventoryOrder extends React.Component {
   constructor(props) {
     super(props);
+    this.stVal = 0;
     this.state = {
       loading: true,
       active: "true",
@@ -42,7 +44,10 @@ export default class InventoryOrder extends React.Component {
       inventoryList: [],
       inventoryCount: 0,
       orderItemCounter: 0,
-      countInfo: []
+      countInfo: [],
+      shareholders: [{ name: '' }],
+      incVal: 0,
+      stVal: 0
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -54,7 +59,7 @@ export default class InventoryOrder extends React.Component {
         authToken: resLoginDtls.Token
       });
     });
-    //Get Inventory List
+    //Get Inventory List data
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -70,6 +75,7 @@ export default class InventoryOrder extends React.Component {
           inventoryList: responseJson,
           inventoryCount: responseJson.length
         });
+        this.state.inventoryList.map(v => v.incVal = 0)
         this.setState({ loading: false });
       })
       .catch(error => {
@@ -100,19 +106,29 @@ export default class InventoryOrder extends React.Component {
     }
   }
   //Increment Counter and check whether it is exceeded more than quantity
-  incrementOrder = (cntr, qnty, id) => {
+  incrementOrder = (id) => {
     // const incCntr = this.state.orderItemCounter;
-    console.log('Welcome');
-    console.log("Count", cntr, " Quant", qnty, "Ite", id);
-    alert(id);
-    
+    //console.log('Welcome Increment'); 
+    const res = this.state.inventoryList.filter(v => v.ItemID === id);
+    res.map(v => v.incVal = v.incVal + 1)
+    res.incVal = this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
+    // const s = 'surendra';
+    //console.log('response', res);
+    this.state.inventoryList.push(res);
+
   };
 
   // Decrement Counter
-  decCounter = (itmId) => {
-    alert(`${itmId} Count`);
-
-     
+  decCounter(itmId) {
+    // console.error('des', itmId);
+    //.log('Decrement', this.state.orderItemCounter, itmId);
+    //let s = 0;
+    const res = this.state.inventoryList.filter(v => v.ItemID === itmId);
+    res.map(v => v.incVal = v.incVal - 1)
+    res.incVal = this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
+    // const s = 'surendra';
+    //console.log('response', res);
+    this.state.inventoryList.push(res);
   }
 
   render() {
@@ -148,7 +164,7 @@ export default class InventoryOrder extends React.Component {
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
-                  placeholder="Search Inventory"
+                  placeholder="Search Order"
                   style={{
                     textAlign: "center",
                     height: 50,
@@ -164,7 +180,7 @@ export default class InventoryOrder extends React.Component {
           </View>
           <ScrollView>
             {this.state.inventoryList.map((itm, i) => (
-              <View key={itm.ItemID}>
+              <View key={i}>
                 <Card>
                   <CardItem>
                     <Left>
@@ -218,14 +234,7 @@ export default class InventoryOrder extends React.Component {
                       <View style={commonStyles.column}>
                         <Right>
                           <TouchableOpacity
-                            onPress={() => {
-                              this.incrementOrder(
-                                this.state.orderItemCounter,
-                                itm.Quantity,
-                                itm.ItemID
-                              );
-                            }}
-                          >
+                            onPress={() => this.incrementOrder(itm.ItemID)}>
                             <Icon
                               name="plus"
                               type="FontAwesome"
@@ -234,15 +243,15 @@ export default class InventoryOrder extends React.Component {
                           </TouchableOpacity>
 
                           <Text style={{ fontWeight: "bold" }}>
-                            {this.state.orderItemCounter}
+                            {itm.incVal}
                           </Text>
-                          <TouchableOpacity onPress={()=> this.decCounter(itm.ItemID)}>
-                          <Icon
-                            name="minus"
-                            type="FontAwesome"
-                            style={{ color: "#f50" }}
-                          />
-                          </TouchableOpacity>                          
+                          <TouchableOpacity onPress={() => this.decCounter(itm.ItemID)}>
+                            <Icon
+                              name="minus"
+                              type="FontAwesome"
+                              style={{ color: "#f50" }}
+                            />
+                          </TouchableOpacity>
                         </Right>
                       </View>
                       {/* <View style={commonStyles.column}>
@@ -268,6 +277,29 @@ export default class InventoryOrder extends React.Component {
           </ScrollView>
         </Content>
         {this.renderLoading()}
+        <View style={{ position: 'absolute', right: 0, bottom: 0, width: deviceWidth, height: 50 }}>
+          <Card>
+            <CardItem>
+              <Left>
+                <Text>1 Item</Text>
+              </Left>
+              <Right>
+
+                <Button bordered style={{ backgroundColor: "#00ffff", width: 120, height: 40 }} onPress={() => this.props.navigation.navigate("AddInventoryOrder")}>
+                  <Text
+                    style={{
+                      color: "#ffffff",
+                      fontSize: 15,
+                      margin: 10
+                    }}
+                  >
+                    Create Order
+                  </Text>
+                </Button>
+              </Right>
+            </CardItem>
+          </Card>
+        </View>
       </Container>
     );
   }

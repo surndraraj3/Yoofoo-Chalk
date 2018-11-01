@@ -16,6 +16,8 @@ import Help from "../common/help";
 import Settings from "../common/settings";
 import Inventory from "../inventory/inventory";
 import InventoryOrder from "../inventory/inventory-order";
+import InventoryOrderDiscount from '../inventory/inventory-discount';
+import AddInventoryOrder from '../inventory/add-order';
 import Customers from "../customers/customers";
 import Transfer from "../transfer/transfer";
 import ResendInvoice from "../orders/resend-invoice";
@@ -52,10 +54,22 @@ const AppDrawerNavigator = createDrawerNavigator(
   {
     Home: Home,
     Order: Orders,
-    Transfer: Transfer,
+    Transfer: InventoryOrderDiscount, //Transfer,
     Inventory: Inventory,
     InventoryOrder: {
       screen: InventoryOrder,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
+    InventoryOrderDiscount: {
+      screen: InventoryOrderDiscount,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
+    AddInventoryOrder: {
+      screen: AddInventoryOrder,
       navigationOptions: {
         drawerLabel: () => null
       }

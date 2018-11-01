@@ -7,7 +7,7 @@ import {
   View,
   UIManager,
   findNodeHandle,
-  TouchableOpacity,  
+  TouchableOpacity,
   ActivityIndicator,
   AsyncStorage
 } from "react-native";
@@ -41,25 +41,24 @@ export default class Customers extends React.Component {
       customersListData: [],
       distributorId: "",
       customerCount: 0,
-      authToken:""
+      authToken: ""
     };
   }
   //get Customers list
-  componentDidMount = async () => {    
-   
+  componentDidMount = async () => {
     await AsyncStorage.getItem('LoginDetails')
-    // .then(response => response.json())
-    .then(responseJson => {
-      responseJson = JSON.parse(responseJson);
-      // console.log(responseJson.message, responseJson.DistributorID);
-      this.setState({distributorId: responseJson.DistributorID, authToken: responseJson.Token})
-    })
-   
+      // .then(response => response.json())
+      .then(responseJson => {
+        responseJson = JSON.parse(responseJson);
+        // console.log(responseJson.message, responseJson.DistributorID);
+        this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token })
+      })
+
     console.log('url', `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.state.authToken}`
       }
@@ -78,6 +77,12 @@ export default class Customers extends React.Component {
         this.setState({ loading: false });
       });
   };
+  //
+  componentWillMount = () => {
+      
+      this.setState({customersListData: [] })
+  }
+
   onChangeFab = fabitem => {
     console.log("item", fabitem);
   };
@@ -196,12 +201,12 @@ export default class Customers extends React.Component {
                 <Icon active name="search" />
               </Item>
             </View>
-          </View>          
+          </View>
           <ScrollView>
-          <Text style={commonStyles.warningMessage}>{(this.state.customerCount === 0 ? 'No Customers Found': '')} </Text>
+            <Text style={commonStyles.warningMessage}>{(this.state.customerCount === 0 ? 'No Customers Found' : '')} </Text>
             {this.state.customersListData.map((itm, i) => (
               <View key={i}>
-                <Text style={commonStyles.warningMessage}>{(itm.length === 0 ? 'No Customers Found': '')}</Text>
+                <Text style={commonStyles.warningMessage}>{(itm.length === 0 ? 'No Customers Found' : '')}</Text>
                 <Card>
                   <CardItem>
                     <Left>
@@ -238,7 +243,7 @@ export default class Customers extends React.Component {
                 </Card>
               </View>
             ))}
-          </ScrollView>          
+          </ScrollView>
         </Content>
         {this.renderLoading()}
         {this.renderFloatingActionButton()}
