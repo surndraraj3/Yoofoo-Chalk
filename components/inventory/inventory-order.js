@@ -7,15 +7,14 @@ import {
   TextInput,
   AsyncStorage,
   TouchableOpacity,
-  Image, Dimensions
+  Image,
+  Dimensions
 } from "react-native";
 import {
   Container,
   Content,
-  Form,
   Item,
   Input,
-  Label,
   Icon,
   Button,
   Header,
@@ -25,8 +24,7 @@ import {
   Title,
   Card,
   CardItem,
-  CheckBox,
-  Fab
+  CheckBox
 } from "native-base";
 import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
@@ -45,9 +43,12 @@ export default class InventoryOrder extends React.Component {
       inventoryCount: 0,
       orderItemCounter: 0,
       countInfo: [],
-      shareholders: [{ name: '' }],
+      shareholders: [{ name: "" }],
       incVal: 0,
-      stVal: 0
+      stVal: 0,
+      checked: false,
+      addToOrderList: [],
+      dup: ""
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -75,7 +76,9 @@ export default class InventoryOrder extends React.Component {
           inventoryList: responseJson,
           inventoryCount: responseJson.length
         });
-        this.state.inventoryList.map(v => v.incVal = 0)
+        this.state.inventoryList.map(v => {
+          (v.incVal = 1), (v.selectItem = false);
+        });
         this.setState({ loading: false });
       })
       .catch(error => {
@@ -106,16 +109,17 @@ export default class InventoryOrder extends React.Component {
     }
   }
   //Increment Counter and check whether it is exceeded more than quantity
-  incrementOrder = (id) => {
+  incrementOrder = id => {
     // const incCntr = this.state.orderItemCounter;
-    //console.log('Welcome Increment'); 
+    //console.log('Welcome Increment');
     const res = this.state.inventoryList.filter(v => v.ItemID === id);
-    res.map(v => v.incVal = v.incVal + 1)
-    res.incVal = this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
+    res.map(v => (v.incVal = v.incVal + 1));
+    res.incVal = this.setState({
+      orderItemCounter: this.state.orderItemCounter + 1
+    });
     // const s = 'surendra';
-    //console.log('response', res);
+    //console.log("response", res);
     this.state.inventoryList.push(res);
-
   };
 
   // Decrement Counter
@@ -124,12 +128,41 @@ export default class InventoryOrder extends React.Component {
     //.log('Decrement', this.state.orderItemCounter, itmId);
     //let s = 0;
     const res = this.state.inventoryList.filter(v => v.ItemID === itmId);
-    res.map(v => v.incVal = v.incVal - 1)
-    res.incVal = this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
+    res.map(v => (v.incVal = v.incVal - 1));
+    res.incVal = this.setState({
+      orderItemCounter: this.state.orderItemCounter - 1
+    });
     // const s = 'surendra';
     //console.log('response', res);
     this.state.inventoryList.push(res);
   }
+  //Check which item is checked and get the array and overwrite it
+  onChangeCheck = itemId => {
+    //console.log("Item Id", itemId);
+    const checkedItem = this.state.inventoryList.filter(
+      chkItm => chkItm.ItemID === itemId
+    );
+    checkedItem.map(chkValItm => {
+      if (!chkValItm.selectItem) chkValItm.selectItem = true;
+      else chkValItm.selectItem = false;
+    });
+    checkedItem.selectItem = this.setState({ checked: true });
+    this.state.inventoryList.push(checkedItem);
+  };
+  // Adding the list of selected orders
+  addListOfOrders = () => {
+    //console.log("Welcome To orders");
+    const addedOrderToCart = this.state.inventoryList.filter(
+      addedItems => addedItems.selectItem === true
+    );
+    if (addedOrderToCart.length === 0) alert("No Items added to cart");
+    else console.log("Items are added");
+
+    //this.setState({ addToOrderList: addedOrderToCart});
+    //this.state.addToOrderList.push(addedOrderToCart);
+    this.setState({ addToOrderList: addedOrderToCart})
+    //console.log("Added List", addedOrderToCart);
+  };
 
   render() {
     return (
@@ -184,7 +217,10 @@ export default class InventoryOrder extends React.Component {
                 <Card>
                   <CardItem>
                     <Left>
-                      <CheckBox checked={true} />
+                      <CheckBox
+                        onPress={() => this.onChangeCheck(itm.ItemID)}
+                        checked={itm.selectItem}
+                      />
                     </Left>
                     <Text style={{ fontWeight: "bold" }}>
                       {itm.Description}
@@ -234,7 +270,8 @@ export default class InventoryOrder extends React.Component {
                       <View style={commonStyles.column}>
                         <Right>
                           <TouchableOpacity
-                            onPress={() => this.incrementOrder(itm.ItemID)}>
+                            onPress={() => this.incrementOrder(itm.ItemID)}
+                          >
                             <Icon
                               name="plus"
                               type="FontAwesome"
@@ -245,7 +282,9 @@ export default class InventoryOrder extends React.Component {
                           <Text style={{ fontWeight: "bold" }}>
                             {itm.incVal}
                           </Text>
-                          <TouchableOpacity onPress={() => this.decCounter(itm.ItemID)}>
+                          <TouchableOpacity
+                            onPress={() => this.decCounter(itm.ItemID)}
+                          >
                             <Icon
                               name="minus"
                               type="FontAwesome"
@@ -254,21 +293,6 @@ export default class InventoryOrder extends React.Component {
                           </TouchableOpacity>
                         </Right>
                       </View>
-                      {/* <View style={commonStyles.column}>
-                        <Text style={{ fontWeight: "bold" }}>{itm.Description}</Text>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>SKU</Text>
-                          <Text>{itm.ItemID}</Text>
-                          <Text>MSRP</Text>
-                          <Text>10</Text>
-                        </View>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Size </Text>
-                          <Text>{itm.ItemID}</Text>
-                          <Text>Count</Text>
-                          <Text>{itm.Quantity}</Text>
-                        </View>
-                      </View> */}
                     </View>
                   </CardItem>
                 </Card>
@@ -277,28 +301,69 @@ export default class InventoryOrder extends React.Component {
           </ScrollView>
         </Content>
         {this.renderLoading()}
-        <View style={{ position: 'absolute', right: 0, bottom: 0, width: deviceWidth, height: 50 }}>
-          <Card>
-            <CardItem>
-              <Left>
-                <Text>1 Item</Text>
-              </Left>
-              <Right>
-
-                <Button bordered style={{ backgroundColor: "#00ffff", width: 120, height: 40 }} onPress={() => this.props.navigation.navigate("AddInventoryOrder")}>
-                  <Text
-                    style={{
-                      color: "#ffffff",
-                      fontSize: 15,
-                      margin: 10
-                    }}
-                  >
-                    Create Order
-                  </Text>
-                </Button>
-              </Right>
-            </CardItem>
-          </Card>
+        <View
+          style={{
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            width: deviceWidth,
+            height: 70
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              borderWidth: 1,
+              backgroundColor: "#FFFFFF",
+              height: 100
+            }}
+          >
+            <Button
+              bordered
+              style={{
+                backgroundColor: "#00ffff",
+                width: 120,
+                height: 40,
+                margin: 10
+              }}
+              onPress={this.addListOfOrders}
+            >
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 15,
+                  margin: 10
+                }}
+              >
+                Add to order
+              </Text>
+            </Button>
+            <Button
+              bordered
+              style={{
+                backgroundColor: "#00ffff",
+                width: 120,
+                height: 40,
+                margin: 10
+              }}
+              onPress={() =>
+                this.props.navigation.navigate("AddInventoryOrder", {
+                  reviewOrderDetailsList: this.state.addToOrderList
+                })
+              }
+            >
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 15,
+                  margin: 10
+                }}
+              >
+                Review Order
+              </Text>
+            </Button>
+          </View>
         </View>
       </Container>
     );

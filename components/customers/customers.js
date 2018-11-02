@@ -74,6 +74,7 @@ export default class Customers extends React.Component {
       })
       .catch(error => {
         console.error(error);
+        this.setState({ customersListData: []})
         this.setState({ loading: false });
       });
   };

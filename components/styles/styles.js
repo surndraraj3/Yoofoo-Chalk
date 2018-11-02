@@ -143,13 +143,45 @@ const commonStyles = StyleSheet.create({
     margin: 10
   },
   buttomMaincontainer: {
-    flex: 1, flexDirection: 'row', justifyContent: 'space-around', margin: 10 
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    margin: 10
   },
   buttonNestedContainer: {
-    width: 50, height: 50, backgroundColor: '#00e6e6'
+    width: 50,
+    height: 50,
+    backgroundColor: "#00e6e6"
   },
   textDiscount: {
-    alignContent: 'center', alignItems: 'center', margin: 15
+    alignContent: "center",
+    alignItems: "center",
+    margin: 15
+  },
+  footerContainer: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    width: window.width,
+    height: 70
+  },
+  footerInnerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    borderWidth: 1,
+    backgroundColor: "#FFFFFF",
+    height: 100
+  },
+  footerButton: {
+    backgroundColor: "#00ffff",
+    width: 120,
+    height: 40,
+    margin: 10
+  },
+  footerText: {
+    color: "#000000",
+    fontSize: 15,
+    margin: 10
   }
 });
 

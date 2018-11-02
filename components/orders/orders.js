@@ -55,7 +55,7 @@ export default class Orders extends React.Component {
       // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
-        console.log(responseJson.message, responseJson.DistributorID);
+        //console.log(responseJson.message, responseJson.DistributorID);
         this.setState({
           distributorId: responseJson.DistributorID,
           authToken: responseJson.Token
