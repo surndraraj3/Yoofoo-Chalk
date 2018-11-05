@@ -2,14 +2,12 @@ import React from "react";
 import {
   Text,
   View,
-  TouchableOpacity,
   UIManager,
   findNodeHandle,
   ActivityIndicator,
   AsyncStorage,
-  StyleSheet,
   Picker,
-  TouchableHighlight
+  ImageBackground
 } from "react-native";
 import {
   Container,
@@ -117,12 +115,6 @@ export default class Orders extends React.Component {
       //
     );
     this.setState({ searchOrdersList: res, orderCount: res.length });
-    if (res.length === 0) {
-      console.log("length zero");
-    } else {
-      console.log("Lent count");
-    }
-    console.log("Response", res);
   };
 
   render() {
@@ -179,25 +171,7 @@ export default class Orders extends React.Component {
             <Text>Order Date</Text>
             <Text>Order #</Text>
             <Text>Action</Text>
-          </View>
-          {/* <View style={commonStyles.row}>
-            <Text>11</Text>
-            <Text>7/12/2018</Text>
-            <Text>Lisa Barton</Text>
-            <TouchableOpacity
-              ref={e => {
-                this._button = e;
-              }}
-              onPress={() => this.onOpenMenu("261")}
-              style={commonStyles.iconCircle}
-            >
-              <Icon
-                name="ellipsis-h"
-                type="FontAwesome"
-                style={{ fontSize: 20, color: "#55e6f6" }}
-              />
-            </TouchableOpacity>
-          </View> */}
+          </View>          
           <Text style={commonStyles.warningMessage}>
             {this.state.orderCount === 0 ? "No Orders Found" : ""}
           </Text>
@@ -211,60 +185,33 @@ export default class Orders extends React.Component {
                     <Text>{orderItem.Customer}</Text>
                     <Text>{orderItem.OrderDate}</Text>
                     <Text>{orderItem.OrderNum}</Text>
-                    <Picker
-                      selectedValue={this.state.language}
-                      mode="dropdown"
+                    <ImageBackground
+                      resizeMode={"stretch"} // or cover
                       style={{
-                        height: 20,
-                        width: 20,
-                        backgroundColor: "#55e6f6",
+                        height: 30,
+                        width: 30,
                         borderRadius: 15,
-                        borderWidth: 1
+                        backgroundColor: "#55e6f6"
                       }}
-                      onValueChange={(itemValue, itemIndex) => {
-                        console.log("221", itemValue, itemIndex);
-                        this.setState({ language: itemValue });
-                        this.props.navigation.navigate("ResendInvoice");
-                      }}
+                      source={require("../../assets/ellipsis-h.png")}
                     >
-                      <Picker.Item label="" value="" />
-                      <Picker.Item label="View Invoice" value="ViewInvoice" />
-                    </Picker>
-                    {/* <TouchableOpacity>
-                      <MenuProvider
-                        style={{ flexDirection: "column", padding: 20 }}
+                      <Picker
+                        selectedValue={this.state.language}
+                        mode="dropdown"
+                        style={{
+                          height: 20,
+                          width: 20
+                        }}
+                        onValueChange={(itemValue, itemIndex) => {
+                          console.log("221", itemValue, itemIndex);
+                          this.setState({ language: itemValue });
+                          this.props.navigation.navigate("ResendInvoice");
+                        }}
                       >
-                        <Menu
-                          onSelect={value => alert(`Selected number: ${value}`)}
-                          style={commonStyles.iconCircle}
-                        >
-                          <MenuTrigger>
-                            <Icon
-                              name="ellipsis-v"
-                              type="FontAwesome"
-                              style={{ fontSize: 20, color: "#55e6f6" }}
-                            />
-                          </MenuTrigger>
-                          <MenuOptions>
-                            <MenuOption
-                              value={1}
-                              onSelect={() =>
-                                this.props.navigation.navigate("ResendInvoice")
-                              }
-                            >
-                              <Text style={{ color: "#000000" }}>
-                                View Invoice
-                              </Text>
-                            </MenuOption>
-                            <MenuOption
-                              value={3}
-                              disabled={true}
-                              text="Three"
-                            />
-                          </MenuOptions>
-                        </Menu>
-                      </MenuProvider>
-                    </TouchableOpacity> */}
+                        <Picker.Item label="" value="" />
+                        <Picker.Item label="View Invoice" value="ViewInvoice" />
+                      </Picker>
+                    </ImageBackground>
                   </View>
                 </View>
               ))
@@ -277,61 +224,33 @@ export default class Orders extends React.Component {
                     <Text>{orderItem.Customer}</Text>
                     <Text>{orderItem.OrderDate}</Text>
                     <Text>{orderItem.OrderNum}</Text>
-                    <Picker
-                      selectedValue={this.state.language}
-                      mode="dropdown"
+                    <ImageBackground
+                      resizeMode={"stretch"} // or cover
                       style={{
-                        height: 20,
-                        width: 20,
-                        backgroundColor: "#55e6f6",
+                        height: 30,
+                        width: 30,
                         borderRadius: 15,
-                        borderWidth: 1
+                        backgroundColor: "#55e6f6"
                       }}
-                      onValueChange={(itemValue, itemIndex) => {
-                        console.log("221", itemValue);
-                        this.setState({ language: itemValue });
-                        this.props.navigation.navigate("ResendInvoice");
-                      }}
+                      source={require("../../assets/ellipsis-h.png")}
                     >
-                      <Picker.Item label="" value="" />
-                      <Picker.Item label="View Invoice" value="ViewInvoice" />
-                    </Picker>
-
-                    {/* <TouchableOpacity>
-                      <MenuProvider
-                        style={{ flexDirection: "column", padding: 20 }}
+                      <Picker
+                        selectedValue={this.state.language}
+                        mode="dropdown"
+                        style={{
+                          height: 20,
+                          width: 20
+                        }}
+                        onValueChange={(itemValue, itemIndex) => {
+                          console.log("221", itemValue);
+                          this.setState({ language: itemValue });
+                          this.props.navigation.navigate("ResendInvoice");
+                        }}
                       >
-                        <Menu
-                          onSelect={value => alert(`Selected number: ${value}`)}
-                          style={commonStyles.iconCircle}
-                        >
-                          <MenuTrigger>
-                            <Icon
-                              name="ellipsis-v"
-                              type="FontAwesome"
-                              style={{ fontSize: 20, color: "#55e6f6" }}
-                            />
-                          </MenuTrigger>
-                          <MenuOptions>
-                            <MenuOption
-                              value={1}
-                              onSelect={() =>
-                                this.props.navigation.navigate("ResendInvoice")
-                              }
-                            >
-                              <Text style={{ color: "#000000" }}>
-                                View Invoice
-                              </Text>
-                            </MenuOption>
-                            <MenuOption
-                              value={3}
-                              disabled={true}
-                              text="Three"
-                            />
-                          </MenuOptions>
-                        </Menu>
-                      </MenuProvider>
-                    </TouchableOpacity> */}
+                        <Picker.Item label="" value="" />
+                        <Picker.Item label="View Invoice" value="ViewInvoice" />
+                      </Picker>
+                    </ImageBackground>
                   </View>
                 </View>
               ))}
