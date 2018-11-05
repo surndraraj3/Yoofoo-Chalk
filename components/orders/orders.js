@@ -109,8 +109,12 @@ export default class Orders extends React.Component {
   onChangeOrder = txtSrchFild => {
     //txtSearchBox
     console.log("Search Field", txtSrchFild);
-    const res = this.state.dataSource.filter(v =>
-      v.Customer.includes(txtSrchFild)
+    const res = this.state.dataSource.filter(
+      v =>
+        v.Customer.toLowerCase().includes(txtSrchFild.toLowerCase()) ||
+        v.OrderDate.contains(txtSrchFild) ||
+        v.OrderNum.contains(txtSrchFild)
+      //
     );
     this.setState({ searchOrdersList: res, orderCount: res.length });
     if (res.length === 0) {
@@ -220,7 +224,7 @@ export default class Orders extends React.Component {
                       onValueChange={(itemValue, itemIndex) => {
                         console.log("221", itemValue, itemIndex);
                         this.setState({ language: itemValue });
-                        this.props.navigation.navigate("ResendInvoice")
+                        this.props.navigation.navigate("ResendInvoice");
                       }}
                     >
                       <Picker.Item label="" value="" />
@@ -351,4 +355,3 @@ export default class Orders extends React.Component {
     );
   }
 }
-

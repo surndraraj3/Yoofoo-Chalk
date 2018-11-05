@@ -9,7 +9,8 @@ import {
   findNodeHandle,
   TouchableOpacity,
   ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,
+  RefreshControl
 } from "react-native";
 import {
   Container,
@@ -41,26 +42,30 @@ export default class Customers extends React.Component {
       customersListData: [],
       distributorId: "",
       customerCount: 0,
-      authToken: ""
+      authToken: "",
+      searchCustomerList: []
     };
   }
   //get Customers list
   componentDidMount = async () => {
-    await AsyncStorage.getItem('LoginDetails')
+    await AsyncStorage.getItem("LoginDetails")
       // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         // console.log(responseJson.message, responseJson.DistributorID);
-        this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token })
-      })
+        this.setState({
+          distributorId: responseJson.DistributorID,
+          authToken: responseJson.Token
+        });
+      });
 
-    console.log('url', `${getCustomerListURL}${this.state.distributorId}`);
+    console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.state.authToken}`
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
       }
     })
       .then(response => response.json())
@@ -70,19 +75,18 @@ export default class Customers extends React.Component {
           customersListData: responseJson,
           customerCount: responseJson.length
         });
-        this.setState({ loading: false, });
+        this.setState({ loading: false });
       })
       .catch(error => {
         console.error(error);
-        this.setState({ customersListData: []})
+        this.setState({ customersListData: [] });
         this.setState({ loading: false });
       });
   };
   //
   componentWillMount = () => {
-      
-      this.setState({customersListData: [] })
-  }
+    this.setState({ customersListData: [] });
+  };
 
   onChangeFab = fabitem => {
     console.log("item", fabitem);
@@ -158,6 +162,26 @@ export default class Customers extends React.Component {
       }
     );
   };
+  //Search Customer
+  onSearchCustomer = txtSrchCustomer => {
+    const rsSrchCustomer = this.state.customersListData.filter(
+      cstmrItm =>
+        cstmrItm.FirstName.toLowerCase().contains(
+          txtSrchCustomer.toLowerCase()
+        ) ||
+        cstmrItm.LastName.toLowerCase().contains(
+          txtSrchCustomer.toLowerCase()
+        ) ||
+        cstmrItm.Email.toLowerCase().contains(txtSrchCustomer.toLowerCase()) ||
+        cstmrItm.Phone.contains(txtSrchCustomer)
+    );
+    this.setState({
+      searchCustomerList: rsSrchCustomer,
+      customerCount: rsSrchCustomer.length
+    });
+    console.log("ListCustomer", rsSrchCustomer.length);
+  };
+
   render() {
     return (
       <Container>
@@ -185,7 +209,9 @@ export default class Customers extends React.Component {
         </Header>
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}>{this.state.customerCount} Customers</Text>
+            <Text style={{ margin: 15, fontSize: 20 }}>
+              {this.state.customerCount} Customers
+            </Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
@@ -198,52 +224,103 @@ export default class Customers extends React.Component {
                     borderRadius: 20,
                     backgroundColor: "#FFFFFF"
                   }}
+                  onChangeText={this.onSearchCustomer}
                 />
                 <Icon active name="search" />
               </Item>
             </View>
           </View>
           <ScrollView>
-            <Text style={commonStyles.warningMessage}>{(this.state.customerCount === 0 ? 'No Customers Found' : '')} </Text>
-            {this.state.customersListData.map((itm, i) => (
-              <View key={i}>
-                <Text style={commonStyles.warningMessage}>{(itm.length === 0 ? 'No Customers Found' : '')}</Text>
-                <Card>
-                  <CardItem>
-                    <Left>
-                      <Text>
-                        {itm.FirstName} {itm.LastName}
+            <Text style={commonStyles.warningMessage}>
+              {this.state.customerCount === 0 ? "No Customers Found" : ""}
+            </Text>
+            {this.state.searchCustomerList.length === 0
+              ? this.state.customersListData.map((itm, i) => (
+                  <View key={i}>
+                    <Text style={commonStyles.warningMessage}>
+                      {itm.length === 0 ? "No Customers Found" : ""}
+                    </Text>
+                    <Card>
+                      <CardItem>
+                        <Left>
+                          <Text>
+                            {itm.FirstName} {itm.LastName}
+                          </Text>
+                        </Left>
+                      </CardItem>
+                      <CardItem>
+                        <Left>
+                          <Text>{itm.Email}</Text>
+                        </Left>
+                        <Right>
+                          <TouchableOpacity
+                            ref={e => {
+                              this._button = e;
+                            }}
+                            onPress={() => this.onOpenMenu(itm.CustomerID)}
+                            style={commonStyles.iconCircle}
+                          >
+                            <Icon
+                              name="ellipsis-v"
+                              type="FontAwesome"
+                              style={{ fontSize: 20, color: "#55e6f6" }}
+                            />
+                          </TouchableOpacity>
+                        </Right>
+                      </CardItem>
+                      <CardItem>
+                        <Left>
+                          <Text>{itm.Phone}</Text>
+                        </Left>
+                      </CardItem>
+                    </Card>
+                  </View>
+                ))
+              : this.state.searchCustomerList.map(
+                  (srchCustItm, srchCustIndx) => (
+                    <View key={srchCustIndx}>
+                      <Text style={commonStyles.warningMessage}>
+                        {srchCustItm.length === 0 ? "No Customers Found" : ""}
                       </Text>
-                    </Left>
-                  </CardItem>
-                  <CardItem>
-                    <Left>
-                      <Text>{itm.Email}</Text>
-                    </Left>
-                    <Right>
-                      <TouchableOpacity
-                        ref={e => {
-                          this._button = e;
-                        }}
-                        onPress={() => this.onOpenMenu(itm.CustomerID)}
-                        style={commonStyles.iconCircle}
-                      >
-                        <Icon
-                          name="ellipsis-v"
-                          type="FontAwesome"
-                          style={{ fontSize: 20, color: "#55e6f6" }}
-                        />
-                      </TouchableOpacity>
-                    </Right>
-                  </CardItem>
-                  <CardItem>
-                    <Left>
-                      <Text>{itm.Phone}</Text>
-                    </Left>
-                  </CardItem>
-                </Card>
-              </View>
-            ))}
+                      <Card>
+                        <CardItem>
+                          <Left>
+                            <Text>
+                              {srchCustItm.FirstName} {srchCustItm.LastName}
+                            </Text>
+                          </Left>
+                        </CardItem>
+                        <CardItem>
+                          <Left>
+                            <Text>{srchCustItm.Email}</Text>
+                          </Left>
+                          <Right>
+                            <TouchableOpacity
+                              ref={e => {
+                                this._button = e;
+                              }}
+                              onPress={() =>
+                                this.onOpenMenu(srchCustItm.CustomerID)
+                              }
+                              style={commonStyles.iconCircle}
+                            >
+                              <Icon
+                                name="ellipsis-v"
+                                type="FontAwesome"
+                                style={{ fontSize: 20, color: "#55e6f6" }}
+                              />
+                            </TouchableOpacity>
+                          </Right>
+                        </CardItem>
+                        <CardItem>
+                          <Left>
+                            <Text>{srchCustItm.Phone}</Text>
+                          </Left>
+                        </CardItem>
+                      </Card>
+                    </View>
+                  )
+                )}
           </ScrollView>
         </Content>
         {this.renderLoading()}

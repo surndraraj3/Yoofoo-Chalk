@@ -27,7 +27,7 @@ import {
   CardItem,
   Fab
 } from "native-base";
-import { getInventoryListURL } from '../common/url_config';
+import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 export default class Inventory extends React.Component {
@@ -37,42 +37,45 @@ export default class Inventory extends React.Component {
       loading: true,
       active: "true",
       distributorId: "",
-      authToken:"",
+      authToken: "",
       inventoryList: [],
-      inventoryCount: 0
+      inventoryCount: 0,
+      searchInventoryList: []
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
   componentDidMount = async () => {
-    await AsyncStorage.getItem('LoginDetails')
-    .then(resLoginDtls => {
-      resLoginDtls = JSON.parse(resLoginDtls)
-      this.setState({ distributorId: resLoginDtls.DistributorID, authToken: resLoginDtls.Token })
-    })
+    await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
+      resLoginDtls = JSON.parse(resLoginDtls);
+      this.setState({
+        distributorId: resLoginDtls.DistributorID,
+        authToken: resLoginDtls.Token
+      });
+    });
     //Get Inventory List
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.state.authToken}`
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
       }
     })
-    .then(response => response.json())
-    .then(responseJson => {
-      //console.log(responseJson);
-      this.setState({
-        inventoryList: responseJson,
-        inventoryCount: responseJson.length
-      });      
-      this.setState({ loading: false });
-    })
-    .catch(error => {
-      console.error(error);
-      this.setState({ loading: false });
-    });
-  }
- // Loading Spinner
+      .then(response => response.json())
+      .then(responseJson => {
+        //console.log(responseJson);
+        this.setState({
+          inventoryList: responseJson,
+          inventoryCount: responseJson.length
+        });
+        this.setState({ loading: false });
+      })
+      .catch(error => {
+        console.error(error);
+        this.setState({ loading: false });
+      });
+  };
+  // Loading Spinner
   renderLoading() {
     if (this.state.loading) {
       return (
@@ -94,8 +97,21 @@ export default class Inventory extends React.Component {
       return null;
     }
   }
+  //Search the inventory based on keyword match
+  onSearchInventory = txtInventoryFld => {    
+    const rsSrchInvtry = this.state.inventoryList.filter(
+      k =>
+        k.ItemID.toLowerCase().contains(txtInventoryFld.toLowerCase()) ||
+        k.Description.toLowerCase().contains(txtInventoryFld.toLowerCase())
+      // k.Quantity.contains(txtInventoryFld)
+    );
+    this.setState({
+      searchInventoryList: rsSrchInvtry,
+      inventoryCount: rsSrchInvtry.length
+    });
+  };
   //Render FAB
-  renderInventoryFloatingActionButton(){
+  renderInventoryFloatingActionButton() {
     return (
       <Fab
         active={this.state.active}
@@ -111,19 +127,6 @@ export default class Inventory extends React.Component {
         onPress={() => this.props.navigation.navigate("InventoryOrder")}
       >
         <Icon name="sun-o" type="FontAwesome" />
-        {/* <Button
-          style={{ backgroundColor: "#34A34F" }}
-          // onPress={() => this.props.navigation.navigate("AddCutsomer")}
-        >
-          <Image
-            source={require("../../assets/new_customer.png")}
-            style={{
-              height: 40,
-              width: 40,
-              borderRadius: 40 / 2
-            }}
-          />
-        </Button> */}
       </Fab>
     );
   }
@@ -154,7 +157,9 @@ export default class Inventory extends React.Component {
         </Header>
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}> {this.state.inventoryCount} Inventory</Text>
+            <Text style={{ margin: 15, fontSize: 20 }}>
+              {this.state.inventoryCount} Inventory
+            </Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
@@ -167,46 +172,85 @@ export default class Inventory extends React.Component {
                     borderRadius: 20,
                     backgroundColor: "#FFFFFF"
                   }}
+                  onChangeText={this.onSearchInventory}
                 />
                 <Icon active name="search" />
               </Item>
-            </View>            
+            </View>
           </View>
           <ScrollView>
-            {this.state.inventoryList.map((itm, i) => (
-              <View key={i}>
-                <Card>
-                  <CardItem bordered>
-                    <View style={commonStyles.row}>
-                      <View style={commonStyles.column}>
-                        <Icon
-                          active
-                          name="birthday-cake"
-                          type="FontAwesome"
-                          style={{ color: "#ff6666" }}
-                        />
-                      </View>
-                      <View style={commonStyles.column}>
-                        <Text style={{ fontWeight: "bold" }}>{itm.Description}</Text>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>SKU</Text>
-                          <Text>{itm.ItemID}</Text>
-                          <Text>MSRP</Text>
-                          <Text>10</Text>
+            {this.state.searchInventoryList.length === 0
+              ? this.state.inventoryList.map((itm, i) => (
+                  <View key={i}>
+                    <Card>
+                      <CardItem bordered>
+                        <View style={commonStyles.row}>
+                          <View style={commonStyles.column}>
+                            <Icon
+                              active
+                              name="birthday-cake"
+                              type="FontAwesome"
+                              style={{ color: "#ff6666" }}
+                            />
+                          </View>
+                          <View style={commonStyles.column}>
+                            <Text style={{ fontWeight: "bold" }}>
+                              {itm.Description}
+                            </Text>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>SKU</Text>
+                              <Text>{itm.ItemID}</Text>
+                              <Text>MSRP</Text>
+                              <Text>{itm.Price}</Text>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Size </Text>
+                              <Text>{itm.Quantity}</Text>
+                              <Text>Count</Text>
+                              <Text>{itm.Quantity}</Text>
+                            </View>
+                          </View>
                         </View>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Size </Text>
-                          <Text>{itm.ItemID}</Text>
-                          <Text>Count</Text>
-                          <Text>{itm.Quantity}</Text>
+                      </CardItem>
+                    </Card>
+                  </View>
+                ))
+              : this.state.searchInventoryList.map((srchItm, srchIndx) => (
+                  <View key={srchIndx}>
+                    <Card>
+                      <CardItem bordered>
+                        <View style={commonStyles.row}>
+                          <View style={commonStyles.column}>
+                            <Icon
+                              active
+                              name="birthday-cake"
+                              type="FontAwesome"
+                              style={{ color: "#ff6666" }}
+                            />
+                          </View>
+                          <View style={commonStyles.column}>
+                            <Text style={{ fontWeight: "bold" }}>
+                              {srchItm.Description}
+                            </Text>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>SKU</Text>
+                              <Text>{srchItm.ItemID}</Text>
+                              <Text>MSRP</Text>
+                              <Text>{srchItm.Price}</Text>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Size </Text>
+                              <Text>{srchItm.Quantity}</Text>
+                              <Text>Count</Text>
+                              <Text>{srchItm.Quantity}</Text>
+                            </View>
+                          </View>
                         </View>
-                      </View>
-                    </View>
-                  </CardItem>
-                </Card>
-              </View>
-            ))}
-          </ScrollView> 
+                      </CardItem>
+                    </Card>
+                  </View>
+                ))}
+          </ScrollView>
         </Content>
         {this.renderLoading()}
         {this.renderInventoryFloatingActionButton()}

@@ -48,7 +48,8 @@ export default class InventoryOrder extends React.Component {
       stVal: 0,
       checked: false,
       addToOrderList: [],
-      dup: ""
+      dup: "",
+      searchInventoryOrdersList: []
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -160,8 +161,21 @@ export default class InventoryOrder extends React.Component {
 
     //this.setState({ addToOrderList: addedOrderToCart});
     //this.state.addToOrderList.push(addedOrderToCart);
-    this.setState({ addToOrderList: addedOrderToCart})
+    this.setState({ addToOrderList: addedOrderToCart });
     //console.log("Added List", addedOrderToCart);
+  };
+  //Search the inventory based on keyword match
+  onSearchInventoryOrder = txtInventoryFld => {
+    const rsSrchInvtryOrder = this.state.inventoryList.filter(
+      k =>
+        k.ItemID.toLowerCase().contains(txtInventoryFld.toLowerCase()) ||
+        k.Description.toLowerCase().contains(txtInventoryFld.toLowerCase())
+      // k.Quantity.contains(txtInventoryFld)
+    );
+    this.setState({
+      searchInventoryOrdersList: rsSrchInvtryOrder,
+      inventoryCount: rsSrchInvtryOrder.length
+    });
   };
 
   render() {
@@ -206,13 +220,14 @@ export default class InventoryOrder extends React.Component {
                     borderRadius: 20,
                     backgroundColor: "#FFFFFF"
                   }}
+                  onChangeText={this.onSearchInventoryOrder}
                 />
                 <Icon active name="search" />
               </Item>
             </View>
           </View>
           <ScrollView>
-            {this.state.inventoryList.map((itm, i) => (
+            { this.state.searchInventoryOrdersList.length === 0 ? this.state.inventoryList.map((itm, i) => (
               <View key={i}>
                 <Card>
                   <CardItem>
@@ -236,14 +251,7 @@ export default class InventoryOrder extends React.Component {
                           style={{ color: "#ff6666" }}
                         />
                       </View>
-                      <View style={commonStyles.column}>
-                        {/* <View
-                          style={{ flexDirection: "row", flexWrap: "wrap" }}
-                        >
-                          <Text style={{ fontWeight: "bold" }}>
-                            {itm.Description}
-                          </Text>
-                        </View> */}
+                      <View style={commonStyles.column}>                        
                         <View style={commonStyles.nestedRow}>
                           <Text>Qty Available </Text>
                           <Text>{itm.Quantity}</Text>
@@ -255,15 +263,13 @@ export default class InventoryOrder extends React.Component {
                         <View style={commonStyles.nestedRow}>
                           <Text>Msrp </Text>
                           <Text>
-                            {"\u0024"}
-                            10
+                            {"\u0024"}{itm.Price}
                           </Text>
                         </View>
                         <View style={commonStyles.nestedRow}>
                           <Text>Designer</Text>
                           <Text>
-                            {"\u0024"}
-                            4.59
+                            {"\u0024"}{itm.Price}
                           </Text>
                         </View>
                       </View>
@@ -297,7 +303,85 @@ export default class InventoryOrder extends React.Component {
                   </CardItem>
                 </Card>
               </View>
-            ))}
+            )) : 
+            this.state.searchInventoryOrdersList.map((srchInvOrdrItm, srchInvOrdrItmIndx) => (
+              <View key={srchInvOrdrItmIndx}>
+                <Card>
+                  <CardItem>
+                    <Left>
+                      <CheckBox
+                        onPress={() => this.onChangeCheck(srchInvOrdrItm.ItemID)}
+                        checked={srchInvOrdrItm.selectItem}
+                      />
+                    </Left>
+                    <Text style={{ fontWeight: "bold" }}>
+                      {srchInvOrdrItm.Description}
+                    </Text>
+                  </CardItem>
+                  <CardItem bordered>
+                    <View style={commonStyles.row}>
+                      <View style={commonStyles.column}>
+                        <Icon
+                          active
+                          name="birthday-cake"
+                          type="FontAwesome"
+                          style={{ color: "#ff6666" }}
+                        />
+                      </View>
+                      <View style={commonStyles.column}>                        
+                        <View style={commonStyles.nestedRow}>
+                          <Text>Qty Available </Text>
+                          <Text>{srchInvOrdrItm.Quantity}</Text>
+                        </View>
+                        <View style={commonStyles.nestedRow}>
+                          <Text>Discount </Text>
+                          <Text>20%</Text>
+                        </View>
+                        <View style={commonStyles.nestedRow}>
+                          <Text>Msrp </Text>
+                          <Text>
+                            {"\u0024"}{srchInvOrdrItm.Price}
+                          </Text>
+                        </View>
+                        <View style={commonStyles.nestedRow}>
+                          <Text>Designer</Text>
+                          <Text>
+                            {"\u0024"}{srchInvOrdrItm.Price}
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={commonStyles.column}>
+                        <Right>
+                          <TouchableOpacity
+                            onPress={() => this.incrementOrder(srchInvOrdrItm.ItemID)}
+                          >
+                            <Icon
+                              name="plus"
+                              type="FontAwesome"
+                              style={{ color: "#f50" }}
+                            />
+                          </TouchableOpacity>
+
+                          <Text style={{ fontWeight: "bold" }}>
+                            {srchInvOrdrItm.incVal}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => this.decCounter(srchInvOrdrItm.ItemID)}
+                          >
+                            <Icon
+                              name="minus"
+                              type="FontAwesome"
+                              style={{ color: "#f50" }}
+                            />
+                          </TouchableOpacity>
+                        </Right>
+                      </View>
+                    </View>
+                  </CardItem>
+                </Card>
+              </View>
+            ))
+            }
           </ScrollView>
         </Content>
         {this.renderLoading()}
