@@ -56,7 +56,7 @@ export default class ResendInvoice extends React.Component {
             <Title>Resend Invoice</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

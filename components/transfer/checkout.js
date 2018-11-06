@@ -38,7 +38,7 @@ export default class Checkout extends React.Component {
             <Title>Checkout</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

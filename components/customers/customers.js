@@ -199,7 +199,7 @@ export default class Customers extends React.Component {
             <Title>Customer</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

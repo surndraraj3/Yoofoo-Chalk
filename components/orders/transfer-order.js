@@ -91,7 +91,7 @@ export default class TransferOrder extends React.Component {
             <Title>Transfer Order</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

@@ -147,7 +147,7 @@ export default class Inventory extends React.Component {
             <Title>Inventory</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

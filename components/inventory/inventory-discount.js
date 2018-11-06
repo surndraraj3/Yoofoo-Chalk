@@ -44,7 +44,7 @@ export default class InventoryOrderDiscount extends React.Component {
                         <Title>Discount</Title>
                     </Body>
                     <Right>
-                        <Button transparent>
+                        <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
                             <Icon name="home" />
                         </Button>
                         <Button transparent>

@@ -162,7 +162,7 @@ export default class InventoryOrder extends React.Component {
     //this.setState({ addToOrderList: addedOrderToCart});
     //this.state.addToOrderList.push(addedOrderToCart);
     this.setState({ addToOrderList: addedOrderToCart });
-    //console.log("Added List", addedOrderToCart);
+    console.log("Added List", addedOrderToCart);
   };
   //Search the inventory based on keyword match
   onSearchInventoryOrder = txtInventoryFld => {
@@ -195,7 +195,7 @@ export default class InventoryOrder extends React.Component {
             <Title>Order</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

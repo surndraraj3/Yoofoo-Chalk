@@ -182,7 +182,7 @@ export default class AddCutsomer extends React.Component {
             <Title>Add Customer</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

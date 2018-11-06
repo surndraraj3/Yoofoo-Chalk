@@ -51,7 +51,7 @@ export default class Settings extends React.Component {
             <Title>Settings</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

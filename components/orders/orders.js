@@ -135,7 +135,7 @@ export default class Orders extends React.Component {
             <Title>Orders</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -193,7 +193,7 @@ export default class Orders extends React.Component {
                         borderRadius: 15,
                         backgroundColor: "#55e6f6"
                       }}
-                      source={require("../../assets/ellipsis-h.png")}
+                      source={require("../../assets/ellipsis-h-white.png")}
                     >
                       <Picker
                         selectedValue={this.state.language}
@@ -232,7 +232,7 @@ export default class Orders extends React.Component {
                         borderRadius: 15,
                         backgroundColor: "#55e6f6"
                       }}
-                      source={require("../../assets/ellipsis-h.png")}
+                      source={require("../../assets/ellipsis-h-white.png")}
                     >
                       <Picker
                         selectedValue={this.state.language}

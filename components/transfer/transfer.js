@@ -40,7 +40,7 @@ export default class Transfer extends React.Component {
             <Title>Help</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

@@ -13,3 +13,5 @@ export const getCustomerListURL = 'http://customerservices-dev.us-west-1.elastic
 export const getOrdersListURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/';
 //Get Inventory List 
 export const getInventoryListURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/InventoryByDesignerID/';
+//Add Orders 
+export const addOrdersUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/AddOrder/';

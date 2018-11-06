@@ -37,7 +37,7 @@ export default class Help extends React.Component {
             <Title>Help</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>

@@ -1,9 +1,8 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, AsyncStorage } from "react-native";
 import {
   Container,
   Content,
-  CheckBox,
   Item,
   Input,
   Icon,
@@ -16,6 +15,7 @@ import {
   Card,
   CardItem
 } from "native-base";
+import { addOrdersUrl } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 export default class AddInventoryOrder extends React.Component {
@@ -26,20 +26,47 @@ export default class AddInventoryOrder extends React.Component {
       getListofOrdersPrevScreen: this.props.navigation.getParam(
         "reviewOrderDetailsList"
       ),
-      listOfOrders: []
+      listOfOrders: [],
+      distributorId: "",
+      authToken: ""
     };
   }
+  componentDidMount = async () => {
+    await AsyncStorage.getItem("LoginDetails")
+      .then(responseJson => {
+        responseJson = JSON.parse(responseJson);
+        console.log(responseJson.message, responseJson.DistributorID);
+        this.setState({
+          distributorId: responseJson.DistributorID,
+          authToken: responseJson.Token
+        });
+      });
+      this.state.getListofOrdersPrevScreen.map(v => {
+        (v.OrderID = "c3fcaefd-ac80"),(v.DesignerID = this.state.distributorId);
+      });
+  };
+  //save checkout orders
+  saveOrderDtls = () => {
+    console.log("Welcom to data", this.state.distributorId);
+    fetch(`${addOrdersUrl}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
+      },
+      body:JSON.stringify(this.state.getListofOrdersPrevScreen)      
+    })
+      .then(response => response.json())
+      .then(resAddOrderJson => {
+        console.log('resAddOrderJson', resAddOrderJson);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   render() {
-    // const otherParam = this.props.navigation.getParam('reviewOrderDetailsList', 'some default value');
-    //console.log("otherParam", this.state.getListofOrdersPrevScreen);
-    // this.setState({ listOfOrders: otherParam });
-    // const dest = JSON.stringify(otherParam);
-    // const strngFy = dest.replace(/[[\]]/g,'');
-    // console.log('dest', dest.replace(/[[\]]/g,''));
-    // this.state.listOfOrders.push(strngFy);
-    // console.log('Final', JSON.stringify(this.state.listOfOrders));
-    // this.setState({ listOfOrders: this.state.getListofOrders});
-    //this.state.listOfOrders.push(this.state.getListofOrdersPrevScreen)
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -56,7 +83,7 @@ export default class AddInventoryOrder extends React.Component {
             <Title> Review Order</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -147,19 +174,19 @@ export default class AddInventoryOrder extends React.Component {
                         </View>
                         <View style={commonStyles.column}>
                           <Right>
-                            {/* <Icon
+                            <Icon
                               name="plus"
                               type="FontAwesome"
                               style={{ color: "#f50" }}
-                            /> */}
+                            />
                             <Text style={{ fontWeight: "bold" }}>
                               {reviewItmLst.incVal}
                             </Text>
-                            {/* <Icon
+                            <Icon
                               name="minus"
                               type="FontAwesome"
                               style={{ color: "#f50" }}
-                            /> */}
+                            />
                           </Right>
                         </View>
                       </View>
@@ -180,11 +207,17 @@ export default class AddInventoryOrder extends React.Component {
         <View style={commonStyles.footerContainer}>
           <View style={commonStyles.footerInnerContainer}>
             <View style={{ margin: 20 }}>
-              <Text style={{ color: "#42f4f1", fontSize: 20,  fontWeight:'bold'}}>
+              <Text
+                style={{ color: "#42f4f1", fontSize: 20, fontWeight: "bold" }}
+              >
                 Continue Shopping
               </Text>
             </View>
-            <Button bordered style={commonStyles.footerButton}>
+            <Button
+              bordered
+              style={commonStyles.footerButton}
+              onPress={this.saveOrderDtls}
+            >
               <Text style={commonStyles.footerText}>Checkout</Text>
             </Button>
           </View>
