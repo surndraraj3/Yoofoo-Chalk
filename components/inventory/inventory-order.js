@@ -49,7 +49,7 @@ export default class InventoryOrder extends React.Component {
       checked: false,
       addToOrderList: [],
       dup: "",
-      searchInventoryOrdersList: []
+      searchInventoryOrdersList: [],
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -179,6 +179,10 @@ export default class InventoryOrder extends React.Component {
   };
 
   render() {
+    const { navigation } = this.props;
+    const cstmrId = navigation.getParam('customerID', 'CUSTOMER-ID');
+    const cstmrDistributorId = navigation.getParam('customerDistributorId', 'CUSTOMER_DIST_ID');
+    console.log('ID', cstmrId, cstmrDistributorId);
     return (
       <Container>
         <View style={{ padding: 10 }} />

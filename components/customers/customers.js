@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   AsyncStorage,
+  ImageBackground,
   RefreshControl
 } from "react-native";
 import {
@@ -28,7 +29,8 @@ import {
   Input,
   Card,
   CardItem,
-  Fab
+  Fab,
+  Picker
 } from "native-base";
 import { getCustomerListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
@@ -43,7 +45,8 @@ export default class Customers extends React.Component {
       distributorId: "",
       customerCount: 0,
       authToken: "",
-      searchCustomerList: []
+      searchCustomerList: [],
+      selPickItm: ""
     };
   }
   //get Customers list
@@ -199,7 +202,10 @@ export default class Customers extends React.Component {
             <Title>Customer</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -253,19 +259,41 @@ export default class Customers extends React.Component {
                           <Text>{itm.Email}</Text>
                         </Left>
                         <Right>
-                          <TouchableOpacity
-                            ref={e => {
-                              this._button = e;
+                          <ImageBackground
+                            resizeMode={"stretch"} // or cover
+                            style={{
+                              height: 30,
+                              width: 30,
+                              borderRadius: 15,
+                              backgroundColor: "#55e6f6"
                             }}
-                            onPress={() => this.onOpenMenu(itm.CustomerID)}
-                            style={commonStyles.iconCircle}
+                            source={require("../../assets/ellipsis-h-white.png")}
                           >
-                            <Icon
-                              name="ellipsis-v"
-                              type="FontAwesome"
-                              style={{ fontSize: 20, color: "#55e6f6" }}
-                            />
-                          </TouchableOpacity>
+                            <Picker
+                              selectedValue={this.state.selPickItm}
+                              mode="dropdown"
+                              style={{
+                                height: 20,
+                                width: 20
+                              }}
+                              onValueChange={(selVal, selIndex) => {
+                                console.log("221", selVal, selIndex);
+                                this.setState({ selPickItm: selVal });
+                                this.props.navigation.navigate(
+                                  "InventoryOrder",{
+                                    customerID: itm.CustomerID,
+                                    customerDistributorId: this.state.distributorId
+                                  }
+                                );
+                              }}
+                            >
+                              <Picker.Item label="" value="" />
+                              <Picker.Item
+                                label="Create Order"
+                                value="CreateOrder"
+                              />
+                            </Picker>
+                          </ImageBackground>
                         </Right>
                       </CardItem>
                       <CardItem>
@@ -295,21 +323,41 @@ export default class Customers extends React.Component {
                             <Text>{srchCustItm.Email}</Text>
                           </Left>
                           <Right>
-                            <TouchableOpacity
-                              ref={e => {
-                                this._button = e;
+                            <ImageBackground
+                              resizeMode={"stretch"} // or cover
+                              style={{
+                                height: 30,
+                                width: 30,
+                                borderRadius: 15,
+                                backgroundColor: "#55e6f6"
                               }}
-                              onPress={() =>
-                                this.onOpenMenu(srchCustItm.CustomerID)
-                              }
-                              style={commonStyles.iconCircle}
+                              source={require("../../assets/ellipsis-h-white.png")}
                             >
-                              <Icon
-                                name="ellipsis-v"
-                                type="FontAwesome"
-                                style={{ fontSize: 20, color: "#55e6f6" }}
-                              />
-                            </TouchableOpacity>
+                              <Picker
+                                selectedValue={this.state.selPickItm}
+                                mode="dropdown"
+                                style={{
+                                  height: 20,
+                                  width: 20
+                                }}
+                                onValueChange={(selItmVal, selItmIndex) => {
+                                  console.log("221", selItmVal, selItmIndex);
+                                  this.setState({ selPickItm: selItmVal });
+                                  this.props.navigation.navigate(
+                                    "InventoryOrder", {
+                                      customerID: srchCustItm.CustomerID,
+                                      customerDistributorId: this.state.distributorId
+                                    }
+                                  );
+                                }}
+                              >
+                                <Picker.Item label="" value="" />
+                                <Picker.Item
+                                  label="Create Order"
+                                  value="CreateOrder"
+                                />
+                              </Picker>
+                            </ImageBackground>
                           </Right>
                         </CardItem>
                         <CardItem>
