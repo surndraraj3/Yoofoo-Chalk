@@ -101,8 +101,8 @@ export default class Inventory extends React.Component {
   onSearchInventory = txtInventoryFld => {    
     const rsSrchInvtry = this.state.inventoryList.filter(
       k =>
-        k.ItemID.toLowerCase().contains(txtInventoryFld.toLowerCase()) ||
-        k.Description.toLowerCase().contains(txtInventoryFld.toLowerCase())
+        k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
+        k.Description.toLowerCase().includes(txtInventoryFld.toLowerCase())
       // k.Quantity.contains(txtInventoryFld)
     );
     this.setState({

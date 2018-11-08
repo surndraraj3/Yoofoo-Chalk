@@ -169,14 +169,14 @@ export default class Customers extends React.Component {
   onSearchCustomer = txtSrchCustomer => {
     const rsSrchCustomer = this.state.customersListData.filter(
       cstmrItm =>
-        cstmrItm.FirstName.toLowerCase().contains(
+        cstmrItm.FirstName.toLowerCase().includes(
           txtSrchCustomer.toLowerCase()
         ) ||
-        cstmrItm.LastName.toLowerCase().contains(
+        cstmrItm.LastName.toLowerCase().includes(
           txtSrchCustomer.toLowerCase()
         ) ||
-        cstmrItm.Email.toLowerCase().contains(txtSrchCustomer.toLowerCase()) ||
-        cstmrItm.Phone.contains(txtSrchCustomer)
+        cstmrItm.Email.toLowerCase().includes(txtSrchCustomer.toLowerCase()) ||
+        cstmrItm.Phone.includes(txtSrchCustomer)
     );
     this.setState({
       searchCustomerList: rsSrchCustomer,

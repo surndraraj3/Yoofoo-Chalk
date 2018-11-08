@@ -110,8 +110,8 @@ export default class Orders extends React.Component {
     const res = this.state.dataSource.filter(
       v =>
         v.Customer.toLowerCase().includes(txtSrchFild.toLowerCase()) ||
-        v.OrderDate.contains(txtSrchFild) ||
-        v.OrderNum.contains(txtSrchFild)
+        v.OrderDate.includes(txtSrchFild) ||
+        v.OrderNum.includes(txtSrchFild)
       //
     );
     this.setState({ searchOrdersList: res, orderCount: res.length });
