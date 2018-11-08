@@ -21,6 +21,7 @@ import {
   Content,
   Fab
 } from "native-base";
+import OptionsMenu from "react-native-options-menu";
 import commonStyles from "../styles/styles";
 
 export default class Home extends React.Component {
@@ -53,6 +54,18 @@ export default class Home extends React.Component {
       }
     );
   };
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  }
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  }
   render() {
     return (
       <Container>
@@ -71,17 +84,34 @@ export default class Home extends React.Component {
           </Body>
           <Right>
             <TouchableOpacity
-              ref={e => {
-                this._button = e;
-              }}
-              onPress={this.onOpenMenu}
+              // ref={e => {
+              //   this._button = e;
+              // }}
+              //onPress={this.onOpenMenu}
               // background={TouchableNativeFeedback.Ripple("#f2f2f2")}
               style={commonStyles.ellipseCircle}
             >
-              <Icon
+              {/* <Icon
                 name="ellipsis-v"
                 type="FontAwesome"
                 style={{ fontSize: 30, color: "#55e6f6" }}
+              /> */}
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ fontSize: 30, color: "#55e6f6" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.gotoProfile
+                ]}
               />
             </TouchableOpacity>
             <View style={{ paddingLeft: 20 }} />
