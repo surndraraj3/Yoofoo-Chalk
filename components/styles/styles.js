@@ -38,6 +38,10 @@ const commonStyles = StyleSheet.create({
     width: 60,
     borderRadius: 60
   },
+  iosDashboardIcon: {
+    height: 60,
+    width: 60
+  },
   rowData: {
     flex: 1,
     flexDirection: "row",
@@ -176,12 +180,13 @@ const commonStyles = StyleSheet.create({
     backgroundColor: "#00ffff",
     width: 120,
     height: 40,
-    margin: 10
+    margin: 10,
+    justifyContent: "center"
   },
   footerText: {
     color: "#000000",
     fontSize: 15,
-    margin: 10
+    // margin: 10
   }
 });
 

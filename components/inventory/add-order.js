@@ -42,7 +42,7 @@ export default class AddInventoryOrder extends React.Component {
         });
       });
       this.state.getListofOrdersPrevScreen.map(v => {
-        (v.OrderID = "c3fcaefd-ac80"),(v.DesignerID = this.state.distributorId);
+        (v.OrderID = ""),(v.DesignerID = this.state.distributorId);
       });
   };
   //save checkout orders

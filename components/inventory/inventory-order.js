@@ -168,7 +168,7 @@ export default class InventoryOrder extends React.Component {
   onSearchInventoryOrder = txtInventoryFld => {
     const rsSrchInvtryOrder = this.state.inventoryList.filter(
       k =>
-        k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
+        //k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
         k.Description.toLowerCase().includes(txtInventoryFld.toLowerCase())
       // k.Quantity.contains(txtInventoryFld)
     );
@@ -413,15 +413,15 @@ export default class InventoryOrder extends React.Component {
                 backgroundColor: "#00ffff",
                 width: 120,
                 height: 40,
-                margin: 10
+                margin: 10,
+                justifyContent: 'center'
               }}
               onPress={this.addListOfOrders}
             >
               <Text
                 style={{
                   color: "#000000",
-                  fontSize: 15,
-                  margin: 10
+                  fontSize: 15                  
                 }}
               >
                 Add to order
@@ -433,7 +433,8 @@ export default class InventoryOrder extends React.Component {
                 backgroundColor: "#00ffff",
                 width: 120,
                 height: 40,
-                margin: 10
+                margin: 10,
+                justifyContent: 'center'
               }}
               onPress={() =>
                 this.props.navigation.navigate("AddInventoryOrder", {
@@ -444,8 +445,8 @@ export default class InventoryOrder extends React.Component {
               <Text
                 style={{
                   color: "#000000",
-                  fontSize: 15,
-                  margin: 10
+                  fontSize: 15
+                  // margin: 10
                 }}
               >
                 Review Order

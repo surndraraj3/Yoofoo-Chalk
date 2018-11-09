@@ -7,7 +7,8 @@ import ReactNative, {
   View,
   UIManager,
   TouchableOpacity,
-  TouchableHighlight
+  TouchableHighlight,
+  Platform
 } from "react-native";
 import {
   Container,
@@ -61,11 +62,11 @@ export default class Home extends React.Component {
   //Go To Settings
   goToSettings = () => {
     this.props.navigation.navigate("SettingsScreen");
-  }
+  };
   //Go To Help
   goToHelp = () => {
     this.props.navigation.navigate("HelpScreen");
-  }
+  };
   render() {
     return (
       <Container>
@@ -124,10 +125,17 @@ export default class Home extends React.Component {
                 <TouchableHighlight
                   onPress={() => this.props.navigation.navigate("Customer")}
                 >
-                  <Image
-                    source={require("../../assets/customer.png")}
-                    style={commonStyles.imgDashboardIcon}
-                  />
+                  {Platform.OS === "ios" ? (
+                    <Image
+                      source={require("../../assets/customer.png")}
+                      style={commonStyles.iosDashboardIcon}
+                    />
+                  ) : (
+                    <Image
+                      source={require("../../assets/customer.png")}
+                      style={commonStyles.imgDashboardIcon}
+                    />
+                  )}
                 </TouchableHighlight>
                 <Text>Customer</Text>
               </View>
@@ -135,30 +143,35 @@ export default class Home extends React.Component {
                 <TouchableHighlight
                   onPress={() => this.props.navigation.navigate("Inventory")}
                 >
-                  <Image
-                    source={require("../../assets/inventory.png")}
-                    style={commonStyles.imgDashboardIcon}
-                  />
+                  {Platform.OS === "ios" ? (
+                    <Image
+                      source={require("../../assets/inventory.png")}
+                      style={commonStyles.iosDashboardIcon}
+                    />
+                  ) : (
+                    <Image
+                      source={require("../../assets/inventory.png")}
+                      style={commonStyles.imgDashboardIcon}
+                    />
+                  )}
                 </TouchableHighlight>
                 <Text>Inventory</Text>
               </View>
               <View>
-                {/* <TouchableHighlight
-                  onPress={() => this.props.navigation.navigate("Transfer")}
-                >
-                  <Image
-                    source={require("../../assets/transfer.png")}
-                    style={commonStyles.imgDashboardIcon}
-                  />
-                </TouchableHighlight>
-                <Text>Transfer</Text> */}
                 <TouchableHighlight
                   onPress={() => this.props.navigation.navigate("Order")}
                 >
-                  <Image
-                    source={require("../../assets/orders.png")}
-                    style={commonStyles.imgDashboardIcon}
-                  />
+                  {Platform.OS === "ios" ? (
+                    <Image
+                      source={require("../../assets/orders.png")}
+                      style={commonStyles.iosDashboardIcon}
+                    />
+                  ) : (
+                    <Image
+                      source={require("../../assets/orders.png")}
+                      style={commonStyles.imgDashboardIcon}
+                    />
+                  )}
                 </TouchableHighlight>
                 <Text>Order</Text>
               </View>
@@ -168,10 +181,17 @@ export default class Home extends React.Component {
                 <TouchableHighlight
                   onPress={() => this.props.navigation.navigate("Checkout")}
                 >
-                  <Image
-                    source={require("../../assets/transaction.png")}
-                    style={commonStyles.imgDashboardIcon}
-                  />
+                  {Platform.OS === "ios" ? (
+                    <Image
+                      source={require("../../assets/transaction.png")}
+                      style={commonStyles.iosDashboardIcon}
+                    />
+                  ) : (
+                    <Image
+                      source={require("../../assets/transaction.png")}
+                      style={commonStyles.imgDashboardIcon}
+                    />
+                  )}                  
                 </TouchableHighlight>
                 <Text>C & T Fee</Text>
               </View>
