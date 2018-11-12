@@ -7,7 +7,9 @@ import {
   ActivityIndicator,
   AsyncStorage,
   Picker,
-  ImageBackground
+  Image,
+  ImageBackground,
+  TouchableHighlight
 } from "react-native";
 import {
   Container,
@@ -20,7 +22,8 @@ import {
   Right,
   Title,
   Item,
-  Input
+  Input,
+  Fab
 } from "native-base";
 // import {
 //   Menu,
@@ -44,7 +47,8 @@ export default class Orders extends React.Component {
       txtSearchBox: "",
       searchOrdersList: [],
       pickerModalState: false,
-      language: ""
+      language: "",
+      active: false
     };
   }
   componentDidMount = async () => {
@@ -103,6 +107,47 @@ export default class Orders extends React.Component {
       }
     );
   };
+  //Show Floating Button
+  renderFloatingActionButton() {
+    return (
+      <Fab
+        active={this.state.active}
+        direction="up"
+        containerStyle={{}}
+        style={{
+          backgroundColor: "#4d4d4d",
+          position: "absolute",
+          right: 0,
+          bottom: 0
+        }}
+        position="bottomRight"
+        onPress={() => this.setState({ active: !this.state.active })}
+      >
+        {/* <Icon name="sun-o" type="FontAwesome" /> */}
+        <ImageBackground
+          resizeMode={"stretch"} // or cover
+          style={{
+            height: 40,
+            width: 40
+          }}
+          source={require("../../assets/start.png")}
+        />
+        <Button
+          style={{ backgroundColor: "#34A34F" }}
+          onPress={() => this.props.navigation.navigate("InventoryOrder")}
+        >
+          <Image
+            source={require("../../assets/cart.png")}
+            style={{
+              height: 40,
+              width: 40,
+              borderRadius: 40 / 2
+            }}
+          />
+        </Button>
+      </Fab>
+    );
+  }
   // Filter by text box search
   onChangeOrder = txtSrchFild => {
     //txtSearchBox
@@ -122,8 +167,8 @@ export default class Orders extends React.Component {
     return (
       <Container>
         <View style={{ padding: 10 }} />
-        <Header>
-          <Left>
+        <Header style={{ backgroundColor: "#778899" }}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -135,7 +180,10 @@ export default class Orders extends React.Component {
             <Title>Orders</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -145,13 +193,13 @@ export default class Orders extends React.Component {
         </Header>
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}>
+            <Text style={{ margin: 10, fontSize: 12 }}>
               {this.state.orderCount} Order
             </Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
-                  placeholder="Order Number, Name or Designer Id"
+                  placeholder="Search"
                   style={{
                     textAlign: "center",
                     height: 50,
@@ -170,8 +218,8 @@ export default class Orders extends React.Component {
             <Text>Customer</Text>
             <Text>Order Date</Text>
             <Text>Order #</Text>
-            <Text>Action</Text>
-          </View>          
+            {/* <Text /> */}
+          </View>
           <Text style={commonStyles.warningMessage}>
             {this.state.orderCount === 0 ? "No Orders Found" : ""}
           </Text>
@@ -184,18 +232,15 @@ export default class Orders extends React.Component {
                   <View style={commonStyles.row}>
                     <Text>{orderItem.Customer}</Text>
                     <Text>{orderItem.OrderDate}</Text>
-                    <Text>{orderItem.OrderNum}</Text>
-                    <ImageBackground
-                      resizeMode={"stretch"} // or cover
-                      style={{
-                        height: 30,
-                        width: 30,
-                        borderRadius: 15,
-                        backgroundColor: "#55e6f6"
-                      }}
-                      source={require("../../assets/ellipsis-h-white.png")}
+                    <TouchableHighlight
+                      onPress={() =>
+                        this.props.navigation.navigate("ResendInvoice")
+                      }
                     >
-                      <Picker
+                      <Text>{orderItem.OrderNum}</Text>
+                    </TouchableHighlight>
+
+                    {/* <Picker
                         selectedValue={this.state.language}
                         mode="dropdown"
                         style={{
@@ -210,8 +255,7 @@ export default class Orders extends React.Component {
                       >
                         <Picker.Item label="" value="" />
                         <Picker.Item label="View Invoice" value="ViewInvoice" />
-                      </Picker>
-                    </ImageBackground>
+                      </Picker> */}
                   </View>
                 </View>
               ))
@@ -222,9 +266,15 @@ export default class Orders extends React.Component {
                   </Text>
                   <View style={commonStyles.row}>
                     <Text>{orderItem.Customer}</Text>
-                    <Text>{orderItem.OrderDate}</Text>
-                    <Text>{orderItem.OrderNum}</Text>
-                    <ImageBackground
+                    <Text>{orderItem.OrderDate}</Text>                    
+                    <TouchableHighlight
+                      onPress={() =>
+                        this.props.navigation.navigate("ResendInvoice")
+                      }
+                    >
+                      <Text>{orderItem.OrderNum}</Text>
+                    </TouchableHighlight>
+                    {/* <ImageBackground
                       resizeMode={"stretch"} // or cover
                       style={{
                         height: 30,
@@ -250,7 +300,7 @@ export default class Orders extends React.Component {
                         <Picker.Item label="" value="" />
                         <Picker.Item label="View Invoice" value="ViewInvoice" />
                       </Picker>
-                    </ImageBackground>
+                    </ImageBackground> */}
                   </View>
                 </View>
               ))}
@@ -270,6 +320,7 @@ export default class Orders extends React.Component {
             }}
           />
         )}
+        {this.renderFloatingActionButton()}
       </Container>
     );
   }

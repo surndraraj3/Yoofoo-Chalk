@@ -78,8 +78,8 @@ export default class TransferOrder extends React.Component {
       <Container>
         <View style={{ padding: 10 }} />
         {/* <Text>itemId: {this.state.customerId}</Text> */}
-        <Header>
-          <Left>
+        <Header style={{ backgroundColor: "#778899" }}>
+          <Left style={{flex: 1}}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}

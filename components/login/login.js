@@ -4,7 +4,8 @@ import {
   ActivityIndicator,
   AsyncStorage,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Image
 } from "react-native";
 import {
   Container,
@@ -46,19 +47,16 @@ export default class Login extends React.Component {
   //On sign click and validate user and pass
   onSignIn = (user, pass) => {
     this.setState({ spinnerStatus: true });
-    fetch(      
-      `${baseURL}Login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          UserName: user,
-          Password: pass
-        })
-      }
-    )
+    fetch(`${baseURL}Login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        UserName: user,
+        Password: pass
+      })
+    })
       .then(response => response.json())
       .then(responseJson => {
         //console.log(responseJson);
@@ -84,7 +82,7 @@ export default class Login extends React.Component {
       });
   };
   // Reset Username
-  clearUsername = () => {    
+  clearUsername = () => {
     this.setState({ userName: "" });
     this.setState({
       clearInput: !this.state.clearInput
@@ -96,13 +94,17 @@ export default class Login extends React.Component {
     this.setState({
       clearInputPass: !this.state.clearInputPass
     });
-  }
+  };
 
   render() {
     return (
       <Container>
         <Content>
-          <Text style={commonStyles.logoStyles}>Chalk COUTURE</Text>
+          {/* <Text style={commonStyles.logoStyles}>Chalk COUTURE</Text> */}
+          <Image
+            source={require("../../assets/logo.png")}
+            style={{ flexDirection: "row", margin: 40 }}
+          />
           <Form>
             <Label style={commonStyles.labelPos}>Username/Email</Label>
             <Item>
@@ -119,12 +121,14 @@ export default class Login extends React.Component {
               <Input
                 secureTextEntry={true}
                 onChangeText={this.handleUserPass}
-                value={!this.state.clearInputPass ? this.state.userPassword : null}
+                value={
+                  !this.state.clearInputPass ? this.state.userPassword : null
+                }
               />
               <TouchableOpacity onPress={this.clearPassword}>
                 <Icon active name="close-circle" />
               </TouchableOpacity>
-            </Item>            
+            </Item>
             {this.state.spinnerStatus && (
               <ActivityIndicator size="large" color="#0000ff" />
             )}

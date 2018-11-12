@@ -31,8 +31,8 @@ export default class InventoryOrderDiscount extends React.Component {
         return (
             <Container>
                 <View style={{ padding: 10 }} />
-                <Header>
-                    <Left>
+                <Header style={{ backgroundColor: "#778899" }}>
+                    <Left style={{flex: 1}}>
                         <Button
                             transparent
                             onPress={() => this.props.navigation.navigate("Home")}

@@ -87,8 +87,8 @@ export default class CustomerProfile extends React.Component {
         {/* <Button full>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>Profile</Text>
         </Button> */}
-        <Header>
-          <Left>
+        <Header style={{ backgroundColor: "#778899" }}>
+          <Left style={{flex: 1}}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}

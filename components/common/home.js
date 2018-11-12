@@ -3,7 +3,7 @@ import ReactNative, {
   StyleSheet,
   Text,
   Image,
-  ScrollView,
+  ImageBackground,
   View,
   UIManager,
   TouchableOpacity,
@@ -29,7 +29,7 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      active: "true"
+      active: false
     };
   }
   onOpenMenu = () => {
@@ -67,12 +67,15 @@ export default class Home extends React.Component {
   goToHelp = () => {
     this.props.navigation.navigate("HelpScreen");
   };
+  goToSignout = () => {
+    console.log("Signout");
+  };
   render() {
     return (
       <Container>
         <View style={{ padding: 10 }} />
-        <Header>
-          <Left>
+        <Header style={{ backgroundColor: "#778899" }}>
+          <Left style={{flex: 1}}>
             <Button
               transparent
               onPress={() => this.props.navigation.openDrawer()}
@@ -90,7 +93,13 @@ export default class Home extends React.Component {
               // }}
               //onPress={this.onOpenMenu}
               // background={TouchableNativeFeedback.Ripple("#f2f2f2")}
-              style={commonStyles.ellipseCircle}
+              style={{
+                borderWidth: 0,
+                alignItems: "center",
+                justifyContent: "center",
+                width: 40,
+                height: 40
+              }}
             >
               {/* <Icon
                 name="ellipsis-v"
@@ -102,16 +111,17 @@ export default class Home extends React.Component {
                   <Icon
                     name="ellipsis-v"
                     type="FontAwesome"
-                    style={{ fontSize: 30, color: "#55e6f6" }}
+                    style={{ fontSize: 30, color: "#f2f2f2" }}
                   />
                 }
                 destructiveIndex={1}
-                options={["Profile", "Settings", "Help", "Signout"]}
+                options={["Profile", "Settings", "Help", "Signout", "Cancel"]}
                 actions={[
                   this.gotoProfile,
                   this.goToSettings,
                   this.goToHelp,
-                  this.gotoProfile
+                  this.goToSignout,
+                  this.goToSignout
                 ]}
               />
             </TouchableOpacity>
@@ -119,7 +129,16 @@ export default class Home extends React.Component {
           </Right>
         </Header>
         <Content>
-          <ScrollView>
+          <Image
+            source={require("../../assets/logo.png")}
+            style={{
+              flexDirection: "row",
+              marginLeft: 40,
+              marginRight: 40,
+              marginTop: 20
+            }}
+          />
+          <View>
             <View style={styles.container}>
               <View>
                 <TouchableHighlight
@@ -191,12 +210,12 @@ export default class Home extends React.Component {
                       source={require("../../assets/transaction.png")}
                       style={commonStyles.imgDashboardIcon}
                     />
-                  )}                  
+                  )}
                 </TouchableHighlight>
                 <Text>C & T Fee</Text>
               </View>
             </View>
-          </ScrollView>
+          </View>
         </Content>
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <Fab
@@ -212,7 +231,15 @@ export default class Home extends React.Component {
             position="bottomRight"
             onPress={() => this.setState({ active: !this.state.active })}
           >
-            <Icon name="sun-o" type="FontAwesome" />
+            <ImageBackground
+              resizeMode={"stretch"} // or cover
+              style={{
+                height: 40,
+                width: 40
+              }}
+              source={require("../../assets/start.png")}
+            />           
+            {/* <Icon name="sun-o" type="FontAwesome" /> */}
             <Button style={{ backgroundColor: "#34A34F" }}>
               {/* <Icon name="logo-whatsapp" /> */}
               <Image

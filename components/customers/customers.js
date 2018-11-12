@@ -40,7 +40,7 @@ export default class Customers extends React.Component {
     super(props);
     this.state = {
       loading: true,
-      active: "true",
+      active: false,
       customersListData: [],
       distributorId: "",
       customerCount: 0,
@@ -130,7 +130,16 @@ export default class Customers extends React.Component {
         position="bottomRight"
         onPress={() => this.setState({ active: !this.state.active })}
       >
-        <Icon name="sun-o" type="FontAwesome" />
+        {/* <Icon name="sun-o" type="FontAwesome" /> */}
+        <ImageBackground
+          resizeMode={"stretch"} // or cover
+          style={{
+            height: 40,
+            width: 40,
+            color: "#fff"
+          }}
+          source={require("../../assets/start.png")}
+        />
         <Button
           style={{ backgroundColor: "#34A34F" }}
           onPress={() => this.props.navigation.navigate("AddCutsomer")}
@@ -189,8 +198,8 @@ export default class Customers extends React.Component {
     return (
       <Container>
         <View style={{ padding: 10 }} />
-        <Header>
-          <Left>
+        <Header style={{ backgroundColor: "#778899" }}>
+          <Left style={{flex: 1}}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -280,9 +289,11 @@ export default class Customers extends React.Component {
                                 console.log("221", selVal, selIndex);
                                 this.setState({ selPickItm: selVal });
                                 this.props.navigation.navigate(
-                                  "InventoryOrder",{
+                                  "InventoryOrder",
+                                  {
                                     customerID: itm.CustomerID,
-                                    customerDistributorId: this.state.distributorId
+                                    customerDistributorId: this.state
+                                      .distributorId
                                   }
                                 );
                               }}
@@ -344,9 +355,11 @@ export default class Customers extends React.Component {
                                   console.log("221", selItmVal, selItmIndex);
                                   this.setState({ selPickItm: selItmVal });
                                   this.props.navigation.navigate(
-                                    "InventoryOrder", {
+                                    "InventoryOrder",
+                                    {
                                       customerID: srchCustItm.CustomerID,
-                                      customerDistributorId: this.state.distributorId
+                                      customerDistributorId: this.state
+                                        .distributorId
                                     }
                                   );
                                 }}
