@@ -8,7 +8,8 @@ import ReactNative, {
   UIManager,
   TouchableOpacity,
   TouchableHighlight,
-  Platform
+  Platform,
+  Dimensions
 } from "react-native";
 import {
   Container,
@@ -25,6 +26,7 @@ import {
 import OptionsMenu from "react-native-options-menu";
 import commonStyles from "../styles/styles";
 
+const window = Dimensions.get("window");
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -125,7 +127,7 @@ export default class Home extends React.Component {
                 ]}
               />
             </TouchableOpacity>
-            <View style={{ paddingLeft: 20 }} />
+            <View style={{ paddingLeft: 10 }} />
           </Right>
         </Header>
         <Content>
@@ -195,7 +197,7 @@ export default class Home extends React.Component {
                 <Text>Order</Text>
               </View>
             </View>
-            <View style={{ flex: 1, flexDirection: "row", marginLeft: 50 }}>
+            <View style={{ flex: 1, flexDirection: "row", marginLeft: 40, marginTop:5 }}>
               <View>
                 <TouchableHighlight
                   onPress={() => this.props.navigation.navigate("Checkout")}
@@ -239,6 +241,7 @@ export default class Home extends React.Component {
               }}
               source={require("../../assets/start.png")}
             />           
+           
             {/* <Icon name="sun-o" type="FontAwesome" /> */}
             <Button style={{ backgroundColor: "#34A34F" }}>
               {/* <Icon name="logo-whatsapp" /> */}
@@ -271,6 +274,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
-    margin: 20
+    //margin: 20
+    marginTop: 15
   }
 });

@@ -19,6 +19,7 @@ export default class App extends React.Component {
   }
 
   render() {
+    console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
     if (this.state.loading) {
       return <Expo.AppLoading />;
     }
