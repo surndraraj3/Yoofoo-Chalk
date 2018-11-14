@@ -26,6 +26,7 @@ export default class AddInventoryOrder extends React.Component {
       getListofOrdersPrevScreen: this.props.navigation.getParam(
         "reviewOrderDetailsList"
       ),
+      getCustomerId: this.props.navigation.getParam("customerId"),
       listOfOrders: [],
       distributorId: "",
       authToken: ""
@@ -42,12 +43,12 @@ export default class AddInventoryOrder extends React.Component {
         });
       });
       this.state.getListofOrdersPrevScreen.map(v => {
-        (v.OrderID = ""),(v.DesignerID = this.state.distributorId);
+        (v.OrderID = ""),(v.DesignerID = this.state.distributorId), (v.CustomerID = this.state.getCustomerId), (v.Discount = 20);
       });
   };
   //save checkout orders
   saveOrderDtls = () => {
-    console.log("Welcom to data", this.state.distributorId);
+    console.log("Welcom to data", this.state.distributorId, this.state.getListofOrdersPrevScreen);
     fetch(`${addOrdersUrl}`, {
       method: "POST",
       headers: {

@@ -49,7 +49,7 @@ export default class InventoryOrder extends React.Component {
       checked: false,
       addToOrderList: [],
       dup: "",
-      searchInventoryOrdersList: [],
+      searchInventoryOrdersList: []
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -78,7 +78,7 @@ export default class InventoryOrder extends React.Component {
           inventoryCount: responseJson.length
         });
         this.state.inventoryList.map(v => {
-          (v.incVal = 1), (v.selectItem = false);
+          (v.incVal = 0), (v.selectItem = false);
         });
         this.setState({ loading: false });
       })
@@ -110,42 +110,55 @@ export default class InventoryOrder extends React.Component {
     }
   }
   //Increment Counter and check whether it is exceeded more than quantity
-  incrementOrder = id => {
-    // const incCntr = this.state.orderItemCounter;
-    //console.log('Welcome Increment');
+  incrementOrder = (id, qty) => {
     const res = this.state.inventoryList.filter(v => v.ItemID === id);
-    res.map(v => (v.incVal = v.incVal + 1));
-    res.incVal = this.setState({
-      orderItemCounter: this.state.orderItemCounter + 1
+    res.map(c => {
+      console.log("-----", c.incVal, qty);
+      const incremntVal = c.incVal + 1;
+      if (incremntVal > qty) {
+        alert("Max Quantity Reached");
+      } else {
+        console.log("Lesser Val");
+        res.map(v => (v.incVal = v.incVal + 1));
+        res.incVal = this.setState({
+          orderItemCounter: this.state.orderItemCounter + 1
+        });
+        this.state.inventoryList.push(res);
+      }
     });
-    // const s = 'surendra';
-    //console.log("response", res);
-    this.state.inventoryList.push(res);
   };
 
-  // Decrement Counter
-  decCounter(itmId) {
-    // console.error('des', itmId);
-    //.log('Decrement', this.state.orderItemCounter, itmId);
-    //let s = 0;
+  // Decrement Counter by getting current value of an array
+  decCounter(itmId, decQty) {
     const res = this.state.inventoryList.filter(v => v.ItemID === itmId);
-    res.map(v => (v.incVal = v.incVal - 1));
-    res.incVal = this.setState({
-      orderItemCounter: this.state.orderItemCounter - 1
-    });
-    // const s = 'surendra';
-    //console.log('response', res);
-    this.state.inventoryList.push(res);
+    res.map(resp => {
+      // console.log("-----", resp.incVal, decQty);
+      const decrementVal = resp.incVal - 1;
+      // console.log("decrementVal", decrementVal);
+      if (decrementVal < 0) {
+        alert(`Can't decrement value`);
+      } else {
+        res.map(v => (v.incVal = v.incVal - 1));
+        res.incVal = this.setState({
+          orderItemCounter: this.state.orderItemCounter - 1
+        });
+        this.state.inventoryList.push(res);
+      }
+    });    
   }
   //Check which item is checked and get the array and overwrite it
+  // If Item IncVal is greaterthan zero prompt a message
   onChangeCheck = itemId => {
     //console.log("Item Id", itemId);
     const checkedItem = this.state.inventoryList.filter(
       chkItm => chkItm.ItemID === itemId
     );
     checkedItem.map(chkValItm => {
-      if (!chkValItm.selectItem) chkValItm.selectItem = true;
-      else chkValItm.selectItem = false;
+      if(chkValItm.incVal === 0) alert('Add the item quantity before selecting item');
+      else {
+        if (!chkValItm.selectItem) chkValItm.selectItem = true;
+        else chkValItm.selectItem = false;
+      }      
     });
     checkedItem.selectItem = this.setState({ checked: true });
     this.state.inventoryList.push(checkedItem);
@@ -180,14 +193,17 @@ export default class InventoryOrder extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    const cstmrId = navigation.getParam('customerID', 'CUSTOMER-ID');
-    const cstmrDistributorId = navigation.getParam('customerDistributorId', 'CUSTOMER_DIST_ID');
-    console.log('ID', cstmrId, cstmrDistributorId);
+    const cstmrId = navigation.getParam("customerID", "CUSTOMER-ID");
+    const cstmrDistributorId = navigation.getParam(
+      "customerDistributorId",
+      "CUSTOMER_DIST_ID"
+    );
+    console.log("ID", cstmrId, cstmrDistributorId);
     return (
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -199,7 +215,10 @@ export default class InventoryOrder extends React.Component {
             <Title>Order</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -231,161 +250,183 @@ export default class InventoryOrder extends React.Component {
             </View>
           </View>
           <ScrollView>
-            { this.state.searchInventoryOrdersList.length === 0 ? this.state.inventoryList.map((itm, i) => (
-              <View key={i}>
-                <Card>
-                  <CardItem>
-                    <Left>
-                      <CheckBox
-                        onPress={() => this.onChangeCheck(itm.ItemID)}
-                        checked={itm.selectItem}
-                      />
-                    </Left>
-                    <Text style={{ fontWeight: "bold" }}>
-                      {itm.Description}
-                    </Text>
-                  </CardItem>
-                  <CardItem bordered>
-                    <View style={commonStyles.row}>
-                      <View style={commonStyles.column}>
-                        <Icon
-                          active
-                          name="birthday-cake"
-                          type="FontAwesome"
-                          style={{ color: "#ff6666" }}
-                        />
-                      </View>
-                      <View style={commonStyles.column}>                        
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Qty Available </Text>
-                          <Text>{itm.Quantity}</Text>
-                        </View>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Discount </Text>
-                          <Text>20%</Text>
-                        </View>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Msrp </Text>
-                          <Text>
-                            {"\u0024"}{itm.Price}
-                          </Text>
-                        </View>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Designer</Text>
-                          <Text>
-                            {"\u0024"}{itm.Price}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={commonStyles.column}>
-                        <Right>
-                          <TouchableOpacity
-                            onPress={() => this.incrementOrder(itm.ItemID)}
-                          >
+            {this.state.searchInventoryOrdersList.length === 0
+              ? this.state.inventoryList.map((itm, i) => (
+                  <View key={i}>
+                    <Card>
+                      <CardItem>
+                        <Left>
+                          <CheckBox
+                            onPress={() => this.onChangeCheck(itm.ItemID)}
+                            checked={itm.selectItem}
+                          />
+                        </Left>
+                        <Text style={{ fontWeight: "bold" }}>
+                          {itm.Description}
+                        </Text>
+                      </CardItem>
+                      <CardItem bordered>
+                        <View style={commonStyles.row}>
+                          <View style={commonStyles.column}>
                             <Icon
-                              name="plus"
+                              active
+                              name="birthday-cake"
                               type="FontAwesome"
-                              style={{ color: "#f50" }}
+                              style={{ color: "#ff6666" }}
                             />
-                          </TouchableOpacity>
+                          </View>
+                          <View style={commonStyles.column}>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Qty Available </Text>
+                              <Text>{itm.Quantity}</Text>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Discount </Text>
+                              <Text>20%</Text>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Msrp </Text>
+                              <Text>
+                                {"\u0024"}
+                                {itm.Price}
+                              </Text>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Designer</Text>
+                              <Text>
+                                {"\u0024"}
+                                {itm.Price}
+                              </Text>
+                            </View>
+                          </View>
+                          <View style={commonStyles.column}>
+                            <Right>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  this.incrementOrder(itm.ItemID, itm.Quantity)
+                                }
+                              >
+                                <Icon
+                                  name="plus"
+                                  type="FontAwesome"
+                                  style={{ color: "#f50" }}
+                                />
+                              </TouchableOpacity>
 
+                              <Text style={{ fontWeight: "bold" }}>
+                                {itm.incVal}
+                              </Text>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  this.decCounter(itm.ItemID, itm.Quantity)
+                                }
+                              >
+                                <Icon
+                                  name="minus"
+                                  type="FontAwesome"
+                                  style={{ color: "#f50" }}
+                                />
+                              </TouchableOpacity>
+                            </Right>
+                          </View>
+                        </View>
+                      </CardItem>
+                    </Card>
+                  </View>
+                ))
+              : this.state.searchInventoryOrdersList.map(
+                  (srchInvOrdrItm, srchInvOrdrItmIndx) => (
+                    <View key={srchInvOrdrItmIndx}>
+                      <Card>
+                        <CardItem>
+                          <Left>
+                            <CheckBox
+                              onPress={() =>
+                                this.onChangeCheck(srchInvOrdrItm.ItemID)
+                              }
+                              checked={srchInvOrdrItm.selectItem}
+                            />
+                          </Left>
                           <Text style={{ fontWeight: "bold" }}>
-                            {itm.incVal}
+                            {srchInvOrdrItm.Description}
                           </Text>
-                          <TouchableOpacity
-                            onPress={() => this.decCounter(itm.ItemID)}
-                          >
-                            <Icon
-                              name="minus"
-                              type="FontAwesome"
-                              style={{ color: "#f50" }}
-                            />
-                          </TouchableOpacity>
-                        </Right>
-                      </View>
-                    </View>
-                  </CardItem>
-                </Card>
-              </View>
-            )) : 
-            this.state.searchInventoryOrdersList.map((srchInvOrdrItm, srchInvOrdrItmIndx) => (
-              <View key={srchInvOrdrItmIndx}>
-                <Card>
-                  <CardItem>
-                    <Left>
-                      <CheckBox
-                        onPress={() => this.onChangeCheck(srchInvOrdrItm.ItemID)}
-                        checked={srchInvOrdrItm.selectItem}
-                      />
-                    </Left>
-                    <Text style={{ fontWeight: "bold" }}>
-                      {srchInvOrdrItm.Description}
-                    </Text>
-                  </CardItem>
-                  <CardItem bordered>
-                    <View style={commonStyles.row}>
-                      <View style={commonStyles.column}>
-                        <Icon
-                          active
-                          name="birthday-cake"
-                          type="FontAwesome"
-                          style={{ color: "#ff6666" }}
-                        />
-                      </View>
-                      <View style={commonStyles.column}>                        
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Qty Available </Text>
-                          <Text>{srchInvOrdrItm.Quantity}</Text>
-                        </View>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Discount </Text>
-                          <Text>20%</Text>
-                        </View>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Msrp </Text>
-                          <Text>
-                            {"\u0024"}{srchInvOrdrItm.Price}
-                          </Text>
-                        </View>
-                        <View style={commonStyles.nestedRow}>
-                          <Text>Designer</Text>
-                          <Text>
-                            {"\u0024"}{srchInvOrdrItm.Price}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={commonStyles.column}>
-                        <Right>
-                          <TouchableOpacity
-                            onPress={() => this.incrementOrder(srchInvOrdrItm.ItemID)}
-                          >
-                            <Icon
-                              name="plus"
-                              type="FontAwesome"
-                              style={{ color: "#f50" }}
-                            />
-                          </TouchableOpacity>
+                        </CardItem>
+                        <CardItem bordered>
+                          <View style={commonStyles.row}>
+                            <View style={commonStyles.column}>
+                              <Icon
+                                active
+                                name="birthday-cake"
+                                type="FontAwesome"
+                                style={{ color: "#ff6666" }}
+                              />
+                            </View>
+                            <View style={commonStyles.column}>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Qty Available </Text>
+                                <Text>{srchInvOrdrItm.Quantity}</Text>
+                              </View>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Discount </Text>
+                                <Text>20%</Text>
+                              </View>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Msrp </Text>
+                                <Text>
+                                  {"\u0024"}
+                                  {srchInvOrdrItm.Price}
+                                </Text>
+                              </View>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Designer</Text>
+                                <Text>
+                                  {"\u0024"}
+                                  {srchInvOrdrItm.Price}
+                                </Text>
+                              </View>
+                            </View>
+                            <View style={commonStyles.column}>
+                              <Right>
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    this.incrementOrder(
+                                      srchInvOrdrItm.ItemID,
+                                      srchInvOrdrItm.Quantity
+                                    )
+                                  }
+                                >
+                                  <Icon
+                                    name="plus"
+                                    type="FontAwesome"
+                                    style={{ color: "#f50" }}
+                                  />
+                                </TouchableOpacity>
 
-                          <Text style={{ fontWeight: "bold" }}>
-                            {srchInvOrdrItm.incVal}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => this.decCounter(srchInvOrdrItm.ItemID)}
-                          >
-                            <Icon
-                              name="minus"
-                              type="FontAwesome"
-                              style={{ color: "#f50" }}
-                            />
-                          </TouchableOpacity>
-                        </Right>
-                      </View>
+                                <Text style={{ fontWeight: "bold" }}>
+                                  {srchInvOrdrItm.incVal}
+                                </Text>
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    this.decCounter(
+                                      srchInvOrdrItm.ItemID,
+                                      srchInvOrdrItm.Quantity
+                                    )
+                                  }
+                                >
+                                  <Icon
+                                    name="minus"
+                                    type="FontAwesome"
+                                    style={{ color: "#f50" }}
+                                  />
+                                </TouchableOpacity>
+                              </Right>
+                            </View>
+                          </View>
+                        </CardItem>
+                      </Card>
                     </View>
-                  </CardItem>
-                </Card>
-              </View>
-            ))
-            }
+                  )
+                )}
           </ScrollView>
         </Content>
         {this.renderLoading()}
@@ -414,14 +455,14 @@ export default class InventoryOrder extends React.Component {
                 width: 120,
                 height: 40,
                 margin: 10,
-                justifyContent: 'center'
+                justifyContent: "center"
               }}
               onPress={this.addListOfOrders}
             >
               <Text
                 style={{
                   color: "#000000",
-                  fontSize: 15                  
+                  fontSize: 15
                 }}
               >
                 Add to order
@@ -434,11 +475,12 @@ export default class InventoryOrder extends React.Component {
                 width: 120,
                 height: 40,
                 margin: 10,
-                justifyContent: 'center'
+                justifyContent: "center"
               }}
               onPress={() =>
                 this.props.navigation.navigate("AddInventoryOrder", {
-                  reviewOrderDetailsList: this.state.addToOrderList
+                  reviewOrderDetailsList: this.state.addToOrderList,
+                  customerId: cstmrId
                 })
               }
             >
