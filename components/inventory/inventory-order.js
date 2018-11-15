@@ -4,9 +4,10 @@ import {
   View,
   ActivityIndicator,
   ScrollView,
-  TextInput,
+  Switch,
   AsyncStorage,
   TouchableOpacity,
+  TouchableHighlight,
   Image,
   Dimensions
 } from "react-native";
@@ -24,7 +25,9 @@ import {
   Title,
   Card,
   CardItem,
-  CheckBox
+  CheckBox,
+  Accordion,
+  Picker
 } from "native-base";
 import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
@@ -49,7 +52,11 @@ export default class InventoryOrder extends React.Component {
       checked: false,
       addToOrderList: [],
       dup: "",
-      searchInventoryOrdersList: []
+      searchInventoryOrdersList: [],
+      invDiscountVal: this.props.navigation.getParam("discountValue"),
+      invDiscountItemIdVal: this.props.navigation.getParam("discountItem"),
+      selected2: "",
+      valDiscountSwitch: false
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -78,8 +85,15 @@ export default class InventoryOrder extends React.Component {
           inventoryCount: responseJson.length
         });
         this.state.inventoryList.map(v => {
-          (v.incVal = 0), (v.selectItem = false);
+          (v.incVal = 0), (v.selectItem = false), (v.discountVal = 0);
         });
+        // const setDisItem = this.state.inventoryList.filter(
+        //   i => i.ItemID === this.state.invDiscountItemIdVal
+        // );
+        // setDisItem.map(d => {
+        //   d.discountVal = this.state.invDiscountVal;
+        //   console.log("Discount", d.discountVal);
+        // });
         this.setState({ loading: false });
       })
       .catch(error => {
@@ -119,7 +133,9 @@ export default class InventoryOrder extends React.Component {
         alert("Max Quantity Reached");
       } else {
         console.log("Lesser Val");
-        res.map(v => (v.incVal = v.incVal + 1));
+        res.map(
+          v => ((v.incVal = v.incVal + 1), (v.Quantity = v.Quantity - 1))
+        );
         res.incVal = this.setState({
           orderItemCounter: this.state.orderItemCounter + 1
         });
@@ -138,13 +154,15 @@ export default class InventoryOrder extends React.Component {
       if (decrementVal < 0) {
         alert(`Can't decrement value`);
       } else {
-        res.map(v => (v.incVal = v.incVal - 1));
+        res.map(
+          v => ((v.incVal = v.incVal - 1), (v.Quantity = v.Quantity + 1))
+        );
         res.incVal = this.setState({
           orderItemCounter: this.state.orderItemCounter - 1
         });
         this.state.inventoryList.push(res);
       }
-    });    
+    });
   }
   //Check which item is checked and get the array and overwrite it
   // If Item IncVal is greaterthan zero prompt a message
@@ -154,11 +172,12 @@ export default class InventoryOrder extends React.Component {
       chkItm => chkItm.ItemID === itemId
     );
     checkedItem.map(chkValItm => {
-      if(chkValItm.incVal === 0) alert('Add the item quantity before selecting item');
+      if (chkValItm.incVal === 0)
+        alert("Add the item quantity before selecting item");
       else {
         if (!chkValItm.selectItem) chkValItm.selectItem = true;
         else chkValItm.selectItem = false;
-      }      
+      }
     });
     checkedItem.selectItem = this.setState({ checked: true });
     this.state.inventoryList.push(checkedItem);
@@ -190,7 +209,13 @@ export default class InventoryOrder extends React.Component {
       inventoryCount: rsSrchInvtryOrder.length
     });
   };
-
+  // Enable the functionality of discount
+  discountEnable = itm => {
+    console.log('Item', itm);
+    //this.setState({ valDiscountSwitch: true });
+    if (!this.state.valDiscountSwitch) this.setState({ valDiscountSwitch: true });
+    else this.setState({ valDiscountSwitch: false });
+  };
   render() {
     const { navigation } = this.props;
     const cstmrId = navigation.getParam("customerID", "CUSTOMER-ID");
@@ -265,6 +290,78 @@ export default class InventoryOrder extends React.Component {
                           {itm.Description}
                         </Text>
                       </CardItem>
+                      <CardItem>
+                        <Left>
+                          <Text>Discount</Text>
+                        </Left>
+                        <Right>
+                          <Switch
+                            value={this.state.valDiscountSwitch}
+                            onValueChange={() => {}}
+                          />
+                        </Right>
+                      </CardItem>
+                      {this.state.valDiscountSwitch && (
+                        <View>
+                          <CardItem>
+                            <View
+                              style={{
+                                flexDirection: "row"
+                              }}
+                            >
+                              <Left>
+                                <Text>Discount Mode</Text>
+                              </Left>
+                              <Right>
+                                <Picker
+                                  mode="dropdown"
+                                  style={{ width: 200, height: 44 }}
+                                  itemStyle={{ height: 44 }}
+                                  selectedValue={this.state.selected2}
+                                  onValueChange=""
+                                >
+                                  <Picker.Item label="Selct Discount Mode" />
+                                  <Picker.Item label="$" value="$" />
+                                  <Picker.Item label="%" value="%" />
+                                </Picker>
+                              </Right>
+                            </View>
+                          </CardItem>
+                          <CardItem>
+                            <View
+                              style={{
+                                flexDirection: "row"
+                                //justifyContent: "space-around"
+                              }}
+                            >
+                              <Left>
+                                <Text>Discount Value</Text>
+                              </Left>
+                              <Right>
+                                <Picker
+                                  mode="dropdown"
+                                  style={{ width: 200, height: 44 }}
+                                  itemStyle={{ height: 44 }}
+                                  selectedValue={this.state.selected2}
+                                  onValueChange=""
+                                >
+                                  <Picker.Item
+                                    label="Select your Discount Value"
+                                    value=""
+                                  />
+                                  <Picker.Item label="0" value="0" />
+                                  <Picker.Item label="5" value="5" />
+                                  <Picker.Item label="10" value="10" />
+                                  <Picker.Item label="15" value="15" />
+                                  <Picker.Item label="20" value="20" />
+                                  <Picker.Item label="25" value="25" />
+                                  <Picker.Item label="30" value="30" />
+                                </Picker>
+                              </Right>
+                            </View>
+                          </CardItem>
+                        </View>
+                      )}
                       <CardItem bordered>
                         <View style={commonStyles.row}>
                           <View style={commonStyles.column}>
@@ -281,8 +378,19 @@ export default class InventoryOrder extends React.Component {
                               <Text>{itm.Quantity}</Text>
                             </View>
                             <View style={commonStyles.nestedRow}>
-                              <Text>Discount </Text>
-                              <Text>20%</Text>
+                              <TouchableHighlight
+                                onPress={() => {
+                                  this.props.navigation.navigate(
+                                    "InventoryOrderDiscount",
+                                    {
+                                      inventoryItemId: itm.ItemID
+                                    }
+                                  );
+                                }}
+                              >
+                                <Text> Discount </Text>
+                              </TouchableHighlight>
+                              <Text>{itm.discountVal} %</Text>
                             </View>
                             <View style={commonStyles.nestedRow}>
                               <Text>Msrp </Text>
@@ -367,8 +475,16 @@ export default class InventoryOrder extends React.Component {
                                 <Text>{srchInvOrdrItm.Quantity}</Text>
                               </View>
                               <View style={commonStyles.nestedRow}>
-                                <Text>Discount </Text>
-                                <Text>20%</Text>
+                                <TouchableHighlight
+                                  onPress={() => {
+                                    this.props.navigation.navigate(
+                                      "InventoryOrderDiscount"
+                                    );
+                                  }}
+                                >
+                                  <Text> Discount </Text>
+                                </TouchableHighlight>
+                                <Text>{srchInvOrdrItm.discountVal} %</Text>
                               </View>
                               <View style={commonStyles.nestedRow}>
                                 <Text>Msrp </Text>

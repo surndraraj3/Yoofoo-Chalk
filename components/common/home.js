@@ -77,7 +77,7 @@ export default class Home extends React.Component {
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.openDrawer()}
@@ -131,7 +131,7 @@ export default class Home extends React.Component {
           </Right>
         </Header>
         <Content>
-          <Image
+          {/* <Image
             source={require("../../assets/logo.png")}
             style={{
               flexDirection: "row",
@@ -139,7 +139,16 @@ export default class Home extends React.Component {
               marginRight: 40,
               marginTop: 20
             }}
-          />
+          /> */}
+          <View
+            style={{
+              flexDirection: "row",
+              margin: 40,
+              justifyContent: "space-around"
+            }}
+          >
+            <Image source={require("../../assets/logo.png")} />
+          </View>
           <View>
             <View style={styles.container}>
               <View>
@@ -197,7 +206,14 @@ export default class Home extends React.Component {
                 <Text>Order</Text>
               </View>
             </View>
-            <View style={{ flex: 1, flexDirection: "row", marginLeft: 40, marginTop:5 }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                marginLeft: 40,
+                marginTop: 5
+              }}
+            >
               <View>
                 <TouchableHighlight
                   onPress={() => this.props.navigation.navigate("Checkout")}
@@ -240,8 +256,8 @@ export default class Home extends React.Component {
                 width: 40
               }}
               source={require("../../assets/start.png")}
-            />           
-           
+            />
+
             {/* <Icon name="sun-o" type="FontAwesome" /> */}
             <Button style={{ backgroundColor: "#34A34F" }}>
               {/* <Icon name="logo-whatsapp" /> */}

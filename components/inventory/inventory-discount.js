@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Dimensions, StyleSheet } from 'react-native';
+import { Text, View, Dimensions, TouchableHighlight } from 'react-native';
 import {
     Container,
     Content,
@@ -23,11 +23,14 @@ export default class InventoryOrderDiscount extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: true
+            loading: true,
+            discountPercent: 0,
+            discountItemId: this.props.navigation.getParam("inventoryItemId")
         }
     }
 
     render() {
+        console.log('State', this.state.discountPercent, this.state.discountItemId);
         return (
             <Container>
                 <View style={{ padding: 10 }} />
@@ -35,7 +38,10 @@ export default class InventoryOrderDiscount extends React.Component {
                     <Left style={{flex: 1}}>
                         <Button
                             transparent
-                            onPress={() => this.props.navigation.navigate("Home")}
+                            onPress={() => this.props.navigation.navigate("InventoryOrder",{
+                                discountValue: this.state.discountPercent,
+                                discountItem: this.state.discountItemId
+                            })}
                         >
                             <Icon name="arrow-back" />
                         </Button>
@@ -54,19 +60,19 @@ export default class InventoryOrderDiscount extends React.Component {
                 </Header>
                 <Content>
                     <View style={commonStyles.buttomMaincontainer}>
-                        <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>0</Text></View>
+                        <View style={commonStyles.buttonNestedContainer}><TouchableHighlight onPress={()=> {this.setState({discountPercent: 0})}}><Text style={commonStyles.textDiscount}>0</Text></TouchableHighlight></View>
                         <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>$</Text></View>
                         <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>None</Text></View>
                     </View>
                     <View style={commonStyles.buttomMaincontainer}>
-                        <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>5</Text></View>
-                        <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>10</Text></View>
-                        <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>15</Text></View>
+                        <View style={commonStyles.buttonNestedContainer}><TouchableHighlight onPress={()=> {this.setState({discountPercent: 5})}}><Text style={commonStyles.textDiscount}>5</Text></TouchableHighlight></View>
+                        <View style={commonStyles.buttonNestedContainer}><TouchableHighlight onPress={()=> {this.setState({discountPercent: 10})}}><Text style={commonStyles.textDiscount}>10</Text></TouchableHighlight></View>
+                        <View style={commonStyles.buttonNestedContainer}><TouchableHighlight onPress={()=> {this.setState({discountPercent: 15})}}><Text style={commonStyles.textDiscount}>15</Text></TouchableHighlight></View>
                     </View>
                     <View style={commonStyles.buttomMaincontainer}>
-                        <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>20</Text></View>
-                        <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>25</Text></View>
-                        <View style={commonStyles.buttonNestedContainer}><Text style={commonStyles.textDiscount}>50</Text></View>
+                        <View style={commonStyles.buttonNestedContainer}><TouchableHighlight onPress={()=> {this.setState({discountPercent: 20})}}><Text style={commonStyles.textDiscount}>20</Text></TouchableHighlight></View>
+                        <View style={commonStyles.buttonNestedContainer}><TouchableHighlight onPress={()=> {this.setState({discountPercent: 25})}}><Text style={commonStyles.textDiscount}>25</Text></TouchableHighlight></View>
+                        <View style={commonStyles.buttonNestedContainer}><TouchableHighlight onPress={()=> {this.setState({discountPercent: 30})}}><Text style={commonStyles.textDiscount}>30</Text></TouchableHighlight></View>
                     </View>
 
                     <Card>

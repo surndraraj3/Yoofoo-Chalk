@@ -101,10 +101,16 @@ export default class Login extends React.Component {
       <Container>
         <Content>
           {/* <Text style={commonStyles.logoStyles}>Chalk COUTURE</Text> */}
-          <Image
-            source={require("../../assets/logo.png")}
-            style={{ flexDirection: "row", margin: 40 }}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              margin: 40,
+              justifyContent: "space-around"
+            }}
+          >
+            <Image source={require("../../assets/logo.png")} />
+          </View>
+
           <Form>
             <Label style={commonStyles.labelPos}>Username/Email</Label>
             <Item>

@@ -13,7 +13,8 @@ import {
   Right,
   Title,
   Card,
-  CardItem
+  CardItem,
+  Toast
 } from "native-base";
 import { addOrdersUrl } from "../common/url_config";
 import commonStyles from "../styles/styles";
@@ -29,26 +30,40 @@ export default class AddInventoryOrder extends React.Component {
       getCustomerId: this.props.navigation.getParam("customerId"),
       listOfOrders: [],
       distributorId: "",
-      authToken: ""
+      authToken: "",
+      count: 0
     };
   }
   componentDidMount = async () => {
-    await AsyncStorage.getItem("LoginDetails")
-      .then(responseJson => {
-        responseJson = JSON.parse(responseJson);
-        console.log(responseJson.message, responseJson.DistributorID);
-        this.setState({
-          distributorId: responseJson.DistributorID,
-          authToken: responseJson.Token
-        });
+    await AsyncStorage.getItem("LoginDetails").then(responseJson => {
+      responseJson = JSON.parse(responseJson);
+      console.log(responseJson.message, responseJson.DistributorID);
+      this.setState({
+        distributorId: responseJson.DistributorID,
+        authToken: responseJson.Token
       });
-      this.state.getListofOrdersPrevScreen.map(v => {
-        (v.OrderID = ""),(v.DesignerID = this.state.distributorId), (v.CustomerID = this.state.getCustomerId), (v.Discount = 20);
-      });
+    });
+    this.state.getListofOrdersPrevScreen.map(v => {
+      (v.OrderID = ""),
+        (v.DesignerID = this.state.distributorId),
+        (v.CustomerID = this.state.getCustomerId),
+        (v.Discount = 20);
+    });
   };
+  
   //save checkout orders
   saveOrderDtls = () => {
-    console.log("Welcom to data", this.state.distributorId, this.state.getListofOrdersPrevScreen);
+    console.log(
+      "Welcom to data",
+      this.state.distributorId,
+      this.state.getListofOrdersPrevScreen
+    );
+    this.state.getListofOrdersPrevScreen.map(itmVal => {
+      console.log("Before Quantity", itmVal.Quantity);
+      itmVal.Quantity = itmVal.incVal;
+      console.log("After Quantity", itmVal.Quantity);
+    });
+    console.log("Final Composure Data", this.state.getListofOrdersPrevScreen);
     fetch(`${addOrdersUrl}`, {
       method: "POST",
       headers: {
@@ -56,23 +71,24 @@ export default class AddInventoryOrder extends React.Component {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.state.authToken}`
       },
-      body:JSON.stringify(this.state.getListofOrdersPrevScreen)      
+      body: JSON.stringify(this.state.getListofOrdersPrevScreen)
     })
       .then(response => response.json())
       .then(resAddOrderJson => {
-        console.log('resAddOrderJson', resAddOrderJson);
+        console.log("resAddOrderJson", resAddOrderJson);
+        this.setState({ count: this.state.count + 1 });
       })
       .catch(error => {
         console.error(error);
       });
   };
 
-  render() {
+  render() {    
     return (
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("InventoryOrder")}
@@ -84,7 +100,10 @@ export default class AddInventoryOrder extends React.Component {
             <Title> Review Order</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
             <Button transparent>
