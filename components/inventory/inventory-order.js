@@ -213,7 +213,7 @@ export default class InventoryOrder extends React.Component {
   discountEnable = itm => {
     console.log('Item', itm);
     //this.setState({ valDiscountSwitch: true });
-    if (!this.state.valDiscountSwitch) this.setState({ valDiscountSwitch: true });
+    if (itm) this.setState({ valDiscountSwitch: true });
     else this.setState({ valDiscountSwitch: false });
   };
   render() {
@@ -297,7 +297,7 @@ export default class InventoryOrder extends React.Component {
                         <Right>
                           <Switch
                             value={this.state.valDiscountSwitch}
-                            onValueChange={() => {}}
+                            onValueChange={this.discountEnable}
                           />
                         </Right>
                       </CardItem>
