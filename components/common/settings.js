@@ -39,7 +39,7 @@ export default class Settings extends React.Component {
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -51,7 +51,10 @@ export default class Settings extends React.Component {
             <Title>Settings</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -62,16 +65,27 @@ export default class Settings extends React.Component {
         <Content padder>
           <Card>
             <CardItem header bordered>
-              <Text>General</Text>
+              <Text>Settings</Text>
+            </CardItem>
+            <CardItem>              
+                <Left>
+                  <Label>Build Number</Label>
+                </Left>
+                <Right>
+                  <Text>11/16/2018</Text>
+                </Right>
             </CardItem>
             <CardItem>
-              <View style={commonStyles.rowData}>
                 <Left>
                   <Label>Default Zip</Label>
                 </Left>
-                <Input placeholder="84106" onChangeText={this.handleZipCode} />
-                {/* <Right><Input placeholder="84106" onChangeText={this.handleZipCode} /></Right>  */}
-              </View>
+                <Right>
+                  <Input
+                    placeholder="84106"
+                    onChangeText={this.handleZipCode}
+                  />
+                </Right>
+                {/* <Right><Input placeholder="84106" onChangeText={this.handleZipCode} /></Right>  */}              
             </CardItem>
             {this.state.errorZipCode && (
               <Label style={commonStyles.errorMsg}>Incorrect Zip Code</Label>
