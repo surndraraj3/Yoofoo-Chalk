@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, ScrollView, AsyncStorage } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  AsyncStorage,
+  Image,
+  TouchableHighlight
+} from "react-native";
 import {
   Container,
   Content,
@@ -31,7 +38,8 @@ export default class AddInventoryOrder extends React.Component {
       listOfOrders: [],
       distributorId: "",
       authToken: "",
-      count: 0
+      count: 0,
+      msgData: ""
     };
   }
   componentDidMount = async () => {
@@ -50,7 +58,7 @@ export default class AddInventoryOrder extends React.Component {
         (v.Discount = 20);
     });
   };
-  
+
   //save checkout orders
   saveOrderDtls = () => {
     console.log(
@@ -76,14 +84,25 @@ export default class AddInventoryOrder extends React.Component {
       .then(response => response.json())
       .then(resAddOrderJson => {
         console.log("resAddOrderJson", resAddOrderJson);
-        this.setState({ count: this.state.count + 1 });
+        const resMessage = `Order placed successfully Order Id: ${
+          resAddOrderJson.OrderID
+        }`;
+        this.setState({ msgData: resMessage, getListofOrdersPrevScreen: [] });
       })
       .catch(error => {
         console.error(error);
       });
   };
+  //Delete Record from Array
+  handleDeleteReviewOrder = itmId => {
+    console.log("Welcome Delete", itmId);
+    const filteredItems = this.state.getListofOrdersPrevScreen.filter(item => {
+      return item.ItemID !== itmId;
+    });
+    this.setState({ getListofOrdersPrevScreen: filteredItems });
+  };
 
-  render() {    
+  render() {
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -134,6 +153,9 @@ export default class AddInventoryOrder extends React.Component {
             </View>
           </View>
           <ScrollView>
+            <Text style={{ color: "#e60000", textAlign: "center", margin: 10 }}>
+              {this.state.msgData}
+            </Text>
             {this.state.getListofOrdersPrevScreen.map(
               (reviewItmLst, reviewIndex) => (
                 <View key={reviewIndex}>
@@ -143,6 +165,17 @@ export default class AddInventoryOrder extends React.Component {
                       <Text style={{ fontWeight: "bold", margin: 10 }}>
                         {reviewItmLst.Description}
                       </Text>
+                      <Right>
+                        <TouchableHighlight
+                          onPress={() => {
+                            this.handleDeleteReviewOrder(reviewItmLst.ItemID);
+                          }}
+                        >
+                          <Image
+                            source={require("../../assets/forbidden.png")}
+                          />
+                        </TouchableHighlight>
+                      </Right>
                     </CardItem>
                     <CardItem>
                       <View style={commonStyles.row}>
