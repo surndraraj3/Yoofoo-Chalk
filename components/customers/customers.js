@@ -128,19 +128,19 @@ export default class Customers extends React.Component {
           bottom: 0
         }}
         position="bottomRight"
-        onPress={() => this.setState({ active: !this.state.active })}
+        onPress={() => this.props.navigation.navigate("AddCutsomer")}
       >
-        {/* <Icon name="sun-o" type="FontAwesome" /> */}
-        <ImageBackground
+        {/* <Icon name="user-plus" type="FontAwesome" /> */}
+         <ImageBackground
           resizeMode={"stretch"} // or cover
           style={{
             height: 40,
             width: 40,
             color: "#fff"
           }}
-          source={require("../../assets/start.png")}
+          source={require("../../assets/new_customer.png")}
         />
-        <Button
+        {/*<Button
           style={{ backgroundColor: "#34A34F" }}
           onPress={() => this.props.navigation.navigate("AddCutsomer")}
         >
@@ -152,7 +152,7 @@ export default class Customers extends React.Component {
               borderRadius: 40 / 2
             }}
           />
-        </Button>
+        </Button> */}
       </Fab>
     );
   }

@@ -266,13 +266,14 @@ export default class AddInventoryOrder extends React.Component {
                 Continue Shopping
               </Text>
             </View>
-            <Button
+            <Image source={require("../../assets/checkout_new.png")}/>
+            {/* <Button
               bordered
-              style={commonStyles.footerButton}
+              style={{backgroundColor: "#00ffff", justifyContent: "center"}}
               onPress={this.saveOrderDtls}
             >
-              <Text style={commonStyles.footerText}>Checkout</Text>
-            </Button>
+              <Text>Proceed to Checkout</Text>
+            </Button> */}
           </View>
         </View>
       </Container>

@@ -126,7 +126,7 @@ export default class Inventory extends React.Component {
         position="bottomRight"
         onPress={() => this.props.navigation.navigate("InventoryOrder")}
       >
-        <Icon name="sun-o" type="FontAwesome" />
+        <Icon name="folder-open" type="FontAwesome" style={{ fontSize:30}}/>
       </Fab>
     );
   }

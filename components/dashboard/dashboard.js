@@ -8,7 +8,7 @@ import {
   Dimensions,
   Image
 } from "react-native";
-import { createDrawerNavigator, DrawerItems } from "react-navigation";
+import { createDrawerNavigator, DrawerItems, DrawerNavigator } from "react-navigation";
 import Home from "../common/home";
 import Orders from "../orders/orders";
 import CustomerProfile from "../customers/profile";
@@ -40,8 +40,7 @@ const customDrawComponent = props => (
         justifyContent: "center"
       }}
     >
-      <Image
-        source={require("../../assets/customer.png")}
+      <Image       
         style={{ height: 120, width: 120, borderRadius: 60 }}
       />
     </View>
@@ -53,8 +52,8 @@ const customDrawComponent = props => (
 const AppDrawerNavigator = createDrawerNavigator(
   {
     Home: Home,
-    Order: Orders,
-    Transfer: InventoryOrderDiscount, //Transfer,
+    Order: Orders, 
+    Transfer: Transfer,
     Inventory: Inventory,
     InventoryOrder: {
       screen: InventoryOrder,

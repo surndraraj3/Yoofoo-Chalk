@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  TextInput,
+  Text,
   View,
   ScrollView,
   KeyboardAvoidingView
@@ -37,7 +37,7 @@ export default class Transfer extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Help</Title>
+            <Title>Transfer</Title>
           </Body>
           <Right>
             <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
@@ -50,7 +50,8 @@ export default class Transfer extends React.Component {
         </Header>
         <Content>
           <ScrollView>
-            <KeyboardAvoidingView
+            <Text>Welcome To Transfer</Text>
+            {/* <KeyboardAvoidingView
               style={{ flex: 1 }}
               keyboardVerticalOffset={100}
               behavior={"position"}
@@ -69,7 +70,7 @@ export default class Transfer extends React.Component {
                 placeholder="Confirm Password"
                 style={commonStyles.input}
               />
-            </KeyboardAvoidingView>
+            </KeyboardAvoidingView> */}
           </ScrollView>
         </Content>
       </Container>

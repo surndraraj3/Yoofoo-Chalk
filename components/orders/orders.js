@@ -121,10 +121,10 @@ export default class Orders extends React.Component {
           bottom: 0
         }}
         position="bottomRight"
-        onPress={() => this.setState({ active: !this.state.active })}
+        onPress={() => this.props.navigation.navigate("InventoryOrder")}
       >
-        {/* <Icon name="sun-o" type="FontAwesome" /> */}
-        <ImageBackground
+        <Icon name="folder-open" type="FontAwesome" style={{ fontSize:30}}/>
+        {/* <ImageBackground
           resizeMode={"stretch"} // or cover
           style={{
             height: 40,
@@ -144,7 +144,7 @@ export default class Orders extends React.Component {
               borderRadius: 40 / 2
             }}
           />
-        </Button>
+        </Button> */}
       </Fab>
     );
   }
