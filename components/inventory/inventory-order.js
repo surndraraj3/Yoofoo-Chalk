@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Image,
+  Alert,
   Dimensions
 } from "react-native";
 import {
@@ -29,6 +30,7 @@ import {
   Accordion,
   Picker
 } from "native-base";
+import Toast from "react-native-simple-toast";
 import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
@@ -188,13 +190,15 @@ export default class InventoryOrder extends React.Component {
     const addedOrderToCart = this.state.inventoryList.filter(
       addedItems => addedItems.selectItem === true
     );
-    if (addedOrderToCart.length === 0) alert("No Items added to cart");
-    else console.log("Items are added");
-
-    //this.setState({ addToOrderList: addedOrderToCart});
-    //this.state.addToOrderList.push(addedOrderToCart);
-    this.setState({ addToOrderList: addedOrderToCart });
-    console.log("Added List", addedOrderToCart);
+    if (addedOrderToCart.length === 0) {
+      //Toast.show('No Items are in cart.', Toast.TOP);
+      Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);
+    } else {
+      this.setState({ addToOrderList: addedOrderToCart });
+      console.log("Added List", addedOrderToCart);
+      Toast.showWithGravity("Item has been added to order", Toast.LONG, Toast.CENTER);
+    }
+    
   };
   //Search the inventory based on keyword match
   onSearchInventoryOrder = txtInventoryFld => {
@@ -211,7 +215,7 @@ export default class InventoryOrder extends React.Component {
   };
   // Enable the functionality of discount
   discountEnable = itm => {
-    console.log('Item', itm);
+    console.log("Item", itm);
     //this.setState({ valDiscountSwitch: true });
     if (itm) this.setState({ valDiscountSwitch: true });
     else this.setState({ valDiscountSwitch: false });

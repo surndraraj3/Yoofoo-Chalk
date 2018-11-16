@@ -20,10 +20,10 @@ import {
   Right,
   Title,
   Card,
-  CardItem,
-  Toast
+  CardItem
 } from "native-base";
 import { addOrdersUrl } from "../common/url_config";
+import Toast from "react-native-simple-toast";
 import commonStyles from "../styles/styles";
 
 export default class AddInventoryOrder extends React.Component {
@@ -96,6 +96,7 @@ export default class AddInventoryOrder extends React.Component {
   //Delete Record from Array
   handleDeleteReviewOrder = itmId => {
     console.log("Welcome Delete", itmId);
+    Toast.showWithGravity("Item has been removed from the order", Toast.LONG, Toast.CENTER, );
     const filteredItems = this.state.getListofOrdersPrevScreen.filter(item => {
       return item.ItemID !== itmId;
     });

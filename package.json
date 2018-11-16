@@ -18,6 +18,7 @@
     "react-native-htmlview": "^0.13.0",
     "react-native-modal": "^6.5.0",
     "react-native-options-menu": "^2.0.2",
+    "react-native-simple-toast": "0.0.8",
     "react-navigation": "^2.18.2",
     "whatwg-fetch": "^2.0.4"
   }
