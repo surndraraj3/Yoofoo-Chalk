@@ -234,7 +234,9 @@ export default class Orders extends React.Component {
                     <Text>{orderItem.OrderDate}</Text>
                     <TouchableHighlight
                       onPress={() =>
-                        this.props.navigation.navigate("ResendInvoice")
+                        this.props.navigation.navigate("ResendInvoice", {
+                          OrderNumber: orderItem.OrderNum
+                        })
                       }
                     >
                       <Text>{orderItem.OrderNum}</Text>

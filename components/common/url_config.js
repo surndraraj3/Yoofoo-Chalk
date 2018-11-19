@@ -15,3 +15,5 @@ export const getOrdersListURL = 'http://ccapiorderservice-dev.us-west-1.elasticb
 export const getInventoryListURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/InventoryByDesignerID/';
 //Add Orders 
 export const addOrdersUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/AddOrder/';
+//Get Invoice Details Based on Order Id
+export const getInvoiceDetailsByOrderIdUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/GetINvoice/'

@@ -4,7 +4,9 @@ import {
   Dimensions,
   ScrollView,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator,
+  AsyncStorage
 } from "react-native";
 import {
   Container,
@@ -23,8 +25,10 @@ import {
   CardItem,
   Label
 } from "native-base";
+import _ from "lodash";
 import Modal from "react-native-modal";
-import HTMLView from "react-native-htmlview";
+//import HTMLView from "react-native-htmlview";
+import { getInvoiceDetailsByOrderIdUrl } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 const deviceWidth = Dimensions.get("window").width;
@@ -36,251 +40,57 @@ export default class ResendInvoice extends React.Component {
       loading: false,
       isModalVisible: false,
       distributorId: "",
-      authToken: ""
+      authToken: "",
+      invoiceOrderNumber: this.props.navigation.getParam("OrderNumber"),
+      invoiceList: [],
+      lineInfoDtls: []
     };
   }
+  componentDidMount = async () => {
+    this.setState({ loading: true });
+    await AsyncStorage.getItem("LoginDetails").then(responseOrderDtlsJson => {
+      responseOrderDtlsJson = JSON.parse(responseOrderDtlsJson);
+      this.setState({
+        distributorId: responseOrderDtlsJson.DistributorID,
+        authToken: responseOrderDtlsJson.Token
+      });
+    });
+    fetch(`${getInvoiceDetailsByOrderIdUrl}${this.state.invoiceOrderNumber}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
+      }
+    })
+      .then(invoiceResp => invoiceResp.json())
+      .then(invoiceRespJson => {
+        //console.log("Data", invoiceRespJson);
+        this.setState({
+          invoiceList: invoiceRespJson
+        });
+        this.setState({ loading: false });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
   _toggleModal = () =>
     this.setState({ isModalVisible: !this.state.isModalVisible });
 
   render() {
-    const htmlContent = `
-    <!doctype html public '-//w3c//dtd html 4.0 transitional//en'> 
-        <html>
-            <head id='ctl00_Head1'>
-                  <style> 
-
-        @media print
-        {
-          div.rptDiv
-          {
-            background: white;
-            overflow: visible;
-          }
-        }
-        div.rptDiv
-        {
-          overflow: auto;
-        }
-        body
-        {
-          scrollbar-3dlight-color: #ADCCE4;
-          scrollbar-arrow-color: #356B93;
-          scrollbar-darkshadow-color: #ADCCE4;
-          scrollbar-face-color: #DBEAF5;
-          scrollbar-highlight-color: #FFFFFF;
-          scrollbar-shadow-color: #DBEAF5;
-          scrollbar-track-color: #E6F0F7;
-        }
-        body, td, input, select, th, textarea
-        {
-          font-family: verdana;
-          font-size: 8pt;
-          color: #393939;
-        }
-        h5
-        {
-          page-break-after: always;
-        }
-        a
-        {
-          text-decoration: none;
-        }
-        a:hover
-        {
-          text-decoration: underline;
-        }
-        a, a:visited, a:hover
-        {
-          color: #003399;
-        }
-        Table.ActionGridBar, Table.ActionGridBar TD
-        {
-          border: 1px solid #6699cc;
-          background-color: #E6EEF7;
-          font-weight: bold;
-          cursor: hand;
-        }
-
-        Table.ActionGridHeader
-        {
-          background-color: #E6EEF7;
-        }
-        Table.ActionGridData
-        {
-          border: none;
-        }
-        Table.ActionGridData TD
-        {
-          border: 1px solid #E6EEF7;
-        }
-        Table.ActionGridFooter
-        {
-          border: 1px solid #6699cc;
-          background-color: #E6EEF7;
-        }
-        Table.ActionGridFooter TD, Table.ActionGridFooter A:hover, Table.ActionGridFooter A:visited, Table.ActionGridFooter A
-        {
-          font-size: 10pt;
-          font-weight: normal;
-        }
-        TABLE.clsReport
-        {
-          border-collapse: collapse;
-          table-layout: fixed;
-          overflow: auto;
-        }
-        TABLE.clsReport TH
-        {
-          border: 1px solid #4791C5;
-          padding: 5px;
-          font-weight: normal;
-          background-color: #ECF4F9;
-        }
-        TABLE.clsReport TH:first-child
-        {
-          border-left: 1px solid #4791C5;
-        }
-        TABLE.clsReport TD
-        {
-          padding: 2px;
-          padding-left: 8px;
-          padding-right: 8px;
-        }
-
-
-        .deeptree span
-        {
-          padding: 2px 2px;
-          position: relative;
-          display: inline;
-          top: 0px;
-          height: 17px;
-          margin: 1px;
-          cursor: hand;
-        }
-        span.clsLabel
-        {
-        }
-        .clsSpace
-        {
-          position: relative;
-          width: 10px;
-          cursor: hand;
-          overflow: hidden;
-          margin-left: -6px;
-          margin-top: -11px;
-          padding-left: 0px;
-        }
-        SPAN.clsMouseOver
-        {
-          background-color: #F2F8FC;
-          border: 1px solid #EAF3FA;
-          margin: 0px;
-        }
-        SPAN.clsMouseDown
-        {
-          background-color: #EAF3FA;
-          color: black;
-          border: 1px solid #EAF3FA;
-          margin: 0px;
-        }
-        SPAN.clsCurrentHasFocus
-        {
-          background-color: #EAF3FA;
-          color: black;
-          border: 1px solid #B4D9F1;
-          margin: 0px;
-        }
-        span.clsUnavailable
-        {
-          height: 0px;
-          padding: 0px;
-          top: 0px;
-          border: none;
-          color: #888888;
-        }
-        .hide
-        {
-          display: none;
-        }
-        .shown
-        {
-          display: block;
-          margin-left: 15px;
-        }
-
-        Table.Grid
-        {
-          width: 100%;
-          table-layout: fixed;
-          border-collapse: collapse;
-          border-left: 1px solid #6699cc;
-          border-right: 1px solid #6699cc;
-          border-bottom: 1px solid #6699cc;
-        }
-
-        Table.Grid Col
-        {
-        }
-
-        Table.Grid TH
-        {
-          color: Black;
-          border-left: 1px solid #6699cc;
-          border-right: 1px solid #6699cc;
-          border-bottom: 1px solid #6699cc;
-          background-color: #99CCFF;
-          background-image: url(data:image/gif;base64,R0lGODlhAQAUAMQAAEeRxaXP67jc8rDW8J/K6avT7oW23LLY8bba8pHA4pjF5TB8sL3f9ICz2rTZ8Ym63svo+Iu737ze87rd8wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAABABQAAAURIAAx0iQgzjEUAaEkkdE8SwgAOw==);
-          padding: 3px;
-          font-weight: normal;
-          font-size: 11px;
-        }
-
-        Table.Grid TD
-        {
-          color: Black;
-          border: 1px solid #D0E5F5;
-          padding: 3px;
-          white-space: nowrap;
-          font-size: 11px;
-        }
-        Table.Grid TR
-        {
-          background-color: white;
-        }
-
-        Table.Grid TR.even
-        {
-          background-color: #F2F8FC;
-        }
-
-    </style>
-            
-    <style type='text/css'>
-        TABLE.clsBorder TH { border: 1px solid #4791C5; background-color: #1CD4C6; }
-        TABLE.clsBorderTop TH { border: 1px solid #4791C5; background-color: #1CD4C6; }
-        TABLE.clsBorderTop TH TH { border: none; }
-        H5 {PAGE-BREAK-AFTER: always;}
-    </style>
-
-        </head>
-        <body id='MainBody' scroll='yes' topmargin='0' leftmargin='0' rightmargin='0' >
-            <div id='orders' class='scrollWindow' align='center' >
-                  <center>
-<table border="0" cellpadding="0" cellspacing="0" width="90%"><tr><td><table cellpadding="0" cellspacing="0" width="100%"><tr><td><p><img src="https://farm1.staticflickr.com/792/27504604888_bfdc331455_m.jpg" /></p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p></td></tr><tr><td>1</td></tr><tr></tr></table></td></tr><tr><td><table border="0" cellpadding="4" cellspacing="0" width="100%" class="clsBorderTop"><tr><th align="left" nowrap width="33%"><table cellpadding="0" cellspacing="0" width="100%"><tr><th align="left"><font color="Black">ORDER INFO</font></th></tr></table></th></tr><tr><td valign="Top"><table><tr><td valign="top" nowrap><font color="black">Name:</font><BR><font color="black">Billed:</font><BR><font color="black">Order Number:</font><BR><font color="black">Last Run Date:</font><BR><font color="black">Next Run Date:</font><BR><font color="black"></font><BR></td><td valign="top" nowrap class="clsText">Alexis  Angres<br><br><br><br><br><br></td></tr></table></td></tr></table><table border="0" cellpadding="4" cellspacing="0" width="100%" class="clsBorder"><tr><th align="left" nowrap ><font color="Black">Payment Info</font></th></tr><tr><td><BR>&nbsp;</td></tr></table><table border="0" cellpadding="4" cellspacing="0" width="100%" class="clsBorder"><tr><th  align="left" nowrap style="width:" ><font color="Black">Qty</font></th><th  align="left" nowrap style="width:" ><font color="Black">Item</font></th><th  align="left" nowrap style="width:" ><font color="Black">Description</font></th><th  align="right" nowrap style="width:" ><font color="Black">Total</font></th></tr><tr><td class="clsText" align="left" valign=top><font color="Black">1</font></td><td class="clsText" align="left" valign=top><font color="Black">B181118</font></td><td class="clsText" align="left" valign=top><font color="Black">(B) Family Rules                      </font></td><td class="clsText" align="right" valign=top><font color="Black">$9.99</font></td></tr></table><div align="right"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td valign="top" align="left" width="70%" valign="top"></td><td valign="top" align="right" width="40%"><table border="0" cellpadding="4" cellspacing="0" width="100%"><tr><td align="right" nowrap><font color="Black">Subtotal:</font></td><td align="right" class="clsText">$9.99</td></tr><tr><td align="right" nowrap><font color="Black">Taxes:</font></td><td align="right" class="clsText">$0.00</td></tr><tr><td align="right" nowrap><font color="Black"><b>Total:</b></font></td><td align="right" class="clsText"><b>$9.99</b></td></tr></table></td></tr></table></div></td></tr><tr><td><p><span style="font-family: georgia, palatino, serif;"><span style="font-family: verdana, geneva, sans-serif; color: #999999;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></span></p>
-<p>&nbsp;</p>
-<p><span style="font-family: georgia, palatino, serif;"><span style="font-family: verdana, geneva, sans-serif; color: #999999;"><span style="font-size: 18pt; color: #a7a9ac;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; happy chalking!&nbsp;</span></span></span></p>
-<p>&nbsp;</p>
-<p><span style="font-family: verdana, geneva, sans-serif;"><span style="font-family: 'trebuchet ms', geneva, sans-serif; color: #b9bbbd;"><span style="color: #a7a9ac;">Designer&nbsp;Services (844) 673-6316&nbsp;</span>&nbsp;&nbsp; &nbsp; &nbsp;</span>&nbsp;&nbsp;</span>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p></td></tr></table><BR></table><BR>
-    </center></div>
-        <script type='text/javascript'>
-            window.document.body.scroll='yes';
-        </script>
-    </body>
-</html>`;
+    const getLineDetailInfosDtls = _.get(
+      this.state.invoiceList,
+      "LineDetailInfos"
+    );
+    // var result = _.map(getLineDetailInfosDtls, item => ({
+    //   id: item.Quantity,
+    //   name: item.Price
+    // }));
+    // console.log("Result", result);
+    // this.setState({lineInfoDtls: getLineDetailInfosDtls});
+    // console.log('getDtls', getLineDetailInfosDtls);
+    // console.log('getLine Info Dtls', this.state.lineInfoDtls);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -310,15 +120,217 @@ export default class ResendInvoice extends React.Component {
         </Header>
         <Content>
           <ScrollView>
-            <HTMLView value={htmlContent} />
+            {/* Get ORDER Info details from end point response list */}
             <Card>
-              <CardItem header>
+              <CardItem header bordered>
+                <Text>ORDER INFO</Text>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Order Number</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.OrderNumber}</Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Shipping Method</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.ShippingMethod}</Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Customer Name</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.CustomerName}</Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Sales Tax ID</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.SalesTaxID}</Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Date</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.Date}</Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Email</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.Email}</Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Phone</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.Phone}</Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Personal Use</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.PersonalUse}</Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Purchase From</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.invoiceList.PurchasedFrom}</Text>
+                </Right>
+              </CardItem>
+            </Card>
+            {/* Get Payment Info details from end point response list */}
+            <Card>
+              <CardItem header bordered>
+                <Text>Payment Info</Text>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Payment Date</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(this.state.invoiceList, "PaymentInfo.PaymentDate")}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Payment Method</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(this.state.invoiceList, "PaymentInfo.PaymentMethod")}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Payment Amount</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(this.state.invoiceList, "PaymentInfo.PaymentAmount")}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Payee Name</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(this.state.invoiceList, "PaymentInfo.PaymentName")}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Billing Name</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(this.state.invoiceList, "PaymentInfo.BillingName")}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Billing Address1</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(
+                      this.state.invoiceList,
+                      "PaymentInfo.BillingAddress1"
+                    )}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Billing Address2</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(
+                      this.state.invoiceList,
+                      "PaymentInfo.BillingAddress2"
+                    )}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Billing City</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(this.state.invoiceList, "PaymentInfo.BillingCity")}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Billing State</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(this.state.invoiceList, "PaymentInfo.BillingState")}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Billing Zip</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(this.state.invoiceList, "PaymentInfo.BillingZip")}
+                  </Text>
+                </Right>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Text>Billing Country</Text>
+                </Left>
+                <Right>
+                  <Text>
+                    {_.get(
+                      this.state.invoiceList,
+                      "PaymentInfo.BillingCountry"
+                    )}
+                  </Text>
+                </Right>
+              </CardItem>
+            </Card>            
+            {/* <Card>
+              <CardItem header bordered>
                 <Text>Order Number</Text>
                 <Text>12345</Text>
               </CardItem>
-            </Card>
+            </Card> */}
             <Card>
-              <CardItem header>
+              {/* <CardItem header>
                 <Left>
                   <Text>Order Number</Text>
                 </Left>
@@ -341,7 +353,7 @@ export default class ResendInvoice extends React.Component {
                 <Right>
                   <Text>Wilma@mail.com</Text>
                 </Right>
-              </CardItem>
+              </CardItem> */}
               <View
                 style={{
                   flexDirection: "row",
@@ -354,24 +366,43 @@ export default class ResendInvoice extends React.Component {
                 }}
               >
                 <View style={styles.box}>
-                  <Text>SKU</Text>
+                  <Text>Quantity</Text>
+                </View>                
+                <View style={styles.box}>
+                  <Text>Item Number</Text>
                 </View>
                 <View style={styles.box}>
                   <Text style={{ flex: 1, flexWrap: "wrap" }}>Description</Text>
                 </View>
                 <View style={styles.box}>
-                  <Text>Quantity</Text>
-                </View>
-                <View style={styles.box}>
                   <Text style={{ flex: 1, flexWrap: "wrap" }}>
-                    Price per unit
+                    Price
                   </Text>
                 </View>
                 <View style={styles.box}>
                   <Text>Total</Text>
                 </View>
               </View>
-              <View style={styles.container}>
+              {_.map(getLineDetailInfosDtls, item => (
+              <View style={styles.container}>                
+                <View style={styles.box}>
+                  <Text>{item.Quantity}</Text>
+                </View>
+                <View style={styles.box}>
+                  <Text>{item.ItemCode}</Text>
+                </View>  
+                <View style={styles.box}>
+                  <Text>Description</Text>
+                </View> 
+                <View style={styles.box}>
+                  <Text>{item.Price}</Text>
+                </View>  
+                <View style={styles.box}>
+                  <Text>{item.LineTotal}</Text>
+                </View>                            
+              </View>
+            ))}
+              {/* <View style={styles.container}>
                 <View style={styles.box}>
                   <Text>B18352</Text>
                 </View>
@@ -419,7 +450,7 @@ export default class ResendInvoice extends React.Component {
                 <View style={styles.box}>
                   <Text>$8.99</Text>
                 </View>
-              </View>
+              </View> */}
             </Card>
             <View
               style={{
@@ -479,6 +510,21 @@ export default class ResendInvoice extends React.Component {
             </View>
           </ScrollView>
         </Content>
+        {this.state.loading && (
+          <ActivityIndicator
+            size="large"
+            color="#0000ff"
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              top: 0
+              // backgroundColor: 'red',
+              // opacity: 0.3
+            }}
+          />
+        )}
       </Container>
     );
   }
