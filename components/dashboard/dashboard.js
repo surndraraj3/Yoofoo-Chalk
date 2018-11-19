@@ -34,14 +34,14 @@ const customDrawComponent = props => (
   <SafeAreaView style={{ flex: 1 }}>
     <View
       style={{
-        height: 150,
+        height: 50,
         backgroundColor: "white",
         alignItems: "center",
         justifyContent: "center"
       }}
     >
       <Image       
-        style={{ height: 120, width: 120, borderRadius: 60 }}
+        style={{ height: 20, width: 50, borderRadius: 60 }}
       />
     </View>
     <ScrollView>
@@ -53,7 +53,7 @@ const AppDrawerNavigator = createDrawerNavigator(
   {
     Home: Home,
     Order: Orders, 
-    Transfer: Transfer,
+    "Designer to Designer": Transfer,
     Inventory: Inventory,
     InventoryOrder: {
       screen: InventoryOrder,
