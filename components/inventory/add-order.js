@@ -96,11 +96,28 @@ export default class AddInventoryOrder extends React.Component {
   //Delete Record from Array
   handleDeleteReviewOrder = itmId => {
     console.log("Welcome Delete", itmId);
-    Toast.showWithGravity("Item has been removed from the order", Toast.LONG, Toast.CENTER, );
-    const filteredItems = this.state.getListofOrdersPrevScreen.filter(item => {
-      return item.ItemID !== itmId;
+    Toast.showWithGravity(
+      "Item has been removed from the order",
+      Toast.LONG,
+      Toast.CENTER
+    );
+    // const filteredItems = this.state.getListofOrdersPrevScreen.filter(item => {
+    //   return item.ItemID !== itmId;
+    // });
+    // const filteredItems1 = this.state.getListofOrdersPrevScreen.filter(item => {
+    //   return item.ItemID === itmId;
+    // });
+    this.state.getListofOrdersPrevScreen.map((dt, i) => {
+      if (dt.ItemID === itmId) {
+        dt.Quantity = 0;
+        dt.incVal = 0;
+      }
     });
-    this.setState({ getListofOrdersPrevScreen: filteredItems });
+    console.log("Filter Items", this.state.getListofOrdersPrevScreen);
+
+    this.setState({
+      getListofOrdersPrevScreen: this.state.getListofOrdersPrevScreen
+    });
   };
 
   render() {
@@ -160,92 +177,97 @@ export default class AddInventoryOrder extends React.Component {
             {this.state.getListofOrdersPrevScreen.map(
               (reviewItmLst, reviewIndex) => (
                 <View key={reviewIndex}>
-                  <Card>
-                    <CardItem header>
-                      {/* <CheckBox checked={true} /> */}
-                      <Text style={{ fontWeight: "bold", margin: 10 }}>
-                        {reviewItmLst.Description}
-                      </Text>
-                      <Right>
-                        <TouchableHighlight
-                          onPress={() => {
-                            this.handleDeleteReviewOrder(reviewItmLst.ItemID);
-                          }}
-                        >
-                          <Image
-                            source={require("../../assets/forbidden.png")}
-                          />
-                        </TouchableHighlight>
-                      </Right>
-                    </CardItem>
-                    <CardItem>
-                      <View style={commonStyles.row}>
-                        <View style={commonStyles.column}>
-                          <Icon
-                            active
-                            name="birthday-cake"
-                            type="FontAwesome"
-                            style={{ color: "#ff6666" }}
-                          />
-                        </View>
-                        <View style={commonStyles.column}>
-                          <View style={commonStyles.nestedRow}>
-                            <Left>
-                              <Text>Qty Available </Text>
-                            </Left>
-                            <Right>
-                              <Text>{reviewItmLst.Quantity}</Text>
-                            </Right>
-                          </View>
-                          <View style={commonStyles.nestedRow}>
-                            <Left>
-                              <Text>Discount </Text>
-                            </Left>
-                            <Right>
-                              <Text>20%</Text>
-                            </Right>
-                          </View>
-                          <View style={commonStyles.nestedRow}>
-                            <Left>
-                              <Text>Msrp </Text>
-                            </Left>
-                            <Right>
-                              <Text>
-                                {"\u0024"} {reviewItmLst.Price}
-                              </Text>
-                            </Right>
-                          </View>
-                          <View style={commonStyles.nestedRow}>
-                            <Left>
-                              <Text>Designer</Text>
-                            </Left>
-                            <Right>
-                              <Text>
-                                {"\u0024"} {reviewItmLst.Price}
-                              </Text>
-                            </Right>
-                          </View>
-                        </View>
-                        <View style={commonStyles.column}>
-                          <Right>
-                            <Icon
-                              name="plus"
-                              type="FontAwesome"
-                              style={{ color: "#f50" }}
+                  {reviewItmLst.Quantity !== 0 ? (
+                    <Card>
+                      <CardItem header>
+                        {/* <CheckBox checked={true} /> */}
+                        <Text style={{ fontWeight: "bold", margin: 10 }}>
+                          {reviewItmLst.Description}
+                        </Text>
+                        <Right>
+                          <TouchableHighlight
+                            onPress={() => {
+                              this.handleDeleteReviewOrder(reviewItmLst.ItemID);
+                            }}
+                          >
+                            <Image
+                              source={require("../../assets/forbidden.png")}
                             />
-                            <Text style={{ fontWeight: "bold" }}>
-                              {reviewItmLst.incVal}
-                            </Text>
+                          </TouchableHighlight>
+                        </Right>
+                      </CardItem>
+
+                      <CardItem>
+                        <View style={commonStyles.row}>
+                          <View style={commonStyles.column}>
                             <Icon
-                              name="minus"
+                              active
+                              name="birthday-cake"
                               type="FontAwesome"
-                              style={{ color: "#f50" }}
+                              style={{ color: "#ff6666" }}
                             />
-                          </Right>
+                          </View>
+                          <View style={commonStyles.column}>
+                            <View style={commonStyles.nestedRow}>
+                              <Left>
+                                <Text>Qty Available </Text>
+                              </Left>
+                              <Right>
+                                <Text>{reviewItmLst.Quantity}</Text>
+                              </Right>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Left>
+                                <Text>Discount </Text>
+                              </Left>
+                              <Right>
+                                <Text>20%</Text>
+                              </Right>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Left>
+                                <Text>Msrp </Text>
+                              </Left>
+                              <Right>
+                                <Text>
+                                  {"\u0024"} {reviewItmLst.Price}
+                                </Text>
+                              </Right>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Left>
+                                <Text>Designer</Text>
+                              </Left>
+                              <Right>
+                                <Text>
+                                  {"\u0024"} {reviewItmLst.Price}
+                                </Text>
+                              </Right>
+                            </View>
+                          </View>
+                          <View style={commonStyles.column}>
+                            <Right>
+                              <Icon
+                                name="plus"
+                                type="FontAwesome"
+                                style={{ color: "#f50" }}
+                              />
+                              <Text style={{ fontWeight: "bold" }}>
+                                {reviewItmLst.incVal}
+                              </Text>
+                              <Icon
+                                name="minus"
+                                type="FontAwesome"
+                                style={{ color: "#f50" }}
+                              />
+                            </Right>
+                          </View>
                         </View>
-                      </View>
-                    </CardItem>
-                  </Card>
+                      </CardItem>
+                    </Card>
+                  ) : (
+                    <Text />
+                  )}
                 </View>
               )
             )}
@@ -266,8 +288,17 @@ export default class AddInventoryOrder extends React.Component {
               >
                 Continue Shopping
               </Text>
-            </View>
-            <Image source={require("../../assets/checkout_new.png")}/>
+            </View>            
+            <TouchableHighlight
+              onPress={() => {
+                this.props.navigation.navigate("Checkout", {
+                  orderDtlsList: this.state.getListofOrdersPrevScreen
+                });
+              }}
+            >
+              <Image source={require("../../assets/checkout_new.png")} />
+            </TouchableHighlight>
+
             {/* <Button
               bordered
               style={{backgroundColor: "#00ffff", justifyContent: "center"}}

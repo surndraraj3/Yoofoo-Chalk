@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, ScrollView, Dimensions } from "react-native";
+import { Text, View, ScrollView, AsyncStorage, } from "react-native";
 import {
   Container,
   Content,
@@ -17,11 +17,60 @@ import {
   Card,
   CardItem
 } from "native-base";
+import { addOrdersUrl } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 export default class Checkout extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state={
+      distributorId: "",
+      authToken: "",
+      getOrdesFromCart: this.props.navigation.getParam("orderDtlsList"),
+      msgData: ""
+    }
+  }
+  componentDidMount = async () => {
+    await AsyncStorage.getItem("LoginDetails").then(responseJson => {
+      responseJson = JSON.parse(responseJson);
+      console.log(responseJson.message, responseJson.DistributorID);
+      this.setState({
+        distributorId: responseJson.DistributorID,
+        authToken: responseJson.Token
+      });
+    });    
+  };
+  //save checkout orders
+  saveOrderDtls = () => {   
+    this.state.getOrdesFromCart.map(itmVal => {
+      console.log("Before Quantity", itmVal.Quantity);
+      itmVal.Quantity = itmVal.incVal;
+      console.log("After Quantity", itmVal.Quantity);
+    });
+    console.log("Final Composure Data", this.state.getOrdesFromCart);
+    fetch(`${addOrdersUrl}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
+      },
+      body: JSON.stringify(this.state.getOrdesFromCart)
+    })
+      .then(response => response.json())
+      .then(resAddOrderJson => {
+        console.log("resAddOrderJson", resAddOrderJson);
+        const resMessage = `Order placed successfully Order Id: ${
+          resAddOrderJson.OrderID
+        }`;
+        this.setState({ msgData: resMessage, getOrdesFromCart: [] });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
   render() {
-    const windowWidth = Dimensions.get("window").width;
+    console.log('Orders List', this.state.getOrdesFromCart);    
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -168,7 +217,7 @@ export default class Checkout extends React.Component {
                 </CardItem>
               </Card>
               <View style={{ margin: 10 }}>
-                <Button full style={{ backgroundColor: "#00ffff" }}>
+                <Button full style={{ backgroundColor: "#00ffff" }} onPress={this.saveOrderDtls}>
                   <Text
                     style={{
                       color: "#ffffff",
