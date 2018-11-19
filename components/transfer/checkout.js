@@ -1,5 +1,14 @@
 import React from "react";
-import { Text, View, ScrollView, AsyncStorage, } from "react-native";
+import {
+  Text,
+  TextInput,
+  View,
+  ScrollView,
+  AsyncStorage,
+  TouchableOpacity,
+  StyleSheet,
+  Picker
+} from "react-native";
 import {
   Container,
   Content,
@@ -17,18 +26,24 @@ import {
   Card,
   CardItem
 } from "native-base";
-import { addOrdersUrl } from "../common/url_config";
+import { addOrdersUrl, getCustomerListURL } from "../common/url_config";
+import Autocomplete from "react-native-autocomplete-input";
 import commonStyles from "../styles/styles";
 
 export default class Checkout extends React.Component {
   constructor(props) {
     super(props);
-    this.state={
+    this.state = {
       distributorId: "",
       authToken: "",
       getOrdesFromCart: this.props.navigation.getParam("orderDtlsList"),
-      msgData: ""
-    }
+      msgData: "",
+      films: [],
+      query: "",
+      language: "",
+      customerId: "",
+      customersListData: []
+    };
   }
   componentDidMount = async () => {
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
@@ -38,10 +53,40 @@ export default class Checkout extends React.Component {
         distributorId: responseJson.DistributorID,
         authToken: responseJson.Token
       });
-    });    
+    });
+    fetch(`${getCustomerListURL}${this.state.distributorId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
+      }
+    })
+      .then(response => response.json())
+      .then(responseJson => {
+        // console.log(responseJson);
+        this.setState({
+          customersListData: responseJson
+        });
+        this.setState({ loading: false });
+      })
+      .catch(error => {
+        console.error(error);
+        this.setState({ customersListData: [] });
+        this.setState({ loading: false });
+      });
   };
+  findFilm(query) {
+    if (query === "") {
+      return [];
+    }
+
+    const { films } = this.state;
+    const regex = new RegExp(`${query.trim()}`, "i");
+    return films.filter(film => film.title.search(regex) >= 0);
+  }
   //save checkout orders
-  saveOrderDtls = () => {   
+  saveOrderDtls = () => {
     this.state.getOrdesFromCart.map(itmVal => {
       console.log("Before Quantity", itmVal.Quantity);
       itmVal.Quantity = itmVal.incVal;
@@ -70,12 +115,16 @@ export default class Checkout extends React.Component {
       });
   };
   render() {
-    console.log('Orders List', this.state.getOrdesFromCart);    
+    console.log("Orders List", this.state.getOrdesFromCart);
+    const { query } = this.state;
+    const films = this.findFilm(query);
+    const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
+
     return (
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -87,7 +136,10 @@ export default class Checkout extends React.Component {
             <Title>Checkout</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -97,7 +149,30 @@ export default class Checkout extends React.Component {
         </Header>
         <Content>
           <View>
-            <ScrollView>
+            <ScrollView> 
+              <View style={{ flexDirection: "row" }}>
+                <Picker
+                  mode="dropdown"
+                  selectedValue={this.state.language}
+                  style={{ height: 50, width: "100%" }}
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({ language: itemValue , customerId: itemValue});
+                    // this.state.getOrdesFromCart.map(dt => {
+                    //   dt.CustomerID = itemValue;
+                    // });
+                  }}
+                >
+                  <Picker.Item
+                    label="Select Customer"
+                    value="Select Customer"
+                  />
+                  {this.state.customersListData.map((dt, i) => {
+                    return (
+                      <Picker.Item label={dt.FirstName} value={dt.CustomerID}  key={i}/>
+                    );
+                  })}
+                </Picker>
+              </View>
               <Card>
                 <CardItem>
                   <Left>
@@ -185,7 +260,9 @@ export default class Checkout extends React.Component {
                   <Text>Credit Card</Text>
                 </CardItem>
                 <CardItem>
-                  <Left><Text>Remaining Due</Text></Left>
+                  <Left>
+                    <Text>Remaining Due</Text>
+                  </Left>
                   <Right>
                     <Text>{"\u0024"} 0.00</Text>
                   </Right>
@@ -217,7 +294,11 @@ export default class Checkout extends React.Component {
                 </CardItem>
               </Card>
               <View style={{ margin: 10 }}>
-                <Button full style={{ backgroundColor: "#00ffff" }} onPress={this.saveOrderDtls}>
+                <Button
+                  full
+                  style={{ backgroundColor: "#00ffff" }}
+                  onPress={this.saveOrderDtls}
+                >
                   <Text
                     style={{
                       color: "#ffffff",
@@ -236,3 +317,44 @@ export default class Checkout extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#F5FCFF",
+    flex: 1,
+    paddingTop: 25
+  },
+  autocompleteContainer: {
+    marginLeft: 10,
+    marginRight: 10
+  },
+  itemText: {
+    fontSize: 15,
+    margin: 2
+  },
+  descriptionContainer: {
+    // `backgroundColor` needs to be set otherwise the
+    // autocomplete input will disappear on text input.
+    backgroundColor: "#F5FCFF",
+    marginTop: 8
+  },
+  infoText: {
+    textAlign: "center"
+  },
+  titleText: {
+    fontSize: 18,
+    fontWeight: "500",
+    marginBottom: 10,
+    marginTop: 10,
+    textAlign: "center"
+  },
+  directorText: {
+    color: "grey",
+    fontSize: 12,
+    marginBottom: 10,
+    textAlign: "center"
+  },
+  openingText: {
+    textAlign: "center"
+  }
+});
