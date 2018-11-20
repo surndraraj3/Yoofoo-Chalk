@@ -6,8 +6,6 @@ import {
   findNodeHandle,
   ActivityIndicator,
   AsyncStorage,
-  Picker,
-  Image,
   ImageBackground,
   TouchableHighlight
 } from "react-native";
@@ -123,7 +121,15 @@ export default class Orders extends React.Component {
         position="bottomRight"
         onPress={() => this.props.navigation.navigate("InventoryOrder")}
       >
-        <Icon name="folder-open" type="FontAwesome" style={{ fontSize:30}}/>
+        {/* <Icon name="folder-open" type="FontAwesome" style={{ fontSize:30}}/> */}
+        <ImageBackground
+              resizeMode={"stretch"} // or cover
+              style={{
+                height: '100%',
+                width: '100%'
+              }}
+              source={require("../../assets/cart.png")}
+            />
         {/* <ImageBackground
           resizeMode={"stretch"} // or cover
           style={{
