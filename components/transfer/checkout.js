@@ -37,10 +37,8 @@ export default class Checkout extends React.Component {
       distributorId: "",
       authToken: "",
       getOrdesFromCart: this.props.navigation.getParam("orderDtlsList"),
-      msgData: "",
-      films: [],
-      query: "",
-      language: "",
+      msgData: "",      
+      selCustomerVal: "",
       customerId: "",
       customersListData: []
     };
@@ -76,15 +74,7 @@ export default class Checkout extends React.Component {
         this.setState({ loading: false });
       });
   };
-  findFilm(query) {
-    if (query === "") {
-      return [];
-    }
-
-    const { films } = this.state;
-    const regex = new RegExp(`${query.trim()}`, "i");
-    return films.filter(film => film.title.search(regex) >= 0);
-  }
+  
   //save checkout orders
   saveOrderDtls = () => {
     this.state.getOrdesFromCart.map(itmVal => {
@@ -114,11 +104,28 @@ export default class Checkout extends React.Component {
         console.error(error);
       });
   };
+  //On Customer Change get value and map it across all orders
+  handleOnChangeCustomersList = e => {
+    //console.log("OnChange", e);
+    if (e !== "Select Customer") {
+      this.setState({ customerId: e, selCustomerVal: e });
+      //console.log('Order List Before', this.state.getOrdesFromCart);
+      if(this.state.getOrdesFromCart !== undefined) {
+        this.state.getOrdesFromCart.map(dt => {
+          dt.CustomerID = e;
+        })
+        this.setState({getOrdesFromCart: this.state.getOrdesFromCart});
+        //console.log('Order List After', this.state.getOrdesFromCart);
+      } else {
+        console.log('Undefined Customer');
+      }
+    } else {
+      console.log("Default Value");
+    }
+  };
+
   render() {
-    console.log("Orders List", this.state.getOrdesFromCart);
-    const { query } = this.state;
-    const films = this.findFilm(query);
-    const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
+   //console.log("Orders List", this.state.customerId);   
 
     return (
       <Container>
@@ -149,18 +156,19 @@ export default class Checkout extends React.Component {
         </Header>
         <Content>
           <View>
-            <ScrollView> 
+            <ScrollView>
               <View style={{ flexDirection: "row" }}>
                 <Picker
                   mode="dropdown"
-                  selectedValue={this.state.language}
+                  selectedValue={this.state.selCustomerVal}
                   style={{ height: 50, width: "100%" }}
-                  onValueChange={(itemValue, itemIndex) => {
-                    this.setState({ language: itemValue , customerId: itemValue});
-                    // this.state.getOrdesFromCart.map(dt => {
-                    //   dt.CustomerID = itemValue;
-                    // });
-                  }}
+                  onValueChange={this.handleOnChangeCustomersList}
+                  // onValueChange={(itemValue, itemIndex) => {
+                  //   this.setState({ language: itemValue , customerId: itemValue});
+                  //   // this.state.getOrdesFromCart.map(dt => {
+                  //   //   dt.CustomerID = itemValue;
+                  //   // });
+                  // }}
                 >
                   <Picker.Item
                     label="Select Customer"
@@ -168,7 +176,11 @@ export default class Checkout extends React.Component {
                   />
                   {this.state.customersListData.map((dt, i) => {
                     return (
-                      <Picker.Item label={dt.FirstName} value={dt.CustomerID}  key={i}/>
+                      <Picker.Item
+                        label={dt.FirstName}
+                        value={dt.CustomerID}
+                        key={i}
+                      />
                     );
                   })}
                 </Picker>

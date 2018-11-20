@@ -252,8 +252,8 @@ export default class Home extends React.Component {
             <ImageBackground
               resizeMode={"stretch"} // or cover
               style={{
-                height: 40,
-                width: 40
+                height: '100%',
+                width: '100%'
               }}
               source={require("../../assets/start.png")}
             />

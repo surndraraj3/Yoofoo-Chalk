@@ -383,8 +383,8 @@ export default class ResendInvoice extends React.Component {
                   <Text>Total</Text>
                 </View>
               </View>
-              {_.map(getLineDetailInfosDtls, item => (
-              <View style={styles.container}>                
+              {_.map(getLineDetailInfosDtls, (item,indx) => (
+              <View style={styles.container} key={indx}>                
                 <View style={styles.box}>
                   <Text>{item.Quantity}</Text>
                 </View>

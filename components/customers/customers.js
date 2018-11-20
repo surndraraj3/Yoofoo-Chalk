@@ -134,8 +134,8 @@ export default class Customers extends React.Component {
          <ImageBackground
           resizeMode={"stretch"} // or cover
           style={{
-            height: 40,
-            width: 40,
+            height: '100%',
+            width: '100%',
             color: "#fff"
           }}
           source={require("../../assets/new_customer.png")}
