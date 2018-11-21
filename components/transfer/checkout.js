@@ -26,7 +26,12 @@ import {
   Card,
   CardItem
 } from "native-base";
-import { addOrdersUrl, getCustomerListURL } from "../common/url_config";
+import Toast from "react-native-simple-toast";
+import {
+  addOrdersUrl,
+  getCustomerListURL,
+  calculateAddOrdersUrl
+} from "../common/url_config";
 import Autocomplete from "react-native-autocomplete-input";
 import commonStyles from "../styles/styles";
 
@@ -37,7 +42,8 @@ export default class Checkout extends React.Component {
       distributorId: "",
       authToken: "",
       getOrdesFromCart: this.props.navigation.getParam("orderDtlsList"),
-      msgData: "",      
+      getCalculatedOrders: [],
+      msgData: "",
       selCustomerVal: "",
       customerId: "",
       customersListData: []
@@ -73,8 +79,9 @@ export default class Checkout extends React.Component {
         this.setState({ customersListData: [] });
         this.setState({ loading: false });
       });
+    this.handleCalculateOrder();
   };
-  
+
   //save checkout orders
   saveOrderDtls = () => {
     this.state.getOrdesFromCart.map(itmVal => {
@@ -110,23 +117,66 @@ export default class Checkout extends React.Component {
     if (e !== "Select Customer") {
       this.setState({ customerId: e, selCustomerVal: e });
       //console.log('Order List Before', this.state.getOrdesFromCart);
-      if(this.state.getOrdesFromCart !== undefined) {
+      if (this.state.getOrdesFromCart !== undefined) {
         this.state.getOrdesFromCart.map(dt => {
           dt.CustomerID = e;
-        })
-        this.setState({getOrdesFromCart: this.state.getOrdesFromCart});
+        });
+        this.setState({ getOrdesFromCart: this.state.getOrdesFromCart });
         //console.log('Order List After', this.state.getOrdesFromCart);
+        this.handleCalculateOrder();
       } else {
-        console.log('Undefined Customer');
+        console.log("Undefined Customer");
       }
     } else {
       console.log("Default Value");
     }
   };
 
+  handleCalculateOrder = () => {
+    console.log("Welcome Calculate");
+    if (this.state.getOrdesFromCart === undefined) {
+      Toast.showWithGravity(
+        "No orders added to cart",
+        Toast.SHORT,
+        Toast.CENTER
+      );
+    } else {
+      const getCustId = this.state.getOrdesFromCart.filter(
+        dt => dt.CustomerID === "CUSTOMER-ID"
+      );
+      console.log("getCustId", getCustId);
+      if (getCustId.length > 0) {
+        console.log("Add Customer Id");
+        Toast.showWithGravity(
+          "No customer id found, Please add customer to place an order",
+          Toast.SHORT,
+          Toast.CENTER
+        );
+      } else {
+        console.log("Data Found");
+        fetch(`${calculateAddOrdersUrl}`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.state.authToken}`
+          },
+          body: JSON.stringify(this.state.getOrdesFromCart)
+        })
+          .then(respCalOrder => respCalOrder.json())
+          .then(respCalOrderJson => {
+            console.log("Orders");
+            this.setState({ getCalculatedOrders: respCalOrderJson });
+          })
+          .catch(errCalOrder => {
+            throw errCalOrder;
+          });
+      }
+    }
+  };
   render() {
-   //console.log("Orders List", this.state.customerId);   
-
+    //console.log("Orders Calc", this.state.getCalculatedOrders);
+    //console.log('Cal', this.state.getCalculatedOrders);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -191,7 +241,14 @@ export default class Checkout extends React.Component {
                     <Text>Sub Total</Text>
                   </Left>
                   <Right>
-                    <Text>{"\u0024"} 8.99</Text>
+                    {this.state.getCalculatedOrders.subTotalField ? (
+                      <Text>
+                        {"\u0024"}
+                        {this.state.getCalculatedOrders.subTotalField}
+                      </Text>
+                    ) : (
+                      <Text>{"\u0024"} 0</Text>
+                    )}
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -199,7 +256,14 @@ export default class Checkout extends React.Component {
                     <Text>Total Discounts</Text>
                   </Left>
                   <Right>
-                    <Text>{"\u0024"} 0.00</Text>
+                    {this.state.getCalculatedOrders.discountTotalField ? (
+                      <Text>
+                        {"\u0024"}
+                        {this.state.getCalculatedOrders.discountTotalField}
+                      </Text>
+                    ) : (
+                      <Text>{"\u0024"} 0</Text>
+                    )}
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -215,7 +279,14 @@ export default class Checkout extends React.Component {
                     <Text>Shipping</Text>
                   </Left>
                   <Right>
-                    <Text>{"\u0024"} 0.00</Text>
+                    {this.state.getCalculatedOrders.shippingTotalField ? (
+                      <Text>
+                        {"\u0024"}
+                        {this.state.getCalculatedOrders.shippingTotalField}
+                      </Text>
+                    ) : (
+                      <Text>{"\u0024"} 0</Text>
+                    )}
                   </Right>
                 </CardItem>
                 <CardItem>
