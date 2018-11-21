@@ -4,12 +4,11 @@ import {
   View,
   ActivityIndicator,
   ScrollView,
-  Switch,
+  Keyboard,
+  TextInput,
   AsyncStorage,
   TouchableOpacity,
   TouchableHighlight,
-  Image,
-  Alert,
   Dimensions
 } from "react-native";
 import {
@@ -36,6 +35,7 @@ import commonStyles from "../styles/styles";
 
 const deviceWidth = Dimensions.get("window").width;
 export default class InventoryOrder extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.stVal = 0;
@@ -55,6 +55,7 @@ export default class InventoryOrder extends React.Component {
       addToOrderList: [],
       dup: "",
       searchInventoryOrdersList: [],
+      selDiscountVal: 0,
       invDiscountVal: this.props.navigation.getParam("discountValue"),
       invDiscountItemIdVal: this.props.navigation.getParam("discountItem"),
       selected2: "",
@@ -63,13 +64,18 @@ export default class InventoryOrder extends React.Component {
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
   componentDidMount = async () => {
-    await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
-      resLoginDtls = JSON.parse(resLoginDtls);
-      this.setState({
-        distributorId: resLoginDtls.DistributorID,
-        authToken: resLoginDtls.Token
+    this._isMounted = true;
+    if(this._isMounted) {
+      await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
+        resLoginDtls = JSON.parse(resLoginDtls);
+        
+          this.setState({
+            distributorId: resLoginDtls.DistributorID,
+            authToken: resLoginDtls.Token
+          });
+          
       });
-    });
+    }    
     //Get Inventory List data
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -82,27 +88,26 @@ export default class InventoryOrder extends React.Component {
       .then(response => response.json())
       .then(responseJson => {
         //console.log(responseJson);
-        this.setState({
-          inventoryList: responseJson,
-          inventoryCount: responseJson.length
-        });
-        this.state.inventoryList.map(v => {
-          (v.incVal = 0), (v.selectItem = false), (v.discountVal = 0);
-        });
-        // const setDisItem = this.state.inventoryList.filter(
-        //   i => i.ItemID === this.state.invDiscountItemIdVal
-        // );
-        // setDisItem.map(d => {
-        //   d.discountVal = this.state.invDiscountVal;
-        //   console.log("Discount", d.discountVal);
-        // });
-        this.setState({ loading: false });
+        if(this._isMounted) {
+          this.setState({
+            inventoryList: responseJson,
+            inventoryCount: responseJson.length
+          });
+          this.state.inventoryList.map(v => {
+            (v.incVal = 0), (v.selectItem = false), (v.discountVal = 0), (v.discountType = '')
+          });
+          
+          this.setState({ loading: false });
+        }        
       })
       .catch(error => {
         console.error(error);
-        this.setState({ loading: false });
+        if(this._isMounted) this.setState({ loading: false });
       });
   };
+  componentWillUnmount(){
+    this._isMounted = false;
+  }
   // Loading Spinner
   renderLoading() {
     if (this.state.loading) {
@@ -196,9 +201,12 @@ export default class InventoryOrder extends React.Component {
     } else {
       this.setState({ addToOrderList: addedOrderToCart });
       console.log("Added List", addedOrderToCart);
-      Toast.showWithGravity("Item has been added to order", Toast.LONG, Toast.CENTER);
+      Toast.showWithGravity(
+        "Item has been added to order",
+        Toast.LONG,
+        Toast.CENTER
+      );
     }
-    
   };
   //Search the inventory based on keyword match
   onSearchInventoryOrder = txtInventoryFld => {
@@ -214,12 +222,25 @@ export default class InventoryOrder extends React.Component {
     });
   };
   // Enable the functionality of discount
-  discountEnable = itm => {
-    console.log("Item", itm);
-    //this.setState({ valDiscountSwitch: true });
-    if (itm) this.setState({ valDiscountSwitch: true });
-    else this.setState({ valDiscountSwitch: false });
+  discountEnable = (discountMode, itmId) => {
+    console.log('Mode', discountMode, 'Item Id', itmId);
+    const discounRes = this.state.inventoryList.filter(v => v.ItemID === itmId);
+    discounRes.map(
+      v => ((v.discountType = discountMode))
+    );
+    console.log('Mode Res', discounRes);
+    this.state.inventoryList.push(discounRes);
   };
+  // Discount Change text
+  discountTextChange = (discountVal, id) => {
+    console.log('A', discountVal, '----', id);
+    const fltrItemId = this.state.inventoryList.filter(v => v.ItemID === id);
+    fltrItemId.map(f => ( f.discountVal = discountVal));
+    //
+    console.log('Discount Res', fltrItemId);
+    this.state.inventoryList.push(fltrItemId);
+  }
+
   render() {
     const { navigation } = this.props;
     const cstmrId = navigation.getParam("customerID", "CUSTOMER-ID");
@@ -294,78 +315,49 @@ export default class InventoryOrder extends React.Component {
                           {itm.Description}
                         </Text>
                       </CardItem>
-                      <CardItem>
+                      {/* <CardItem> */}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between"
+                        }}
+                      >
                         <Left>
                           <Text>Discount</Text>
                         </Left>
-                        <Right>
-                          <Switch
-                            value={this.state.valDiscountSwitch}
-                            onValueChange={this.discountEnable}
+                        <Button style={{ margin: 5 }} onPress={() => {this.discountEnable('d',itm.ItemID)}}>
+                          <Icon
+                            name="dollar"
+                            type="FontAwesome"
+                            style={{ color: "#55e6f6" }}
                           />
-                        </Right>
-                      </CardItem>
-                      {this.state.valDiscountSwitch && (
-                        <View>
-                          <CardItem>
-                            <View
-                              style={{
-                                flexDirection: "row"
-                              }}
-                            >
-                              <Left>
-                                <Text>Discount Mode</Text>
-                              </Left>
-                              <Right>
-                                <Picker
-                                  mode="dropdown"
-                                  style={{ width: 200, height: 44 }}
-                                  itemStyle={{ height: 44 }}
-                                  selectedValue={this.state.selected2}
-                                  onValueChange=""
-                                >
-                                  <Picker.Item label="Selct Discount Mode" />
-                                  <Picker.Item label="$" value="$" />
-                                  <Picker.Item label="%" value="%" />
-                                </Picker>
-                              </Right>
-                            </View>
-                          </CardItem>
-                          <CardItem>
-                            <View
-                              style={{
-                                flexDirection: "row"
-                                //justifyContent: "space-around"
-                              }}
-                            >
-                              <Left>
-                                <Text>Discount Value</Text>
-                              </Left>
-                              <Right>
-                                <Picker
-                                  mode="dropdown"
-                                  style={{ width: 200, height: 44 }}
-                                  itemStyle={{ height: 44 }}
-                                  selectedValue={this.state.selected2}
-                                  onValueChange=""
-                                >
-                                  <Picker.Item
-                                    label="Select your Discount Value"
-                                    value=""
-                                  />
-                                  <Picker.Item label="0" value="0" />
-                                  <Picker.Item label="5" value="5" />
-                                  <Picker.Item label="10" value="10" />
-                                  <Picker.Item label="15" value="15" />
-                                  <Picker.Item label="20" value="20" />
-                                  <Picker.Item label="25" value="25" />
-                                  <Picker.Item label="30" value="30" />
-                                </Picker>
-                              </Right>
-                            </View>
-                          </CardItem>
-                        </View>
-                      )}
+                        </Button>
+                        <Button style={{ margin: 5 }} onPress={() => {this.discountEnable('p',itm.ItemID)}}>
+                          <Icon
+                            name="percent"
+                            type="FontAwesome"
+                            style={{ color: "#55e6f6" }}
+                          />
+                        </Button>
+                        <TextInput
+                          autoCapitalize="sentences"
+                          value={this.state.selDiscountVal}
+                          onChangeText={(txtVal) => {this.discountTextChange(txtVal,itm.ItemID)}}
+                          placeholder="Discount"
+                          style={{
+                            width: 50,
+                            height: 30,
+                            borderLeftWidth: 1,
+                            borderRightWidth: 1,
+                            margin: 5
+                          }}
+                          keyboardType="numeric"
+                          returnKeyType="done"
+                          onSubmitEditing={Keyboard.dismiss}
+                          autoCapitalize="sentences"
+                        />
+                      </View>
+                      {/* </CardItem> */}
                       <CardItem bordered>
                         <View style={commonStyles.row}>
                           <View style={commonStyles.column}>

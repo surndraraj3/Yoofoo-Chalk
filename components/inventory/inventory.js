@@ -31,6 +31,7 @@ import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 export default class Inventory extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -45,13 +46,17 @@ export default class Inventory extends React.Component {
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
   componentDidMount = async () => {
-    await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
-      resLoginDtls = JSON.parse(resLoginDtls);
-      this.setState({
-        distributorId: resLoginDtls.DistributorID,
-        authToken: resLoginDtls.Token
+    this._isMounted = true;
+    if (this._isMounted) {
+      await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
+        resLoginDtls = JSON.parse(resLoginDtls);
+
+        this.setState({
+          distributorId: resLoginDtls.DistributorID,
+          authToken: resLoginDtls.Token
+        });
       });
-    });
+    }
     //Get Inventory List
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -64,17 +69,22 @@ export default class Inventory extends React.Component {
       .then(response => response.json())
       .then(responseJson => {
         //console.log(responseJson);
-        this.setState({
-          inventoryList: responseJson,
-          inventoryCount: responseJson.length
-        });
-        this.setState({ loading: false });
+        if (this._isMounted) {
+          this.setState({
+            inventoryList: responseJson,
+            inventoryCount: responseJson.length
+          });
+          this.setState({ loading: false });
+        }
       })
       .catch(error => {
         console.error(error);
-        this.setState({ loading: false });
+        if (this._isMounted) this.setState({ loading: false });
       });
   };
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
   // Loading Spinner
   renderLoading() {
     if (this.state.loading) {
@@ -98,7 +108,7 @@ export default class Inventory extends React.Component {
     }
   }
   //Search the inventory based on keyword match
-  onSearchInventory = txtInventoryFld => {    
+  onSearchInventory = txtInventoryFld => {
     const rsSrchInvtry = this.state.inventoryList.filter(
       k =>
         k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
@@ -128,13 +138,13 @@ export default class Inventory extends React.Component {
       >
         {/* <Icon name="shopping-cart" type="FontAwesome" style={{ fontSize:30}}/> */}
         <ImageBackground
-              resizeMode={"stretch"} // or cover
-              style={{
-                height: '100%',
-                width: '100%'
-              }}
-              source={require("../../assets/cart.png")}
-            />
+          resizeMode={"stretch"} // or cover
+          style={{
+            height: "100%",
+            width: "100%"
+          }}
+          source={require("../../assets/cart.png")}
+        />
       </Fab>
     );
   }
@@ -143,7 +153,7 @@ export default class Inventory extends React.Component {
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -155,7 +165,10 @@ export default class Inventory extends React.Component {
             <Title>Inventory</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
             <Button transparent>
