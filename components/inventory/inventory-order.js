@@ -59,23 +59,23 @@ export default class InventoryOrder extends React.Component {
       invDiscountVal: this.props.navigation.getParam("discountValue"),
       invDiscountItemIdVal: this.props.navigation.getParam("discountItem"),
       selected2: "",
-      valDiscountSwitch: false
+      valDiscountSwitch: false,
+      valDiscount: 0
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
   componentDidMount = async () => {
     this._isMounted = true;
-    if(this._isMounted) {
+    if (this._isMounted) {
       await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
         resLoginDtls = JSON.parse(resLoginDtls);
-        
-          this.setState({
-            distributorId: resLoginDtls.DistributorID,
-            authToken: resLoginDtls.Token
-          });
-          
+
+        this.setState({
+          distributorId: resLoginDtls.DistributorID,
+          authToken: resLoginDtls.Token
+        });
       });
-    }    
+    }
     //Get Inventory List data
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -88,24 +88,27 @@ export default class InventoryOrder extends React.Component {
       .then(response => response.json())
       .then(responseJson => {
         //console.log(responseJson);
-        if(this._isMounted) {
+        if (this._isMounted) {
           this.setState({
             inventoryList: responseJson,
             inventoryCount: responseJson.length
           });
           this.state.inventoryList.map(v => {
-            (v.incVal = 0), (v.selectItem = false), (v.discountVal = 0), (v.discountType = '')
+            (v.incVal = 0),
+              (v.selectItem = false),
+              (v.discountVal = 0),
+              (v.discountType = "");
           });
-          
+
           this.setState({ loading: false });
-        }        
+        }
       })
       .catch(error => {
         console.error(error);
-        if(this._isMounted) this.setState({ loading: false });
+        if (this._isMounted) this.setState({ loading: false });
       });
   };
-  componentWillUnmount(){
+  componentWillUnmount() {
     this._isMounted = false;
   }
   // Loading Spinner
@@ -223,23 +226,29 @@ export default class InventoryOrder extends React.Component {
   };
   // Enable the functionality of discount
   discountEnable = (discountMode, itmId) => {
-    console.log('Mode', discountMode, 'Item Id', itmId);
+    console.log("Mode", discountMode, "Item Id", itmId);
     const discounRes = this.state.inventoryList.filter(v => v.ItemID === itmId);
-    discounRes.map(
-      v => ((v.discountType = discountMode))
-    );
-    console.log('Mode Res', discounRes);
-    this.state.inventoryList.push(discounRes);
+    discounRes.map(v => {
+      v.discountType = discountMode;
+      this.state.inventoryList.push(discounRes);
+    });
+    //console.log("Mode Res", discounRes);
   };
   // Discount Change text
-  discountTextChange = (discountVal, id) => {
-    console.log('A', discountVal, '----', id);
-    const fltrItemId = this.state.inventoryList.filter(v => v.ItemID === id);
-    fltrItemId.map(f => ( f.discountVal = discountVal));
-    //
-    console.log('Discount Res', fltrItemId);
-    this.state.inventoryList.push(fltrItemId);
-  }
+  discountTextChange = (discountVal, id) => {    
+    const fltrItemId = this.state.inventoryList.filter(v => v.ItemID === id);    
+    fltrItemId.map(c => {
+        fltrItemId.map(
+          v => ((v.discountVal = discountVal))
+        );
+        fltrItemId.discountVal = this.setState({
+          valDiscount: discountVal
+        });
+        this.state.inventoryList.push(fltrItemId);
+      // }
+    });
+    //console.log("Discount Res", fltrItemId);    
+  };
 
   render() {
     const { navigation } = this.props;
@@ -325,14 +334,24 @@ export default class InventoryOrder extends React.Component {
                         <Left>
                           <Text>Discount</Text>
                         </Left>
-                        <Button style={{ margin: 5 }} onPress={() => {this.discountEnable('d',itm.ItemID)}}>
+                        <Button
+                          style={{ margin: 5 }}
+                          onPress={() => {
+                            this.discountEnable("d", itm.ItemID);
+                          }}
+                        >
                           <Icon
                             name="dollar"
                             type="FontAwesome"
                             style={{ color: "#55e6f6" }}
                           />
                         </Button>
-                        <Button style={{ margin: 5 }} onPress={() => {this.discountEnable('p',itm.ItemID)}}>
+                        <Button
+                          style={{ margin: 5 }}
+                          onPress={() => {
+                            this.discountEnable("p", itm.ItemID);
+                          }}
+                        >
                           <Icon
                             name="percent"
                             type="FontAwesome"
@@ -342,7 +361,9 @@ export default class InventoryOrder extends React.Component {
                         <TextInput
                           autoCapitalize="sentences"
                           value={this.state.selDiscountVal}
-                          onChangeText={(txtVal) => {this.discountTextChange(txtVal,itm.ItemID)}}
+                          onChangeText={txtVal => {
+                            this.discountTextChange(txtVal, itm.ItemID);
+                          }}
                           placeholder="Discount"
                           style={{
                             width: 50,

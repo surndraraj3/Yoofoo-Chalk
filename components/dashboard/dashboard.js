@@ -9,6 +9,7 @@ import {
   Image
 } from "react-native";
 import { createDrawerNavigator, DrawerItems, DrawerNavigator } from "react-navigation";
+import Login from '../login/login';
 import Home from "../common/home";
 import Orders from "../orders/orders";
 import CustomerProfile from "../customers/profile";
@@ -114,13 +115,13 @@ const AppDrawerNavigator = createDrawerNavigator(
       navigationOptions: {
         drawerLabel: () => null
       }
+    },
+    Login: {
+      screen: Login,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
     }
-    // Login: {
-    //   screen: Login,
-    //   navigationOptions: {
-    //     drawerLabel: () => null
-    //   }
-    // }
   },
   {
     contentComponent: customDrawComponent

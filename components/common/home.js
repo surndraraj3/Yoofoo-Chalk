@@ -70,7 +70,7 @@ export default class Home extends React.Component {
     this.props.navigation.navigate("HelpScreen");
   };
   goToSignout = () => {
-    console.log("Signout");
+    this.props.navigation.navigate("Login");
   };
   render() {
     return (
@@ -117,12 +117,11 @@ export default class Home extends React.Component {
                   />
                 }
                 destructiveIndex={1}
-                options={["Profile", "Settings", "Help", "Signout", "Cancel"]}
+                options={["Profile", "Settings", "Help", "Signout"]}
                 actions={[
                   this.gotoProfile,
                   this.goToSettings,
                   this.goToHelp,
-                  this.goToSignout,
                   this.goToSignout
                 ]}
               />
