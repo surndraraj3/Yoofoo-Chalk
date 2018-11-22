@@ -60,7 +60,8 @@ export default class InventoryOrder extends React.Component {
       invDiscountItemIdVal: this.props.navigation.getParam("discountItem"),
       selected2: "",
       valDiscountSwitch: false,
-      valDiscount: 0
+      valDiscount: 0,
+      valDiscountType: ""
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -226,28 +227,68 @@ export default class InventoryOrder extends React.Component {
   };
   // Enable the functionality of discount
   discountEnable = (discountMode, itmId) => {
-    console.log("Mode", discountMode, "Item Id", itmId);
+    //console.log("Mode", discountMode, "Item Id", itmId);
     const discounRes = this.state.inventoryList.filter(v => v.ItemID === itmId);
     discounRes.map(v => {
       v.discountType = discountMode;
+      discounRes.discountType = this.setState({
+        valDiscountType: v.discountType
+      });
       this.state.inventoryList.push(discounRes);
     });
     //console.log("Mode Res", discounRes);
   };
   // Discount Change text
-  discountTextChange = (discountVal, id) => {    
-    const fltrItemId = this.state.inventoryList.filter(v => v.ItemID === id);    
+  discountTextChange = (discountVal, id) => {
+    const fltrItemId = this.state.inventoryList.filter(v => v.ItemID === id);
     fltrItemId.map(c => {
-        fltrItemId.map(
-          v => ((v.discountVal = discountVal))
+      //console.log(c.discountType, 'Discount Mode');
+      if (c.discountType === "") {
+        Toast.showWithGravity(
+          "Select discount mode",
+          Toast.SHORT,
+          Toast.CENTER
         );
-        fltrItemId.discountVal = this.setState({
-          valDiscount: discountVal
-        });
-        this.state.inventoryList.push(fltrItemId);
+        c.discountVal = 0;
+      }
+      // Check Percentage Value Condition
+      if (c.discountType === "p") {
+        if (discountVal >= 100.0) {
+          //console.log('');
+          Toast.showWithGravity(
+            "Max Discount value reached",
+            Toast.SHORT,
+            Toast.CENTER
+          );
+          c.discountVal = 100;
+        } else {
+          //console.log('Discount applicable');
+          c.discountVal = discountVal;
+        }
+      }
+      // Check Discount Value Condition
+      if (c.discountType === "d") {
+        if (discountVal >= c.Price) {
+          //console.log('Max Discount Dollar reached');
+          c.discountVal = c.Price;
+          Toast.showWithGravity(
+            "Max Discount Dollar reached",
+            Toast.SHORT,
+            Toast.CENTER
+          );
+        } else {
+          console.log("Discount applicable");
+          c.discountVal = discountVal;
+        }
+      }
+
+      fltrItemId.discountVal = this.setState({
+        valDiscount: discountVal
+      });
+      this.state.inventoryList.push(fltrItemId);
       // }
     });
-    //console.log("Discount Res", fltrItemId);    
+    //console.log("Discount Res", fltrItemId);
   };
 
   render() {
@@ -257,7 +298,7 @@ export default class InventoryOrder extends React.Component {
       "customerDistributorId",
       "CUSTOMER_DIST_ID"
     );
-    console.log("ID", cstmrId, cstmrDistributorId);
+    // console.log("ID", cstmrId, cstmrDistributorId);
     return (
       <Container>
         <View style={{ padding: 10 }} />
