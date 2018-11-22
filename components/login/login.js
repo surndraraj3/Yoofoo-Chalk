@@ -18,6 +18,7 @@ import {
   Text
 } from "native-base";
 import commonStyles from "../styles/styles";
+import { NavigationActions} from 'react-navigation'
 import { baseURL } from "../common/url_config";
 
 export default class Login extends React.Component {
@@ -32,9 +33,10 @@ export default class Login extends React.Component {
       distributorId: "",
       searchInput: "",
       clearInput: false,
-      clearInputPass: false
+      clearInputPass: false,
+      handleLogOut: this.props.navigation.getParam("logout")
     };
-  }
+  }  
   //Get the username from the textbox onchange
   handleUsername = txtUserName => {
     this.setState({ userName: txtUserName });
@@ -64,7 +66,7 @@ export default class Login extends React.Component {
           loginData: responseJson
         });
         if (responseJson.message === "Success") {
-          this.setState({ spinnerStatus: false });
+          this.setState({ spinnerStatus: false });         
           this.props.navigation.navigate("Dashboard");
           AsyncStorage.setItem(
             "LoginDetails",

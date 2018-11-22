@@ -9,7 +9,8 @@ import ReactNative, {
   TouchableOpacity,
   TouchableHighlight,
   Platform,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import {
   Container,
@@ -23,6 +24,7 @@ import {
   Content,
   Fab
 } from "native-base";
+import App from '../../App'
 import OptionsMenu from "react-native-options-menu";
 import commonStyles from "../styles/styles";
 
@@ -69,7 +71,8 @@ export default class Home extends React.Component {
   goToHelp = () => {
     this.props.navigation.navigate("HelpScreen");
   };
-  goToSignout = () => {
+  goToSignout = () => {    
+    AsyncStorage.removeItem("LoginDetails");
     this.props.navigation.navigate("Login");
   };
   render() {

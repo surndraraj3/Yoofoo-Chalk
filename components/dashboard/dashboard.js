@@ -110,6 +110,12 @@ const AppDrawerNavigator = createDrawerNavigator(
         drawerLabel: () => null
       }
     },
+    Dashboard: {
+      screen: Dashboard,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
     Checkout: {
       screen: Checkout,
       navigationOptions: {
