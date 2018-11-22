@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Dimensions } from "react-native";
+import { View, Dimensions, AsyncStorage, Keyboard } from "react-native";
 import {
   Container,
   Content,
@@ -16,34 +16,85 @@ import {
   Card,
   CardItem
 } from "native-base";
+import Toast from "react-native-simple-toast";
+import { zipCodeUrl } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 const deviceWidth = Dimensions.get("window").width;
 export default class Settings extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
-      errorZipCode: false
+      errorZipCode: false,
+      distributorId: "",
+      authToken: "",
+      txtZipCode: 0
     };
   }
+  componentDidMount() {
+    this._isMounted = true;
+    this.loadDistributorDtls();
+  }
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  //Get Distributor ID from login response
+  loadDistributorDtls = async () => {
+    //console.log("Welcome to load login details");
+    await AsyncStorage.getItem("LoginDetails").then(responseJson => {
+      responseJson = JSON.parse(responseJson);
+      if (this._isMounted) {
+        this.setState({
+          distributorId: responseJson.DistributorID,
+          authToken: responseJson.Token
+        });
+      }
+    });
+  };
   handleZipCode = valZipCode => {
-    // console.log(`${valZipCode}`, '----', valZipCode.length);
-    if (valZipCode.length === 5) {
-      this.props.navigation.navigate("Home");
+    this.setState({ txtZipCode: valZipCode });
+  };
+  //Validate Zip Code
+  validateZipCode = () => {
+    // console.log("Welcome Zip", this.state.txtZipCode);
+    if (this.state.txtZipCode !== 0) {
+      fetch(`${zipCodeUrl}${this.state.txtZipCode}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.state.authToken}`
+        }
+      })
+        .then(zipCodeResponse => zipCodeResponse.json())
+        .then(zipCodeResponseJson => {
+          // console.log("Zip Validation", zipCodeResponseJson.ZipCode.Zip5);
+          {
+            zipCodeResponseJson.ZipCode.Zip5 === null
+              ? Toast.showWithGravity(
+                  "Invalid Zip code",
+                  Toast.SHORT,
+                  Toast.CENTER
+                )
+              : this.props.navigation.navigate("Home");
+          }
+        })
+        .catch(errZipValidation => {
+          throw errZipValidation;
+        });
     } else {
-      this.setState({ errorZipCode: true });
+      Toast.showWithGravity("Enter Zip Code", Toast.SHORT, Toast.CENTER);
     }
   };
+
   render() {
     return (
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
           <Left style={{ flex: 1 }}>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate("Home")}
-            >
+            <Button transparent onPress={this.validateZipCode}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
@@ -51,10 +102,7 @@ export default class Settings extends React.Component {
             <Title>Settings</Title>
           </Body>
           <Right>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate("Home")}
-            >
+            <Button transparent onPress={this.validateZipCode}>
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -67,25 +115,29 @@ export default class Settings extends React.Component {
             <CardItem header bordered>
               <Text>Settings</Text>
             </CardItem>
-            <CardItem>              
-                <Left>
-                  <Label>Build Number</Label>
-                </Left>
-                <Right>
-                  <Text>11/16/2018</Text>
-                </Right>
+            <CardItem>
+              <Left>
+                <Label>Build Number</Label>
+              </Left>
+              <Right>
+                <Text>11/22/2018</Text>
+              </Right>
             </CardItem>
             <CardItem>
-                <Left>
-                  <Label>Default Zip</Label>
-                </Left>
-                <Right>
-                  <Input
-                    placeholder="84106"
-                    onChangeText={this.handleZipCode}
-                  />
-                </Right>
-                {/* <Right><Input placeholder="84106" onChangeText={this.handleZipCode} /></Right>  */}              
+              <Left>
+                <Label>Default Zip</Label>
+              </Left>
+              <Right>
+                <Input
+                  placeholder="84106"
+                  onChangeText={this.handleZipCode}
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  onSubmitEditing={Keyboard.dismiss}
+                  blurOnSubmit={false}
+                />
+              </Right>
+              {/* <Right><Input placeholder="84106" onChangeText={this.handleZipCode} /></Right>  */}
             </CardItem>
             {this.state.errorZipCode && (
               <Label style={commonStyles.errorMsg}>Incorrect Zip Code</Label>

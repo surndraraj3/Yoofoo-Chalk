@@ -20,3 +20,6 @@ export const getInvoiceDetailsByOrderIdUrl = 'http://ccapiorderservice-dev.us-we
 
 //Post caluclating orders
 export const calculateAddOrdersUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/CalculateOrder/'
+
+//Zip Code Validation Url
+export const zipCodeUrl = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/ValidateZip/';
