@@ -250,6 +250,7 @@ export default class InventoryOrder extends React.Component {
           Toast.CENTER
         );
         c.discountVal = 0;
+        c.Discount = 0;
       }
       // Check Percentage Value Condition
       if (c.discountType === "p") {
@@ -261,6 +262,7 @@ export default class InventoryOrder extends React.Component {
             Toast.CENTER
           );
           c.discountVal = 100;
+          c.Discount = 100;
         } else {
           //console.log('Discount applicable');
           c.discountVal = discountVal;
@@ -271,6 +273,7 @@ export default class InventoryOrder extends React.Component {
         if (discountVal >= c.Price) {
           //console.log('Max Discount Dollar reached');
           c.discountVal = c.Price;
+          c.Discount = c.Price;
           Toast.showWithGravity(
             "Max Discount Dollar reached",
             Toast.SHORT,
@@ -279,6 +282,7 @@ export default class InventoryOrder extends React.Component {
         } else {
           console.log("Discount applicable");
           c.discountVal = discountVal;
+          c.Discount = discountVal;
         }
       }
 

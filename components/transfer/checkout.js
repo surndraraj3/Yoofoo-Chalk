@@ -87,6 +87,7 @@ export default class Checkout extends React.Component {
     this.state.getOrdesFromCart.map(itmVal => {
       console.log("Before Quantity", itmVal.Quantity);
       itmVal.Quantity = itmVal.incVal;
+      itmVal.Discount = itmVal.discountVal;
       console.log("After Quantity", itmVal.Quantity);
     });
     console.log("Final Composure Data", this.state.getOrdesFromCart);
@@ -175,7 +176,7 @@ export default class Checkout extends React.Component {
     }
   };
   render() {
-    //console.log("Orders Calc", this.state.getCalculatedOrders);
+    console.log("Orders Calc", this.state.getOrdesFromCart);
     //console.log('Cal', this.state.getCalculatedOrders);
     return (
       <Container>

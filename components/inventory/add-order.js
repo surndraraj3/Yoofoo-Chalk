@@ -55,7 +55,7 @@ export default class AddInventoryOrder extends React.Component {
       (v.OrderID = ""),
         (v.DesignerID = this.state.distributorId),
         (v.CustomerID = this.state.getCustomerId),
-        (v.Discount = 20);
+        (v.Discount = 0);
     });
   };
 
@@ -221,7 +221,7 @@ export default class AddInventoryOrder extends React.Component {
                                 <Text>Discount </Text>
                               </Left>
                               <Right>
-                                <Text>20%</Text>
+                                <Text>{reviewItmLst.Discount}</Text>
                               </Right>
                             </View>
                             <View style={commonStyles.nestedRow}>
