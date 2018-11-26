@@ -9,7 +9,8 @@ import {
   AsyncStorage,
   TouchableOpacity,
   TouchableHighlight,
-  Dimensions
+  Dimensions,
+  Image
 } from "react-native";
 import {
   Container,
@@ -427,11 +428,19 @@ export default class InventoryOrder extends React.Component {
                       <CardItem bordered>
                         <View style={commonStyles.row}>
                           <View style={commonStyles.column}>
-                            <Icon
+                            {/* <Icon
                               active
                               name="birthday-cake"
                               type="FontAwesome"
                               style={{ color: "#ff6666" }}
+                            /> */}
+                            <Image
+                              source={{ uri: `${itm.SmallPicture}` }}
+                              style={{
+                                height: 60,
+                                width: "100%"
+                                // borderRadius: 40 / 2
+                              }}
                             />
                           </View>
                           <View style={commonStyles.column}>
@@ -441,14 +450,14 @@ export default class InventoryOrder extends React.Component {
                             </View>
                             <View style={commonStyles.nestedRow}>
                               <TouchableHighlight
-                                onPress={() => {
-                                  this.props.navigation.navigate(
-                                    "InventoryOrderDiscount",
-                                    {
-                                      inventoryItemId: itm.ItemID
-                                    }
-                                  );
-                                }}
+                                // onPress={() => {
+                                //   this.props.navigation.navigate(
+                                //     "InventoryOrderDiscount",
+                                //     {
+                                //       inventoryItemId: itm.ItemID
+                                //     }
+                                //   );
+                                // }}
                               >
                                 <Text> Discount </Text>
                               </TouchableHighlight>
@@ -521,14 +530,80 @@ export default class InventoryOrder extends React.Component {
                             {srchInvOrdrItm.Description}
                           </Text>
                         </CardItem>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between"
+                          }}
+                        >
+                          <Left>
+                            <Text>Discount</Text>
+                          </Left>
+                          <Button
+                            style={{ margin: 5 }}
+                            onPress={() => {
+                              this.discountEnable("d", srchInvOrdrItm.ItemID);
+                            }}
+                          >
+                            <Icon
+                              name="dollar"
+                              type="FontAwesome"
+                              style={{ color: "#55e6f6" }}
+                            />
+                          </Button>
+                          <Button
+                            style={{ margin: 5 }}
+                            onPress={() => {
+                              this.discountEnable("p", srchInvOrdrItm.ItemID);
+                            }}
+                          >
+                            <Icon
+                              name="percent"
+                              type="FontAwesome"
+                              style={{ color: "#55e6f6" }}
+                            />
+                          </Button>
+                          <TextInput
+                            autoCapitalize="sentences"
+                            value={this.state.selDiscountVal}
+                            onChangeText={txtVal => {
+                              this.discountTextChange(
+                                txtVal,
+                                srchInvOrdrItm.ItemID
+                              );
+                            }}
+                            placeholder="Discount"
+                            style={{
+                              width: 50,
+                              height: 30,
+                              borderLeftWidth: 1,
+                              borderRightWidth: 1,
+                              margin: 5
+                            }}
+                            keyboardType="numeric"
+                            returnKeyType="done"
+                            onSubmitEditing={Keyboard.dismiss}
+                            autoCapitalize="sentences"
+                          />
+                        </View>
                         <CardItem bordered>
                           <View style={commonStyles.row}>
                             <View style={commonStyles.column}>
-                              <Icon
+                              {/* <Icon
                                 active
                                 name="birthday-cake"
                                 type="FontAwesome"
                                 style={{ color: "#ff6666" }}
+                              /> */}
+                              <Image
+                                source={{
+                                  uri: `${srchInvOrdrItm.SmallPicture}`
+                                }}
+                                style={{
+                                  height: 60,
+                                  width: "100%"
+                                  // borderRadius: 40 / 2
+                                }}
                               />
                             </View>
                             <View style={commonStyles.column}>
@@ -538,11 +613,11 @@ export default class InventoryOrder extends React.Component {
                               </View>
                               <View style={commonStyles.nestedRow}>
                                 <TouchableHighlight
-                                  onPress={() => {
-                                    this.props.navigation.navigate(
-                                      "InventoryOrderDiscount"
-                                    );
-                                  }}
+                                  // onPress={() => {
+                                  //   this.props.navigation.navigate(
+                                  //     "InventoryOrderDiscount"
+                                  //   );
+                                  // }}
                                 >
                                   <Text> Discount </Text>
                                 </TouchableHighlight>

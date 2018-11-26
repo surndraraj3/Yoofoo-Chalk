@@ -4,7 +4,7 @@ import {
   View,
   ActivityIndicator,
   ScrollView,
-  TextInput,
+  Image,
   AsyncStorage,
   TouchableHighlight,
   ImageBackground
@@ -207,11 +207,19 @@ export default class Inventory extends React.Component {
                       <CardItem bordered>
                         <View style={commonStyles.row}>
                           <View style={commonStyles.column}>
-                            <Icon
+                            {/* <Icon
                               active
                               name="birthday-cake"
                               type="FontAwesome"
                               style={{ color: "#ff6666" }}
+                            /> */}
+                            <Image
+                              source={{uri: `${itm.SmallPicture}`}}
+                              style={{
+                                height: 60,
+                                width: '100%',
+                                // borderRadius: 40 / 2
+                              }}
                             />
                           </View>
                           <View style={commonStyles.column}>
@@ -242,11 +250,19 @@ export default class Inventory extends React.Component {
                       <CardItem bordered>
                         <View style={commonStyles.row}>
                           <View style={commonStyles.column}>
-                            <Icon
+                            {/* <Icon
                               active
                               name="birthday-cake"
                               type="FontAwesome"
                               style={{ color: "#ff6666" }}
+                            /> */}
+                            <Image
+                              source={{uri: `${srchItm.SmallPicture}`}}
+                              style={{
+                                height: 60,
+                                width: '100%',
+                                // borderRadius: 40 / 2
+                              }}
                             />
                           </View>
                           <View style={commonStyles.column}>
