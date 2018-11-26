@@ -62,7 +62,9 @@ export default class InventoryOrder extends React.Component {
       selected2: "",
       valDiscountSwitch: false,
       valDiscount: 0,
-      valDiscountType: ""
+      valDiscountType: "",
+      btnDollarDiscount: false,
+      btnPercentDiscount: false
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -99,7 +101,9 @@ export default class InventoryOrder extends React.Component {
             (v.incVal = 0),
               (v.selectItem = false),
               (v.discountVal = 0),
-              (v.discountType = "");
+              (v.discountType = ""),
+              (v.btnDollarDiscountVal = false),
+              (v.btnPercentDiscountVal = false)
           });
 
           this.setState({ loading: false });
@@ -235,6 +239,16 @@ export default class InventoryOrder extends React.Component {
       discounRes.discountType = this.setState({
         valDiscountType: v.discountType
       });
+      if(discountMode === 'd') { 
+        v.btnDollarDiscountVal = true;
+        v.btnPercentDiscountVal = false;
+        this.setState({ btnDollarDiscount: true, btnPercentDiscount: false});
+      }
+      if(discountMode === 'p') {
+        v.btnDollarDiscountVal = false;
+        v.btnPercentDiscountVal = true;
+        this.setState({ btnDollarDiscount: false, btnPercentDiscount: true});
+      }
       this.state.inventoryList.push(discounRes);
     });
     //console.log("Mode Res", discounRes);
@@ -385,6 +399,7 @@ export default class InventoryOrder extends React.Component {
                           onPress={() => {
                             this.discountEnable("d", itm.ItemID);
                           }}
+                          disabled={itm.btnDollarDiscountVal}
                         >
                           <Icon
                             name="dollar"
@@ -397,6 +412,7 @@ export default class InventoryOrder extends React.Component {
                           onPress={() => {
                             this.discountEnable("p", itm.ItemID);
                           }}
+                          disabled={itm.btnPercentDiscountVal}
                         >
                           <Icon
                             name="percent"
@@ -461,7 +477,7 @@ export default class InventoryOrder extends React.Component {
                               >
                                 <Text> Discount </Text>
                               </TouchableHighlight>
-                              <Text>{itm.discountVal} %</Text>
+                              <Text>{itm.discountVal}</Text>{itm.discountType === 'd' ? <Text>{"\u0024"}</Text> : <Text>%</Text>}
                             </View>
                             <View style={commonStyles.nestedRow}>
                               <Text>Msrp </Text>
@@ -480,7 +496,7 @@ export default class InventoryOrder extends React.Component {
                           </View>
                           <View style={commonStyles.column}>
                             <Right>
-                              <TouchableOpacity
+                              <TouchableHighlight
                                 onPress={() =>
                                   this.incrementOrder(itm.ItemID, itm.Quantity)
                                 }
@@ -490,12 +506,12 @@ export default class InventoryOrder extends React.Component {
                                   type="FontAwesome"
                                   style={{ color: "#f50" }}
                                 />
-                              </TouchableOpacity>
+                              </TouchableHighlight>
 
                               <Text style={{ fontWeight: "bold" }}>
                                 {itm.incVal}
                               </Text>
-                              <TouchableOpacity
+                              <TouchableHighlight
                                 onPress={() =>
                                   this.decCounter(itm.ItemID, itm.Quantity)
                                 }
@@ -505,7 +521,7 @@ export default class InventoryOrder extends React.Component {
                                   type="FontAwesome"
                                   style={{ color: "#f50" }}
                                 />
-                              </TouchableOpacity>
+                              </TouchableHighlight>
                             </Right>
                           </View>
                         </View>
@@ -544,6 +560,7 @@ export default class InventoryOrder extends React.Component {
                             onPress={() => {
                               this.discountEnable("d", srchInvOrdrItm.ItemID);
                             }}
+                            disabled={srchInvOrdrItm.btnDollarDiscountVal}
                           >
                             <Icon
                               name="dollar"
@@ -556,6 +573,7 @@ export default class InventoryOrder extends React.Component {
                             onPress={() => {
                               this.discountEnable("p", srchInvOrdrItm.ItemID);
                             }}
+                            disabled={srchInvOrdrItm.btnPercentDiscountVal}
                           >
                             <Icon
                               name="percent"
@@ -640,7 +658,7 @@ export default class InventoryOrder extends React.Component {
                             </View>
                             <View style={commonStyles.column}>
                               <Right>
-                                <TouchableOpacity
+                                <TouchableHighlight
                                   onPress={() =>
                                     this.incrementOrder(
                                       srchInvOrdrItm.ItemID,
@@ -653,12 +671,12 @@ export default class InventoryOrder extends React.Component {
                                     type="FontAwesome"
                                     style={{ color: "#f50" }}
                                   />
-                                </TouchableOpacity>
+                                </TouchableHighlight>
 
                                 <Text style={{ fontWeight: "bold" }}>
                                   {srchInvOrdrItm.incVal}
                                 </Text>
-                                <TouchableOpacity
+                                <TouchableHighlight
                                   onPress={() =>
                                     this.decCounter(
                                       srchInvOrdrItm.ItemID,
@@ -671,7 +689,7 @@ export default class InventoryOrder extends React.Component {
                                     type="FontAwesome"
                                     style={{ color: "#f50" }}
                                   />
-                                </TouchableOpacity>
+                                </TouchableHighlight>
                               </Right>
                             </View>
                           </View>

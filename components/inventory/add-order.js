@@ -221,7 +221,7 @@ export default class AddInventoryOrder extends React.Component {
                                 <Text>Discount </Text>
                               </Left>
                               <Right>
-                                <Text>{reviewItmLst.Discount}</Text>
+                                <Text>{reviewItmLst.discountVal}</Text>
                               </Right>
                             </View>
                             <View style={commonStyles.nestedRow}>
