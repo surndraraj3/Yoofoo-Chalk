@@ -25,7 +25,8 @@ export default class CustomerProfile extends React.Component {
       customerProfileData: "",
       loading: true,
       distributorId: "",
-      authToken:""
+      authToken:"",
+      zipCode: ""
     };
   }
   componentDidMount = async () => {   
@@ -34,7 +35,7 @@ export default class CustomerProfile extends React.Component {
     .then(responseJson => {
       responseJson = JSON.parse(responseJson);
       // console.log(responseJson.message, responseJson.DistributorID);
-      this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token })
+      this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token, zipCode: responseJson.ZipCode })
     }) 
     // console.log(`${custPrflURL}${this.state.distributorId}`);
     fetch(`${custPrflURL}${this.state.distributorId}`, {
@@ -138,6 +139,12 @@ export default class CustomerProfile extends React.Component {
             <Item>
               <Text style={{ padding: 10 }}>
                 {this.state.customerProfileData.emailField}
+              </Text>
+            </Item>
+            <Label style={commonStyles.labelPos}>Zip</Label>
+            <Item>
+              <Text style={{ padding: 10 }}>
+                {this.state.zipCode}
               </Text>
             </Item>
             {/* <View style={commonStyles.buttonCommonMargin}>

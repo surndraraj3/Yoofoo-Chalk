@@ -29,7 +29,9 @@ export default class Settings extends React.Component {
       errorZipCode: false,
       distributorId: "",
       authToken: "",
-      txtZipCode: 0
+      txtZipCode: 0,
+      distributorZipCode: "",
+      clearInput: false
     };
   }
   componentDidMount() {
@@ -47,19 +49,21 @@ export default class Settings extends React.Component {
       if (this._isMounted) {
         this.setState({
           distributorId: responseJson.DistributorID,
-          authToken: responseJson.Token
+          authToken: responseJson.Token,
+          distributorZipCode: responseJson.ZipCode
         });
       }
     });
   };
   handleZipCode = valZipCode => {
-    this.setState({ txtZipCode: valZipCode });
+    //console.log('valZipCode', valZipCode);
+    this.setState({ distributorZipCode: valZipCode });
   };
   //Validate Zip Code
   validateZipCode = () => {
-    // console.log("Welcome Zip", this.state.txtZipCode);
-    if (this.state.txtZipCode !== 0) {
-      fetch(`${zipCodeUrl}${this.state.txtZipCode}`, {
+    //console.log("Welcome Zip", this.state.distributorZipCode);
+    if (this.state.distributorZipCode !== 0) {
+      fetch(`${zipCodeUrl}${this.state.distributorZipCode}`, {
         method: "GET",
         headers: {
           Accept: "application/json",
@@ -129,12 +133,13 @@ export default class Settings extends React.Component {
               </Left>
               <Right>
                 <Input
-                  placeholder="84106"
+                  placeholder=""
                   onChangeText={this.handleZipCode}
                   keyboardType="numeric"
                   returnKeyType="done"
                   onSubmitEditing={Keyboard.dismiss}
                   blurOnSubmit={false}
+                  value = {this.state.distributorZipCode}
                 />
               </Right>
               {/* <Right><Input placeholder="84106" onChangeText={this.handleZipCode} /></Right>  */}
