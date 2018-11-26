@@ -124,7 +124,7 @@ export default class Settings extends React.Component {
                 <Label>Build Number</Label>
               </Left>
               <Right>
-                <Text>11/22/2018</Text>
+                <Text>11/26/2018</Text>
               </Right>
             </CardItem>
             <CardItem>
