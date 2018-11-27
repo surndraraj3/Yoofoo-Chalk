@@ -103,7 +103,7 @@ export default class InventoryOrder extends React.Component {
               (v.discountVal = 0),
               (v.discountType = ""),
               (v.btnDollarDiscountVal = false),
-              (v.btnPercentDiscountVal = false)
+              (v.btnPercentDiscountVal = false);
           });
 
           this.setState({ loading: false });
@@ -143,18 +143,21 @@ export default class InventoryOrder extends React.Component {
   incrementOrder = (id, qty) => {
     const res = this.state.inventoryList.filter(v => v.ItemID === id);
     res.map(c => {
-      console.log("-----", c.incVal, qty);
+      //console.log("-----", c.incVal, qty);
       const incremntVal = c.incVal + 1;
       if (incremntVal > qty) {
         alert("Max Quantity Reached");
       } else {
-        console.log("Lesser Val");
-        res.map(
-          v => ((v.incVal = v.incVal + 1), (v.Quantity = v.Quantity - 1))
-        );
-        res.incVal = this.setState({
-          orderItemCounter: this.state.orderItemCounter + 1
-        });
+        //console.log("Lesser Val");
+        c.incVal = c.incVal + 1;
+        c.Quantity = c.Quantity - 1
+        this.setState({ orderItemCounter: this.state.orderItemCounter + 1})
+        // res.map(
+        //   v => ((v.incVal = v.incVal + 1), (v.Quantity = v.Quantity - 1))
+        // );
+        // res.incVal = this.setState({
+        //   orderItemCounter: this.state.orderItemCounter + 1
+        // });
         this.state.inventoryList.push(res);
       }
     });
@@ -170,12 +173,15 @@ export default class InventoryOrder extends React.Component {
       if (decrementVal < 0) {
         alert(`Can't decrement value`);
       } else {
-        res.map(
-          v => ((v.incVal = v.incVal - 1), (v.Quantity = v.Quantity + 1))
-        );
-        res.incVal = this.setState({
-          orderItemCounter: this.state.orderItemCounter - 1
-        });
+        resp.incVal = resp.incVal - 1;
+        resp.Quantity = resp.Quantity + 1;
+        this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
+        // res.map(
+        //   v => ((v.incVal = v.incVal - 1), (v.Quantity = v.Quantity + 1))
+        // );
+        // res.incVal = this.setState({
+        //   orderItemCounter: this.state.orderItemCounter - 1
+        // });
         this.state.inventoryList.push(res);
       }
     });
@@ -209,7 +215,7 @@ export default class InventoryOrder extends React.Component {
       Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);
     } else {
       this.setState({ addToOrderList: addedOrderToCart });
-      console.log("Added List", addedOrderToCart);
+     // console.log("Added List", addedOrderToCart);
       Toast.showWithGravity(
         "Item has been added to order",
         Toast.LONG,
@@ -239,15 +245,15 @@ export default class InventoryOrder extends React.Component {
       discounRes.discountType = this.setState({
         valDiscountType: v.discountType
       });
-      if(discountMode === 'd') { 
+      if (discountMode === "d") {
         v.btnDollarDiscountVal = true;
         v.btnPercentDiscountVal = false;
-        this.setState({ btnDollarDiscount: true, btnPercentDiscount: false});
+        this.setState({ btnDollarDiscount: true, btnPercentDiscount: false });
       }
-      if(discountMode === 'p') {
+      if (discountMode === "p") {
         v.btnDollarDiscountVal = false;
         v.btnPercentDiscountVal = true;
-        this.setState({ btnDollarDiscount: false, btnPercentDiscount: true});
+        this.setState({ btnDollarDiscount: false, btnPercentDiscount: true });
       }
       this.state.inventoryList.push(discounRes);
     });
@@ -295,7 +301,7 @@ export default class InventoryOrder extends React.Component {
             Toast.CENTER
           );
         } else {
-          console.log("Discount applicable");
+          //console.log("Discount applicable");
           c.discountVal = discountVal;
           c.Discount = discountVal;
         }
@@ -384,63 +390,6 @@ export default class InventoryOrder extends React.Component {
                           {itm.Description}
                         </Text>
                       </CardItem>
-                      {/* <CardItem> */}
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between"
-                        }}
-                      >
-                        <Left>
-                          <Text>Discount</Text>
-                        </Left>
-                        <Button
-                          style={{ margin: 5 }}
-                          onPress={() => {
-                            this.discountEnable("d", itm.ItemID);
-                          }}
-                          disabled={itm.btnDollarDiscountVal}
-                        >
-                          <Icon
-                            name="dollar"
-                            type="FontAwesome"
-                            style={{ color: "#55e6f6" }}
-                          />
-                        </Button>
-                        <Button
-                          style={{ margin: 5 }}
-                          onPress={() => {
-                            this.discountEnable("p", itm.ItemID);
-                          }}
-                          disabled={itm.btnPercentDiscountVal}
-                        >
-                          <Icon
-                            name="percent"
-                            type="FontAwesome"
-                            style={{ color: "#55e6f6" }}
-                          />
-                        </Button>
-                        <TextInput
-                          autoCapitalize="sentences"
-                          value={this.state.selDiscountVal}
-                          onChangeText={txtVal => {
-                            this.discountTextChange(txtVal, itm.ItemID);
-                          }}
-                          placeholder="Discount"
-                          style={{
-                            width: 50,
-                            height: 30,
-                            borderLeftWidth: 1,
-                            borderRightWidth: 1,
-                            margin: 5
-                          }}
-                          keyboardType="numeric"
-                          returnKeyType="done"
-                          onSubmitEditing={Keyboard.dismiss}
-                          autoCapitalize="sentences"
-                        />
-                      </View>
-                      {/* </CardItem> */}
                       <CardItem bordered>
                         <View style={commonStyles.row}>
                           <View style={commonStyles.column}>
@@ -466,18 +415,23 @@ export default class InventoryOrder extends React.Component {
                             </View>
                             <View style={commonStyles.nestedRow}>
                               <TouchableHighlight
-                                // onPress={() => {
-                                //   this.props.navigation.navigate(
-                                //     "InventoryOrderDiscount",
-                                //     {
-                                //       inventoryItemId: itm.ItemID
-                                //     }
-                                //   );
-                                // }}
+                              // onPress={() => {
+                              //   this.props.navigation.navigate(
+                              //     "InventoryOrderDiscount",
+                              //     {
+                              //       inventoryItemId: itm.ItemID
+                              //     }
+                              //   );
+                              // }}
                               >
                                 <Text> Discount </Text>
                               </TouchableHighlight>
-                              <Text>{itm.discountVal}</Text>{itm.discountType === 'd' ? <Text>{"\u0024"}</Text> : <Text>%</Text>}
+                              <Text>{itm.discountVal}</Text>
+                              {itm.discountType === "d" ? (
+                                <Text>{"\u0024"}</Text>
+                              ) : (
+                                <Text>%</Text>
+                              )}
                             </View>
                             <View style={commonStyles.nestedRow}>
                               <Text>Msrp </Text>
@@ -526,6 +480,67 @@ export default class InventoryOrder extends React.Component {
                           </View>
                         </View>
                       </CardItem>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-around"
+                        }}
+                      >
+                        <Text style={{ marginLeft: 5 }}>Discount</Text>
+
+                        <Button
+                          style={
+                            itm.btnDollarDiscountVal
+                              ? { margin: 5 }
+                              : { margin: 5, backgroundColor: "#61d0c8" }
+                          }
+                          onPress={() => {
+                            this.discountEnable("d", itm.ItemID);
+                          }}
+                          disabled={itm.btnDollarDiscountVal}
+                        >
+                          <Icon
+                            name="dollar"
+                            type="FontAwesome"
+                            style={{ color: "#ffffff" }}
+                          />
+                        </Button>
+                        <Button
+                          style={
+                            itm.btnPercentDiscountVal
+                              ? { margin: 5 }
+                              : { margin: 5, backgroundColor: "#61d0c8" }
+                          }
+                          onPress={() => {
+                            this.discountEnable("p", itm.ItemID);
+                          }}
+                          disabled={itm.btnPercentDiscountVal}
+                        >
+                          <Icon
+                            name="percent"
+                            type="FontAwesome"
+                            style={{ color: "#ffffff" }}
+                          />
+                        </Button>
+                        <TextInput
+                          autoCapitalize="sentences"
+                          value={this.state.selDiscountVal}
+                          onChangeText={txtVal => {
+                            this.discountTextChange(txtVal, itm.ItemID);
+                          }}
+                          placeholder="Discount"
+                          style={{
+                            width: 60,
+                            height: 30,
+                            borderWidth: 1,
+                            margin: 5
+                          }}
+                          keyboardType="numeric"
+                          returnKeyType="done"
+                          onSubmitEditing={Keyboard.dismiss}
+                          autoCapitalize="sentences"
+                        />
+                      </View>
                     </Card>
                   </View>
                 ))
@@ -546,64 +561,7 @@ export default class InventoryOrder extends React.Component {
                             {srchInvOrdrItm.Description}
                           </Text>
                         </CardItem>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between"
-                          }}
-                        >
-                          <Left>
-                            <Text>Discount</Text>
-                          </Left>
-                          <Button
-                            style={{ margin: 5 }}
-                            onPress={() => {
-                              this.discountEnable("d", srchInvOrdrItm.ItemID);
-                            }}
-                            disabled={srchInvOrdrItm.btnDollarDiscountVal}
-                          >
-                            <Icon
-                              name="dollar"
-                              type="FontAwesome"
-                              style={{ color: "#55e6f6" }}
-                            />
-                          </Button>
-                          <Button
-                            style={{ margin: 5 }}
-                            onPress={() => {
-                              this.discountEnable("p", srchInvOrdrItm.ItemID);
-                            }}
-                            disabled={srchInvOrdrItm.btnPercentDiscountVal}
-                          >
-                            <Icon
-                              name="percent"
-                              type="FontAwesome"
-                              style={{ color: "#55e6f6" }}
-                            />
-                          </Button>
-                          <TextInput
-                            autoCapitalize="sentences"
-                            value={this.state.selDiscountVal}
-                            onChangeText={txtVal => {
-                              this.discountTextChange(
-                                txtVal,
-                                srchInvOrdrItm.ItemID
-                              );
-                            }}
-                            placeholder="Discount"
-                            style={{
-                              width: 50,
-                              height: 30,
-                              borderLeftWidth: 1,
-                              borderRightWidth: 1,
-                              margin: 5
-                            }}
-                            keyboardType="numeric"
-                            returnKeyType="done"
-                            onSubmitEditing={Keyboard.dismiss}
-                            autoCapitalize="sentences"
-                          />
-                        </View>
+
                         <CardItem bordered>
                           <View style={commonStyles.row}>
                             <View style={commonStyles.column}>
@@ -631,11 +589,11 @@ export default class InventoryOrder extends React.Component {
                               </View>
                               <View style={commonStyles.nestedRow}>
                                 <TouchableHighlight
-                                  // onPress={() => {
-                                  //   this.props.navigation.navigate(
-                                  //     "InventoryOrderDiscount"
-                                  //   );
-                                  // }}
+                                // onPress={() => {
+                                //   this.props.navigation.navigate(
+                                //     "InventoryOrderDiscount"
+                                //   );
+                                // }}
                                 >
                                   <Text> Discount </Text>
                                 </TouchableHighlight>
@@ -694,6 +652,70 @@ export default class InventoryOrder extends React.Component {
                             </View>
                           </View>
                         </CardItem>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between"
+                          }}
+                        >
+                          <Text style={{ marginLeft: 5 }}>Discount</Text>
+                          <Button
+                            style={
+                              srchInvOrdrItm.btnDollarDiscountVal
+                                ? { margin: 5 }
+                                : { margin: 5, backgroundColor: "#61d0c8" }
+                            }
+                            onPress={() => {
+                              this.discountEnable("d", srchInvOrdrItm.ItemID);
+                            }}
+                            disabled={srchInvOrdrItm.btnDollarDiscountVal}
+                          >
+                            <Icon
+                              name="dollar"
+                              type="FontAwesome"
+                              style={{ color: "#55e6f6" }}
+                            />
+                          </Button>
+                          <Button
+                            style={
+                              srchInvOrdrItm.btnPercentDiscountVal
+                                ? { margin: 5 }
+                                : { margin: 5, backgroundColor: "#61d0c8" }
+                            }
+                            onPress={() => {
+                              this.discountEnable("p", srchInvOrdrItm.ItemID);
+                            }}
+                            disabled={srchInvOrdrItm.btnPercentDiscountVal}
+                          >
+                            <Icon
+                              name="percent"
+                              type="FontAwesome"
+                              style={{ color: "#55e6f6" }}
+                            />
+                          </Button>
+                          <TextInput
+                            autoCapitalize="sentences"
+                            value={this.state.selDiscountVal}
+                            onChangeText={txtVal => {
+                              this.discountTextChange(
+                                txtVal,
+                                srchInvOrdrItm.ItemID
+                              );
+                            }}
+                            placeholder="Discount"
+                            style={{
+                              width: 60,
+                              height: 30,
+                              borderLeftWidth: 1,
+                              borderRightWidth: 1,
+                              margin: 5
+                            }}
+                            keyboardType="numeric"
+                            returnKeyType="done"
+                            onSubmitEditing={Keyboard.dismiss}
+                            autoCapitalize="sentences"
+                          />
+                        </View>
                       </Card>
                     </View>
                   )
