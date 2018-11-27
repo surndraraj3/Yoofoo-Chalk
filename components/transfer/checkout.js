@@ -32,7 +32,6 @@ import {
   getCustomerListURL,
   calculateAddOrdersUrl
 } from "../common/url_config";
-import Autocomplete from "react-native-autocomplete-input";
 import commonStyles from "../styles/styles";
 
 export default class Checkout extends React.Component {
