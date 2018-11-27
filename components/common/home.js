@@ -268,13 +268,13 @@ export default class Home extends React.Component {
                 style={commonStyles.fabIcon}
               />
             </Button>
-            <Button style={{ backgroundColor: "#3B5998" }}>
+            <Button style={{ backgroundColor: "#3B5998" }} onPress={() => this.props.navigation.navigate("InventoryOrder")}>
               <Image
                 source={require("../../assets/cart.png")}
                 style={commonStyles.fabIcon}
               />
             </Button>
-            <Button disabled style={{ backgroundColor: "#DD5144" }}>
+            <Button style={{ backgroundColor: "#DD5144" }} onPress={() => this.props.navigation.navigate("AddCutsomer")}>
               <Image
                 source={require("../../assets/new_customer.png")}
                 style={commonStyles.fabIcon}
