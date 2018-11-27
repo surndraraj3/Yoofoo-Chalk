@@ -54,7 +54,7 @@ const AppDrawerNavigator = createDrawerNavigator(
   {
     Home: Home,
     Order: Orders, 
-    "Designer to Designer": Transfer,
+    "Designer to Designer": Transfer,    
     Inventory: Inventory,
     InventoryOrder: {
       screen: InventoryOrder,
@@ -93,10 +93,7 @@ const AppDrawerNavigator = createDrawerNavigator(
       }
     },
     Customer: {
-      screen: Customers,
-      navigationOptions: {
-        drawerLabel: () => null
-      }
+      screen: Customers      
     },
     ResendInvoice: {
       screen: ResendInvoice,
