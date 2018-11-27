@@ -46,7 +46,7 @@ export default class Customers extends React.Component {
       customerCount: 0,
       authToken: "",
       searchCustomerList: [],
-      selPickItm: ""
+      selPickItm: "test"
     };
   }
   //get Customers list
@@ -131,11 +131,11 @@ export default class Customers extends React.Component {
         onPress={() => this.props.navigation.navigate("AddCutsomer")}
       >
         {/* <Icon name="user-plus" type="FontAwesome" /> */}
-         <ImageBackground
+        <ImageBackground
           resizeMode={"stretch"} // or cover
           style={{
-            height: '100%',
-            width: '100%',
+            height: "100%",
+            width: "100%",
             color: "#fff"
           }}
           source={require("../../assets/new_customer.png")}
@@ -199,7 +199,7 @@ export default class Customers extends React.Component {
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -224,20 +224,20 @@ export default class Customers extends React.Component {
         </Header>
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}>
+            <Text style={{ margin: 15, fontSize: 12 }}>
               {this.state.customerCount} Customers
             </Text>
-            <View style={{ margin: 15, borderColor: "#595959" }}>
-              <Item rounded>
+            <View style={{ margin: 15 }}>
+              <Item>
                 <Input
                   placeholder="Search by Name or Email"
                   style={{
                     textAlign: "center",
-                    height: 50,
-                    borderWidth: 2,
-                    borderColor: "#00e6e6",
-                    borderRadius: 20,
-                    backgroundColor: "#FFFFFF"
+                    height: 50
+                    //borderWidth: 2,
+                    //borderColor: "#00e6e6",
+                    //borderRadius: 20,
+                    //backgroundColor: "#FFFFFF"
                   }}
                   onChangeText={this.onSearchCustomer}
                 />
@@ -358,8 +358,7 @@ export default class Customers extends React.Component {
                                     "InventoryOrder",
                                     {
                                       customerID: srchCustItm.CustomerID,
-                                      customerDistributorId: this.state
-                                        .distributorId
+                                      customerDistributorId: this.state.distributorId
                                     }
                                   );
                                 }}

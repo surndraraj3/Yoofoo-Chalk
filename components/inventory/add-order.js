@@ -283,12 +283,16 @@ export default class AddInventoryOrder extends React.Component {
         <View style={commonStyles.footerContainer}>
           <View style={commonStyles.footerInnerContainer}>
             <View style={{ margin: 20 }}>
-              <Text
-                style={{ color: "#42f4f1", fontSize: 20, fontWeight: "bold" }}
+              <TouchableHighlight
+                onPress={() => this.props.navigation.navigate("InventoryOrder")}
               >
-                Continue Shopping
-              </Text>
-            </View>            
+                <Text
+                  style={{ color: "#42f4f1", fontSize: 20, fontWeight: "bold" }}
+                >
+                  Continue Shopping
+                </Text>
+              </TouchableHighlight>
+            </View>
             <TouchableHighlight
               onPress={() => {
                 this.props.navigation.navigate("Checkout", {
