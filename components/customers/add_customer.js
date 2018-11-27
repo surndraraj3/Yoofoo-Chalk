@@ -28,6 +28,7 @@ import {
   CardItem,
   Card
 } from "native-base";
+import Toast from "react-native-simple-toast";
 import { add_customerURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
@@ -103,66 +104,84 @@ export default class AddCutsomer extends React.Component {
 
   //Save Customer Form
   saveCustomerDetails = (email, firstNm, lastNm, phoneNum) => {
-    this.setState({ loadSpinner: true });
-    fetch(`${add_customerURL}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.state.authToken}`
-      },
-      body: JSON.stringify({
-        Email: email,
-        FirstName: firstNm,
-        LastName: lastNm,
-        DistributorID: this.state.distributorId,
-        Phone: phoneNum,
-        BillingAddress: this.state.customerStreet,
-        BillingCity: this.state.customerCity,
-        BillingState: "UT",
-        BillingZip: this.state.customerZipCode
-      })
-    })
-      .then(response => response.json())
-      .then(responseJson => {
-        // console.log(responseJson);
-        this.setState({
-          customerData: responseJson
-        });
-        console.log("Data", this.state.customerData);
-        this.setState({ loadFormMessage: true, loadSpinner: false });
-        if (this.state.customerData.Result !== "Failure") {
-          console.log("Success");
-          this.setState({
-            customerEmail: "",
-            customerFirstName: "",
-            customerLastName: "",
-            customerPhoneNUmber: "",
-            customerStreet: "",
-            customerCity: "",
-            customerState: "",
-            customerZipCode: ""
-          });
-        } else {
-          console.log("Fail");
-          this.setState({
-            customerEmail: email,
-            customerFirstName: firstNm,
-            customerLastName: lastNm,
-            customerPhoneNUmber: phoneNum,
-            customerStreet: this.state.customerStreet,
-            customerCity: this.state.customerCity,
-            customerState: this.state.customerState,
-            customerZipCode: this.state.customerZipCode
-          });
-        }
-        setTimeout(() => {
-          this.setState({ loadFormMessage: false });
-        }, 3000);
-      })
-      .catch(error => {
-        console.error(error);
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(email) === false) {
+      // console.log("Email is Not Correct");
+      this.setState({
+        validateEmail: "Invalid Email",
+        errorEmail: true
       });
+      return false;
+    } else if(isNaN(phoneNum) || phoneNum.length !== 10 || phoneNum == '') {
+      Toast.showWithGravity(
+        "Invalid Phone Number",
+        Toast.SHORT,
+        Toast.CENTER
+      )
+    }else {
+      this.setState({ validateEmail: "Email is Correct", errorEmail: false });
+      // console.log("Email is Correct");
+      this.setState({ loadSpinner: true });
+      fetch(`${add_customerURL}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.state.authToken}`
+        },
+        body: JSON.stringify({
+          Email: email,
+          FirstName: firstNm,
+          LastName: lastNm,
+          DistributorID: this.state.distributorId,
+          Phone: phoneNum,
+          BillingAddress: this.state.customerStreet,
+          BillingCity: this.state.customerCity,
+          BillingState: "UT",
+          BillingZip: this.state.customerZipCode
+        })
+      })
+        .then(response => response.json())
+        .then(responseJson => {
+          // console.log(responseJson);
+          this.setState({
+            customerData: responseJson
+          });
+          console.log("Data", this.state.customerData);
+          this.setState({ loadFormMessage: true, loadSpinner: false });
+          if (this.state.customerData.Result !== "Failure") {
+            console.log("Success");
+            this.setState({
+              customerEmail: "",
+              customerFirstName: "",
+              customerLastName: "",
+              customerPhoneNUmber: "",
+              customerStreet: "",
+              customerCity: "",
+              customerState: "",
+              customerZipCode: ""
+            });
+          } else {
+            console.log("Fail");
+            this.setState({
+              customerEmail: email,
+              customerFirstName: firstNm,
+              customerLastName: lastNm,
+              customerPhoneNUmber: phoneNum,
+              customerStreet: this.state.customerStreet,
+              customerCity: this.state.customerCity,
+              customerState: this.state.customerState,
+              customerZipCode: this.state.customerZipCode
+            });
+          }
+          setTimeout(() => {
+            this.setState({ loadFormMessage: false });
+          }, 3000);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
   };
 
   render() {
@@ -170,7 +189,7 @@ export default class AddCutsomer extends React.Component {
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Customer")}
@@ -182,7 +201,10 @@ export default class AddCutsomer extends React.Component {
             <Title>Add Customer</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
             <Button transparent>
@@ -222,7 +244,7 @@ export default class AddCutsomer extends React.Component {
             </View>
             <KeyboardAvoidingView
               style={{ flex: 1 }}
-             // keyboardVerticalOffset={65}
+              // keyboardVerticalOffset={65}
               behavior={"position"}
               enabled
             >
