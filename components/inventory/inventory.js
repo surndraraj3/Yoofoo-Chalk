@@ -56,7 +56,15 @@ export default class Inventory extends React.Component {
           authToken: resLoginDtls.Token
         });
       });
-    }
+      this.loadInventoryDetails();
+    }    
+  };
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  //Load Inventory Details
+  loadInventoryDetails = () => {
+    console.log('Inventory');
     //Get Inventory List
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -81,9 +89,6 @@ export default class Inventory extends React.Component {
         console.error(error);
         if (this._isMounted) this.setState({ loading: false });
       });
-  };
-  componentWillUnmount() {
-    this._isMounted = false;
   }
   // Loading Spinner
   renderLoading() {

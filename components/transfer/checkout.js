@@ -45,7 +45,8 @@ export default class Checkout extends React.Component {
       msgData: "",
       selCustomerVal: "",
       customerId: "",
-      customersListData: []
+      customersListData: [],
+      getPrevCustomerId: this.props.navigation.getParam('CustomerId')
     };
   }
   componentDidMount = async () => {
@@ -113,7 +114,7 @@ export default class Checkout extends React.Component {
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
-    //console.log("OnChange", e);
+    console.log("OnChange", e);
     if (e !== "Select Customer") {
       this.setState({ customerId: e, selCustomerVal: e });
       //console.log('Order List Before', this.state.getOrdesFromCart);
@@ -134,6 +135,7 @@ export default class Checkout extends React.Component {
 
   handleCalculateOrder = () => {
     console.log("Welcome Calculate");
+    this.setState({ selCustomerVal:this.state.getPrevCustomerId, customerId: this.state.getPrevCustomerId })
     if (this.state.getOrdesFromCart === undefined) {
       Toast.showWithGravity(
         "No orders added to cart",
@@ -144,16 +146,16 @@ export default class Checkout extends React.Component {
       const getCustId = this.state.getOrdesFromCart.filter(
         dt => dt.CustomerID === "CUSTOMER-ID"
       );
-      console.log("getCustId", getCustId);
+      //console.log("getCustId", getCustId);
       if (getCustId.length > 0) {
-        console.log("Add Customer Id");
+        console.log("Add Customer Id", getCustId);
         Toast.showWithGravity(
           "No customer id found, Please add customer to place an order",
           Toast.SHORT,
           Toast.CENTER
         );
       } else {
-        console.log("Data Found");
+        //console.log("Data Found", getCustId);
         fetch(`${calculateAddOrdersUrl}`, {
           method: "POST",
           headers: {
@@ -175,7 +177,7 @@ export default class Checkout extends React.Component {
     }
   };
   render() {
-    console.log("Orders Calc", this.state.getOrdesFromCart);
+    console.log("Orders Calc", this.state.getPrevCustomerId);
     //console.log('Cal', this.state.getCalculatedOrders);
     return (
       <Container>

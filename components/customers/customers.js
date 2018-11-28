@@ -60,8 +60,11 @@ export default class Customers extends React.Component {
           distributorId: responseJson.DistributorID,
           authToken: responseJson.Token
         });
-      });
-
+      });    
+      this.loadCustomerDetails();
+  };
+  //Load Customer Details
+   loadCustomerDetails = () => {
     console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -85,7 +88,7 @@ export default class Customers extends React.Component {
         this.setState({ customersListData: [] });
         this.setState({ loading: false });
       });
-  };
+   }
   //
   componentWillMount = () => {
     this.setState({ customersListData: [] });

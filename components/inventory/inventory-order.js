@@ -73,14 +73,20 @@ export default class InventoryOrder extends React.Component {
     if (this._isMounted) {
       await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
         resLoginDtls = JSON.parse(resLoginDtls);
-
         this.setState({
           distributorId: resLoginDtls.DistributorID,
           authToken: resLoginDtls.Token
         });
       });
-    }
-    //Get Inventory List data
+      this.loadInventoryOrderData();
+    }    
+  };
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  //Load Inventory Order data
+   loadInventoryOrderData = () => {
+     //Get Inventory List data
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -113,10 +119,7 @@ export default class InventoryOrder extends React.Component {
         console.error(error);
         if (this._isMounted) this.setState({ loading: false });
       });
-  };
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+   }
   // Loading Spinner
   renderLoading() {
     if (this.state.loading) {

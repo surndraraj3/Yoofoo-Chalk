@@ -296,7 +296,8 @@ export default class AddInventoryOrder extends React.Component {
             <TouchableHighlight
               onPress={() => {
                 this.props.navigation.navigate("Checkout", {
-                  orderDtlsList: this.state.getListofOrdersPrevScreen
+                  orderDtlsList: this.state.getListofOrdersPrevScreen,
+                  CustomerId: this.state.getCustomerId
                 });
               }}
             >
