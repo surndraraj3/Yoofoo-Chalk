@@ -35,6 +35,7 @@ import {
 import commonStyles from "../styles/styles";
 
 export default class Checkout extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -46,18 +47,33 @@ export default class Checkout extends React.Component {
       selCustomerVal: "",
       customerId: "",
       customersListData: [],
-      getPrevCustomerId: this.props.navigation.getParam('CustomerId')
+      getPrevCustomerId: this.props.navigation.getParam("CustomerId")
     };
   }
   componentDidMount = async () => {
+    this._isMounted = true;
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
       console.log(responseJson.message, responseJson.DistributorID);
-      this.setState({
-        distributorId: responseJson.DistributorID,
-        authToken: responseJson.Token
-      });
+      if(this._isMounted) {
+        this.setState({
+          distributorId: responseJson.DistributorID,
+          authToken: responseJson.Token
+        });
+      }      
     });
+    if(this._isMounted) this.loadCheckoutDetails();
+  };
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.setState({
+      customersListData: [],
+      distributorId: "",
+      authToken: "",
+    });
+  }
+  //Load Checkout Details
+  loadCheckoutDetails = () => {
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -72,6 +88,7 @@ export default class Checkout extends React.Component {
         this.setState({
           customersListData: responseJson
         });
+        this.handleCalculateOrder();
         this.setState({ loading: false });
       })
       .catch(error => {
@@ -79,9 +96,7 @@ export default class Checkout extends React.Component {
         this.setState({ customersListData: [] });
         this.setState({ loading: false });
       });
-    this.handleCalculateOrder();
   };
-
   //save checkout orders
   saveOrderDtls = () => {
     this.state.getOrdesFromCart.map(itmVal => {
@@ -106,7 +121,15 @@ export default class Checkout extends React.Component {
         const resMessage = `Order placed successfully Order Id: ${
           resAddOrderJson.OrderID
         }`;
+        Toast.showWithGravity(
+          `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
+          Toast.SHORT,
+          Toast.CENTER
+        );
         this.setState({ msgData: resMessage, getOrdesFromCart: [] });
+        setTimeout(() => {
+          this.props.navigation.navigate("Home");
+        }, 2000);
       })
       .catch(error => {
         console.error(error);
@@ -134,9 +157,29 @@ export default class Checkout extends React.Component {
   };
 
   handleCalculateOrder = () => {
-    console.log("Welcome Calculate");
-    this.setState({ selCustomerVal:this.state.getPrevCustomerId, customerId: this.state.getPrevCustomerId })
-    if (this.state.getOrdesFromCart === undefined) {
+    console.log("Welcome Calculate", this.state.getPrevCustomerId);
+    if(this.state.getPrevCustomerId === 'CUSTOMER-ID') {
+      console.log('Get Customer Id');
+    }
+    {
+      (this.state.getPrevCustomerId === undefined || this.state.getPrevCustomerId === 'CUSTOMER-ID')
+        ? this.setState({
+            selCustomerVal: "",
+            customerId: ""
+          })
+        : this.setState({
+            selCustomerVal: this.state.getPrevCustomerId,
+            customerId: this.state.getPrevCustomerId
+          });
+    }
+    // this.setState({
+    //   selCustomerVal: this.state.getPrevCustomerId,
+    //   customerId: this.state.getPrevCustomerId
+    // });
+    if (
+      this.state.getOrdesFromCart === undefined ||
+      this.state.getOrdesFromCart === null
+    ) {
       Toast.showWithGravity(
         "No orders added to cart",
         Toast.SHORT,
@@ -177,7 +220,7 @@ export default class Checkout extends React.Component {
     }
   };
   render() {
-    console.log("Orders Calc", this.state.getPrevCustomerId);
+    console.log("Customer Id", this.state.selCustomerVal);
     //console.log('Cal', this.state.getCalculatedOrders);
     return (
       <Container>

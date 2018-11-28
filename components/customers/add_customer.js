@@ -33,6 +33,7 @@ import { add_customerURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 export default class AddCutsomer extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -56,17 +57,23 @@ export default class AddCutsomer extends React.Component {
   }
   //Get Distributor Id from sync storage
   componentDidMount = async () => {
+    this._isMounted = true;
     await AsyncStorage.getItem("LoginDetails")
       // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         console.log(responseJson.message, responseJson.DistributorID);
-        this.setState({
-          distributorId: responseJson.DistributorID,
-          authToken: responseJson.Token
-        });
+        if(this._isMounted) {
+          this.setState({
+            distributorId: responseJson.DistributorID,
+            authToken: responseJson.Token
+          });
+        }        
       });
   };
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
   //Display Billing Address form based on condition
   onBillingAddressChange = itm => {
     // console.log("itm", itm);

@@ -64,29 +64,40 @@ export default class InventoryOrder extends React.Component {
       valDiscount: 0,
       valDiscountType: "",
       btnDollarDiscount: false,
-      btnPercentDiscount: false
+      btnPercentDiscount: false,
+      getCartItems: this.props.navigation.getParam("addedCartToItems")
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
   componentDidMount = async () => {
     this._isMounted = true;
-    if (this._isMounted) {
+    //if (this._isMounted) {
       await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
         resLoginDtls = JSON.parse(resLoginDtls);
-        this.setState({
-          distributorId: resLoginDtls.DistributorID,
-          authToken: resLoginDtls.Token
-        });
+        if (this._isMounted) {
+          this.setState({
+            distributorId: resLoginDtls.DistributorID,
+            authToken: resLoginDtls.Token
+          });
+        }        
       });
-      this.loadInventoryOrderData();
-    }    
+      if (this._isMounted) this.loadInventoryOrderData();
+    //}    
   };
   componentWillUnmount() {
     this._isMounted = false;
+    this.setState({
+      inventoryList: [],
+      inventoryCount: 0,
+      distributorId: "",
+      authToken: "",
+    });
+    clearInterval(this.loadInventoryOrderData)
   }
   //Load Inventory Order data
    loadInventoryOrderData = () => {
      //Get Inventory List data
+     console.log('asdsasdasasasdas');
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -209,16 +220,22 @@ export default class InventoryOrder extends React.Component {
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
-    //console.log("Welcome To orders");
+    //console.log("Welcome To Cart Items", this.state.getCartItems);
+    let cartArr = [];
+    if(this.state.getCartItems !== undefined) {this.state.getCartItems.map((cartData) => cartArr.push(cartData))}
     const addedOrderToCart = this.state.inventoryList.filter(
       addedItems => addedItems.selectItem === true
     );
     if (addedOrderToCart.length === 0) {
       //Toast.show('No Items are in cart.', Toast.TOP);
       Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);
-    } else {
-      this.setState({ addToOrderList: addedOrderToCart });
-     // console.log("Added List", addedOrderToCart);
+    } else {      
+      if(this.state.getCartItems !== undefined) addedOrderToCart.map((cartNewData) => cartArr.push(cartNewData))
+      //cartArr.push(addedOrderToCart);
+      console.log("Added List Before", cartArr);
+      {this.state.getCartItems === undefined ? this.setState({ addToOrderList: addedOrderToCart }) : this.setState({ addToOrderList: cartArr })}
+      //this.setState({ addToOrderList: addedOrderToCart });
+      console.log("Added List After", cartArr);
       Toast.showWithGravity(
         "Item has been added to order",
         Toast.LONG,

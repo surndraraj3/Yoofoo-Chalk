@@ -27,6 +27,7 @@ import Toast from "react-native-simple-toast";
 import commonStyles from "../styles/styles";
 
 export default class AddInventoryOrder extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -43,22 +44,31 @@ export default class AddInventoryOrder extends React.Component {
     };
   }
   componentDidMount = async () => {
+    _isMounted = true;
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
       console.log(responseJson.message, responseJson.DistributorID);
-      this.setState({
-        distributorId: responseJson.DistributorID,
-        authToken: responseJson.Token
-      });
+      if(this._isMounted) {
+        this.setState({
+          distributorId: responseJson.DistributorID,
+          authToken: responseJson.Token
+        });
+      }      
     });
+    if(this._isMounted) this.loadCartItems();
+  };
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  //load Details
+  loadCartItems = () =>{
     this.state.getListofOrdersPrevScreen.map(v => {
       (v.OrderID = ""),
         (v.DesignerID = this.state.distributorId),
         (v.CustomerID = this.state.getCustomerId),
         (v.Discount = 0);
     });
-  };
-
+  }
   //save checkout orders
   saveOrderDtls = () => {
     console.log(
@@ -119,8 +129,13 @@ export default class AddInventoryOrder extends React.Component {
       getListofOrdersPrevScreen: this.state.getListofOrdersPrevScreen
     });
   };
-
+// Handle Added Items in cart on continue shopping
+  handleAddedItemsToCart = () => {
+    // AsyncStorage.setItem("AddedCartItems", this.state.getListofOrdersPrevScreen)
+    this.props.navigation.navigate("InventoryOrder", { addedCartToItems: this.state.getListofOrdersPrevScreen });
+  }
   render() {
+    console.log('----------------------------', this.state.getListofOrdersPrevScreen);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -284,7 +299,7 @@ export default class AddInventoryOrder extends React.Component {
           <View style={commonStyles.footerInnerContainer}>
             <View style={{ margin: 20 }}>
               <TouchableHighlight
-                onPress={() => this.props.navigation.navigate("InventoryOrder")}
+                onPress={this.handleAddedItemsToCart}
               >
                 <Text
                   style={{ color: "#42f4f1", fontSize: 20, fontWeight: "bold" }}

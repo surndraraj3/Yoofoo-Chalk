@@ -36,6 +36,7 @@ import { getCustomerListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 export default class Customers extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -51,18 +52,24 @@ export default class Customers extends React.Component {
   }
   //get Customers list
   componentDidMount = async () => {
+    this._isMounted = true;
     await AsyncStorage.getItem("LoginDetails")
       // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         // console.log(responseJson.message, responseJson.DistributorID);
-        this.setState({
-          distributorId: responseJson.DistributorID,
-          authToken: responseJson.Token
-        });
+        if(this._isMounted) {
+          this.setState({
+            distributorId: responseJson.DistributorID,
+            authToken: responseJson.Token
+          });
+        }        
       });    
-      this.loadCustomerDetails();
+      if(this._isMounted) this.loadCustomerDetails();
   };
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
   //Load Customer Details
    loadCustomerDetails = () => {
     console.log("url", `${getCustomerListURL}${this.state.distributorId}`);

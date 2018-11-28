@@ -19,6 +19,7 @@ import commonStyles from "../styles/styles";
 import { custPrflURL } from "../common/url_config";
 
 export default class CustomerProfile extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -30,14 +31,23 @@ export default class CustomerProfile extends React.Component {
     };
   }
   componentDidMount = async () => {   
+    this._isMounted = true;
     await AsyncStorage.getItem('LoginDetails')
     // .then(response => response.json())
     .then(responseJson => {
       responseJson = JSON.parse(responseJson);
       // console.log(responseJson.message, responseJson.DistributorID);
-      this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token, zipCode: responseJson.ZipCode })
+      if(this._isMounted) {
+        this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token, zipCode: responseJson.ZipCode })
+      }      
     }) 
-    // console.log(`${custPrflURL}${this.state.distributorId}`);
+    if(this._isMounted) this.loadProfileData();
+    // console.log(`${custPrflURL}${this.state.distributorId}`);    
+  };
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  loadProfileData = () => {
     fetch(`${custPrflURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -59,7 +69,7 @@ export default class CustomerProfile extends React.Component {
         console.error(error);
         this.setState({ loading: false });
       });
-  };
+  }
   renderLoading() {
     if (this.state.loading) {
       return (
