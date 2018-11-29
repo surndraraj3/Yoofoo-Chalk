@@ -2,6 +2,7 @@ import React from "react";
 import {
   Text,
   TextInput,
+  Keyboard,
   View,
   ScrollView,
   AsyncStorage,
@@ -30,7 +31,8 @@ import Toast from "react-native-simple-toast";
 import {
   addOrdersUrl,
   getCustomerListURL,
-  calculateAddOrdersUrl
+  calculateAddOrdersUrl,
+  postCashPaymentUrl
 } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
@@ -47,7 +49,9 @@ export default class Checkout extends React.Component {
       selCustomerVal: "",
       customerId: "",
       customersListData: [],
-      getPrevCustomerId: this.props.navigation.getParam("CustomerId")
+      getPrevCustomerId: this.props.navigation.getParam("CustomerId"),
+      cashVal: 0,
+      remainingDueVal: 0
     };
   }
   componentDidMount = async () => {
@@ -55,21 +59,21 @@ export default class Checkout extends React.Component {
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
       //console.log(responseJson.message, responseJson.DistributorID);
-      if(this._isMounted) {
+      if (this._isMounted) {
         this.setState({
           distributorId: responseJson.DistributorID,
           authToken: responseJson.Token
         });
-      }      
+      }
     });
-    if(this._isMounted) this.loadCheckoutDetails();
+    if (this._isMounted) this.loadCheckoutDetails();
   };
   componentWillUnmount() {
     this._isMounted = false;
     this.setState({
       customersListData: [],
       distributorId: "",
-      authToken: "",
+      authToken: ""
     });
   }
   //Load Checkout Details
@@ -118,18 +122,54 @@ export default class Checkout extends React.Component {
       .then(response => response.json())
       .then(resAddOrderJson => {
         //console.log("resAddOrderJson", resAddOrderJson);
-        const resMessage = `Order placed successfully Order Id: ${
-          resAddOrderJson.OrderID
-        }`;
-        Toast.showWithGravity(
-          `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
-          Toast.SHORT,
-          Toast.CENTER
-        );
-        this.setState({ msgData: resMessage, getOrdesFromCart: [] });
-        setTimeout(() => {
-          this.props.navigation.navigate("Home");
-        }, 2000);
+        // const resMessage = `Order placed successfully Order Id: ${
+        //   resAddOrderJson.OrderID
+        // }`;
+
+        if (resAddOrderJson.OrderID !== "0") {
+          fetch(`${postCashPaymentUrl}`, {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${this.state.authToken}`
+            },
+            body: JSON.stringify({
+              CustomerID: this.state.selCustomerVal,
+              OrderID: resAddOrderJson.OrderID,
+              PaymentAmount: this.state.cashVal - this.state.remainingDueVal
+            })
+          })
+            .then(responseCashPayment => responseCashPayment.json())
+            .then(resCashPaymentJson => {
+              //console.log('resCashPaymentJson', resCashPaymentJson.Message, resCashPaymentJson)
+
+              Toast.showWithGravity(
+                `Order placed successfully Order Id: ${
+                  resAddOrderJson.OrderID
+                }`,
+                Toast.SHORT,
+                Toast.CENTER
+              );
+              this.setState({
+                getOrdesFromCart: [],
+                selCustomerVal: "",
+                customerId: ""
+              });
+
+              setTimeout(() => {
+                this.props.navigation.navigate("Home");
+              }, 2000);
+            });
+        } else {
+          Toast.showWithGravity(
+            `Order Failed: ${
+              resAddOrderJson.OrderID
+            }`,
+            Toast.SHORT,
+            Toast.CENTER
+          );
+        }
       })
       .catch(error => {
         console.error(error);
@@ -137,7 +177,7 @@ export default class Checkout extends React.Component {
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
-    //console.log("OnChange", e);
+    console.log("OnChange", e);
     if (e !== "Select Customer") {
       this.setState({ customerId: e, selCustomerVal: e });
       //console.log('Order List Before', this.state.getOrdesFromCart);
@@ -157,21 +197,33 @@ export default class Checkout extends React.Component {
   };
 
   handleCalculateOrder = () => {
-    //console.log("Welcome Calculate", this.state.getPrevCustomerId);
-    if(this.state.getPrevCustomerId === 'CUSTOMER-ID') {
-      console.log('Get Customer Id');
+    //console.log("No Customer", this.state.getPrevCustomerId);
+    if (isNaN(this.state.getPrevCustomerId)) {
+      //console.log("Get Customer Id", this.state.getPrevCustomerId);
+      //this.setState({ selCustomerVal: "", customerId: "" });
+    } else {
+      //console.log("-----Get Customer Id----", this.state.getPrevCustomerId);
+      this.setState({
+        selCustomerVal: this.state.getPrevCustomerId,
+        customerId: this.state.getPrevCustomerId
+      });
+      // this.handleOnChangeCustomersList();
+      this.state.getOrdesFromCart.map(dt => {
+        dt.CustomerID = this.state.getPrevCustomerId;
+      });
+      //console.log("-----Get Customer Id----", this.state.getOrdesFromCart);
     }
-    {
-      (this.state.getPrevCustomerId === undefined || this.state.getPrevCustomerId === 'CUSTOMER-ID')
-        ? this.setState({
-            selCustomerVal: "",
-            customerId: ""
-          })
-        : this.setState({
-            selCustomerVal: this.state.getPrevCustomerId,
-            customerId: this.state.getPrevCustomerId
-          });
-    }
+    // {
+    //   (this.state.getPrevCustomerId === undefined || this.state.getPrevCustomerId === 'CUSTOMER-ID')
+    //     ? this.setState({
+    //         selCustomerVal: "",
+    //         customerId: ""
+    //       })
+    //     : this.setState({
+    //         selCustomerVal: this.state.getPrevCustomerId,
+    //         customerId: this.state.getPrevCustomerId
+    //       });
+    // }
     // this.setState({
     //   selCustomerVal: this.state.getPrevCustomerId,
     //   customerId: this.state.getPrevCustomerId
@@ -378,7 +430,21 @@ export default class Checkout extends React.Component {
                     <Text style={{ margin: 5 }}> Cash </Text>
                   </Left>
                   <Right>
-                    <Text> {"\u0024"} 0.00</Text>
+                    <Item>
+                      {/* <Text> {"\u0024"}</Text> */}
+                      <Input
+                        autoCapitalize="sentences"
+                        value={this.state.cashVal}
+                        onChangeText={txtCashVal => {
+                          this.setState({ cashVal: txtCashVal });
+                        }}
+                        keyboardType="numeric"
+                        returnKeyType="done"
+                        onSubmitEditing={Keyboard.dismiss}
+                        autoCapitalize="sentences"
+                        placeholder="Enter Cash"
+                      />
+                    </Item>
                   </Right>
                 </CardItem>
               </Card>
@@ -392,7 +458,21 @@ export default class Checkout extends React.Component {
                     <Text>Remaining Due</Text>
                   </Left>
                   <Right>
-                    <Text>{"\u0024"} 0.00</Text>
+                    <Item>
+                      {/* <Text>{"\u0024"}</Text> */}
+                      <Input
+                        autoCapitalize="sentences"
+                        value={this.state.remainingDueVal}
+                        onChangeText={txtDueVal => {
+                          this.setState({ remainingDueVal: txtDueVal });
+                        }}
+                        keyboardType="numeric"
+                        returnKeyType="done"
+                        onSubmitEditing={Keyboard.dismiss}
+                        autoCapitalize="sentences"
+                        placeholder="Enter Due"
+                      />
+                    </Item>
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -434,7 +514,8 @@ export default class Checkout extends React.Component {
                       fontWeight: "bold"
                     }}
                   >
-                    Charge {"\u0024"} 8.99
+                    Charge {"\u0024"}{" "}
+                    {this.state.cashVal - this.state.remainingDueVal}
                   </Text>
                 </Button>
               </View>

@@ -457,7 +457,7 @@ export default class InventoryOrder extends React.Component {
                               <Text>Msrp </Text>
                               <Text>
                                 {"\u0024"}
-                                {itm.Price}
+                                {itm.RetailPrice}
                               </Text>
                             </View>
                             <View style={commonStyles.nestedRow}>
@@ -623,7 +623,7 @@ export default class InventoryOrder extends React.Component {
                                 <Text>Msrp </Text>
                                 <Text>
                                   {"\u0024"}
-                                  {srchInvOrdrItm.Price}
+                                  {srchInvOrdrItm.RetailPrice}
                                 </Text>
                               </View>
                               <View style={commonStyles.nestedRow}>
