@@ -54,7 +54,7 @@ export default class Checkout extends React.Component {
     this._isMounted = true;
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
-      console.log(responseJson.message, responseJson.DistributorID);
+      //console.log(responseJson.message, responseJson.DistributorID);
       if(this._isMounted) {
         this.setState({
           distributorId: responseJson.DistributorID,
@@ -100,12 +100,12 @@ export default class Checkout extends React.Component {
   //save checkout orders
   saveOrderDtls = () => {
     this.state.getOrdesFromCart.map(itmVal => {
-      console.log("Before Quantity", itmVal.Quantity);
+      //console.log("Before Quantity", itmVal.Quantity);
       itmVal.Quantity = itmVal.incVal;
       itmVal.Discount = itmVal.discountVal;
-      console.log("After Quantity", itmVal.Quantity);
+      //console.log("After Quantity", itmVal.Quantity);
     });
-    console.log("Final Composure Data", this.state.getOrdesFromCart);
+    //console.log("Final Composure Data", this.state.getOrdesFromCart);
     fetch(`${addOrdersUrl}`, {
       method: "POST",
       headers: {
@@ -117,7 +117,7 @@ export default class Checkout extends React.Component {
     })
       .then(response => response.json())
       .then(resAddOrderJson => {
-        console.log("resAddOrderJson", resAddOrderJson);
+        //console.log("resAddOrderJson", resAddOrderJson);
         const resMessage = `Order placed successfully Order Id: ${
           resAddOrderJson.OrderID
         }`;
@@ -137,7 +137,7 @@ export default class Checkout extends React.Component {
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
-    console.log("OnChange", e);
+    //console.log("OnChange", e);
     if (e !== "Select Customer") {
       this.setState({ customerId: e, selCustomerVal: e });
       //console.log('Order List Before', this.state.getOrdesFromCart);
@@ -157,7 +157,7 @@ export default class Checkout extends React.Component {
   };
 
   handleCalculateOrder = () => {
-    console.log("Welcome Calculate", this.state.getPrevCustomerId);
+    //console.log("Welcome Calculate", this.state.getPrevCustomerId);
     if(this.state.getPrevCustomerId === 'CUSTOMER-ID') {
       console.log('Get Customer Id');
     }
@@ -191,7 +191,7 @@ export default class Checkout extends React.Component {
       );
       //console.log("getCustId", getCustId);
       if (getCustId.length > 0) {
-        console.log("Add Customer Id", getCustId);
+        //console.log("Add Customer Id", getCustId);
         Toast.showWithGravity(
           "No customer id found, Please add customer to place an order",
           Toast.SHORT,
@@ -220,7 +220,7 @@ export default class Checkout extends React.Component {
     }
   };
   render() {
-    console.log("Customer Id", this.state.selCustomerVal);
+    //console.log("Customer Id", this.state.selCustomerVal);
     //console.log('Cal', this.state.getCalculatedOrders);
     return (
       <Container>

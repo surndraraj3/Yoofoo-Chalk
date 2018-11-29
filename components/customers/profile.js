@@ -66,7 +66,7 @@ export default class CustomerProfile extends React.Component {
         this.setState({ loading: false });
       })
       .catch(error => {
-        console.error(error);
+        //console.error(error);
         this.setState({ loading: false });
       });
   }

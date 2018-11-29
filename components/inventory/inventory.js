@@ -46,30 +46,21 @@ export default class Inventory extends React.Component {
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
-  componentDidMount() {
+  componentDidMount = async() => {
     this._isMounted = true;
-    //if (this._isMounted) {
-      this.setState({ isMounted: true }, async() => {
-        if (this.state.isMounted) {
-          this.setState({ isMounted: false });
-          {
-            await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
-              resLoginDtls = JSON.parse(resLoginDtls);
-              //if (this._isMounted) {
-                this.setState({
-                  distributorId: resLoginDtls.DistributorID,
-                  authToken: resLoginDtls.Token
-                });
-              //}     
-              console.log(this.state.distributorId, 'Dis');
-            });
-            this.loadInventoryDetails();
-          }
-        }
+    if (this._isMounted) { 
+      await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
+        resLoginDtls = JSON.parse(resLoginDtls);
+        //if (this._isMounted) {
+          this.setState({
+            distributorId: resLoginDtls.DistributorID,
+            authToken: resLoginDtls.Token
+          });
+        //}     
+       // console.log(this.state.distributorId, 'Dis');
       });
-      
-      //if (this._isMounted) this.loadInventoryDetails();
-    //}    
+      this.loadInventoryDetails();
+    }
   };  
   componentWillUnmount() {
     this._isMounted = false;
@@ -83,9 +74,9 @@ export default class Inventory extends React.Component {
   }
   //Load Inventory Details
   loadInventoryDetails = () => {
-    console.log('Inventory', `${getInventoryListURL}${this.state.distributorId}`);
+   // console.log('Inventory', `${getInventoryListURL}${this.state.distributorId}`);
     //Get Inventory List   
-    console.log('distributorId', this.state.distributorId);
+    //console.log('distributorId', this.state.distributorId);
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -96,7 +87,7 @@ export default class Inventory extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        console.log(responseJson);
+        //console.log(responseJson);
         if (this._isMounted) {
           this.setState({
             inventoryList: responseJson,
@@ -174,7 +165,7 @@ export default class Inventory extends React.Component {
     );
   }
   render() {
-    console.log('Inventory', this.state.inventoryList);
+    //console.log('Inventory', this.state.inventoryList);
     return (
       <Container>
         <View style={{ padding: 10 }} />

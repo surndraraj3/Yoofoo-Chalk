@@ -47,7 +47,7 @@ export default class AddInventoryOrder extends React.Component {
     _isMounted = true;
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
-      console.log(responseJson.message, responseJson.DistributorID);
+      //console.log(responseJson.message, responseJson.DistributorID);
       if(this._isMounted) {
         this.setState({
           distributorId: responseJson.DistributorID,
@@ -71,17 +71,17 @@ export default class AddInventoryOrder extends React.Component {
   }
   //save checkout orders
   saveOrderDtls = () => {
-    console.log(
-      "Welcom to data",
-      this.state.distributorId,
-      this.state.getListofOrdersPrevScreen
-    );
+    // console.log(
+    //   "Welcom to data",
+    //   this.state.distributorId,
+    //   this.state.getListofOrdersPrevScreen
+    // );
     this.state.getListofOrdersPrevScreen.map(itmVal => {
-      console.log("Before Quantity", itmVal.Quantity);
+      //console.log("Before Quantity", itmVal.Quantity);
       itmVal.Quantity = itmVal.incVal;
-      console.log("After Quantity", itmVal.Quantity);
+      //console.log("After Quantity", itmVal.Quantity);
     });
-    console.log("Final Composure Data", this.state.getListofOrdersPrevScreen);
+    //console.log("Final Composure Data", this.state.getListofOrdersPrevScreen);
     fetch(`${addOrdersUrl}`, {
       method: "POST",
       headers: {
@@ -93,7 +93,7 @@ export default class AddInventoryOrder extends React.Component {
     })
       .then(response => response.json())
       .then(resAddOrderJson => {
-        console.log("resAddOrderJson", resAddOrderJson);
+        //console.log("resAddOrderJson", resAddOrderJson);
         const resMessage = `Order placed successfully Order Id: ${
           resAddOrderJson.OrderID
         }`;
@@ -105,7 +105,7 @@ export default class AddInventoryOrder extends React.Component {
   };
   //Delete Record from Array
   handleDeleteReviewOrder = itmId => {
-    console.log("Welcome Delete", itmId);
+    //console.log("Welcome Delete", itmId);
     Toast.showWithGravity(
       "Item has been removed from the order",
       Toast.LONG,
@@ -123,7 +123,7 @@ export default class AddInventoryOrder extends React.Component {
         dt.incVal = 0;
       }
     });
-    console.log("Filter Items", this.state.getListofOrdersPrevScreen);
+    //console.log("Filter Items", this.state.getListofOrdersPrevScreen);
 
     this.setState({
       getListofOrdersPrevScreen: this.state.getListofOrdersPrevScreen
@@ -135,7 +135,7 @@ export default class AddInventoryOrder extends React.Component {
     this.props.navigation.navigate("InventoryOrder", { addedCartToItems: this.state.getListofOrdersPrevScreen });
   }
   render() {
-    console.log('----------------------------', this.state.getListofOrdersPrevScreen);
+    //console.log('----------------------------', this.state.getListofOrdersPrevScreen);
     return (
       <Container>
         <View style={{ padding: 10 }} />

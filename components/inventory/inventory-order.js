@@ -97,7 +97,7 @@ export default class InventoryOrder extends React.Component {
   //Load Inventory Order data
    loadInventoryOrderData = () => {
      //Get Inventory List data
-     console.log('asdsasdasasasdas');
+     //console.log('asdsasdasasasdas');
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -232,10 +232,10 @@ export default class InventoryOrder extends React.Component {
     } else {      
       if(this.state.getCartItems !== undefined) addedOrderToCart.map((cartNewData) => cartArr.push(cartNewData))
       //cartArr.push(addedOrderToCart);
-      console.log("Added List Before", cartArr);
+      //console.log("Added List Before", cartArr);
       {this.state.getCartItems === undefined ? this.setState({ addToOrderList: addedOrderToCart }) : this.setState({ addToOrderList: cartArr })}
       //this.setState({ addToOrderList: addedOrderToCart });
-      console.log("Added List After", cartArr);
+      //console.log("Added List After", cartArr);
       Toast.showWithGravity(
         "Item has been added to order",
         Toast.LONG,

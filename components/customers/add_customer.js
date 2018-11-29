@@ -62,7 +62,7 @@ export default class AddCutsomer extends React.Component {
       // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
-        console.log(responseJson.message, responseJson.DistributorID);
+        //console.log(responseJson.message, responseJson.DistributorID);
         if(this._isMounted) {
           this.setState({
             distributorId: responseJson.DistributorID,
@@ -154,10 +154,10 @@ export default class AddCutsomer extends React.Component {
           this.setState({
             customerData: responseJson
           });
-          console.log("Data", this.state.customerData);
+          //console.log("Data", this.state.customerData);
           this.setState({ loadFormMessage: true, loadSpinner: false });
           if (this.state.customerData.Result !== "Failure") {
-            console.log("Success");
+            //console.log("Success");
             this.setState({
               customerEmail: "",
               customerFirstName: "",
@@ -169,7 +169,7 @@ export default class AddCutsomer extends React.Component {
               customerZipCode: ""
             });
           } else {
-            console.log("Fail");
+            //console.log("Fail");
             this.setState({
               customerEmail: email,
               customerFirstName: firstNm,

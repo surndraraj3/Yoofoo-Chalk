@@ -72,7 +72,7 @@ export default class Customers extends React.Component {
   }
   //Load Customer Details
    loadCustomerDetails = () => {
-    console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
+    //console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -91,7 +91,7 @@ export default class Customers extends React.Component {
         this.setState({ loading: false });
       })
       .catch(error => {
-        console.error(error);
+        //console.error(error);
         this.setState({ customersListData: [] });
         this.setState({ loading: false });
       });
@@ -102,7 +102,7 @@ export default class Customers extends React.Component {
   };
 
   onChangeFab = fabitem => {
-    console.log("item", fabitem);
+    //console.log("item", fabitem);
   };
   //show spinner
   renderLoading() {
@@ -167,19 +167,19 @@ export default class Customers extends React.Component {
     );
   }
   onOpenMenu = openMenuid => {
-    console.log("Ids", openMenuid);
+    //console.log("Ids", openMenuid);
     UIManager.showPopupMenu(
       findNodeHandle(this._button),
       ["Create Order"],
       () => console.log("something went wrong with the popup menu"),
       (e, i) => {
-        console.log(`${e} : ${i}`);
+        //console.log(`${e} : ${i}`);
         if (i === 0) {
           this.props.navigation.navigate("TransferOrder", {
             customerId: openMenuid
           });
         } else {
-          console.log(`${e} : ${i}`);
+          //console.log(`${e} : ${i}`);
         }
       }
     );
@@ -201,7 +201,7 @@ export default class Customers extends React.Component {
       searchCustomerList: rsSrchCustomer,
       customerCount: rsSrchCustomer.length
     });
-    console.log("ListCustomer", rsSrchCustomer.length);
+    //console.log("ListCustomer", rsSrchCustomer.length);
   };
 
   render() {
@@ -296,7 +296,7 @@ export default class Customers extends React.Component {
                                 width: 20
                               }}
                               onValueChange={(selVal, selIndex) => {
-                                console.log("221", selVal, selIndex);
+                                //console.log("221", selVal, selIndex);
                                 this.setState({ selPickItm: selVal });
                                 this.props.navigation.navigate(
                                   "InventoryOrder",
@@ -362,7 +362,7 @@ export default class Customers extends React.Component {
                                   width: 20
                                 }}
                                 onValueChange={(selItmVal, selItmIndex) => {
-                                  console.log("221", selItmVal, selItmIndex);
+                                  //console.log("221", selItmVal, selItmIndex);
                                   this.setState({ selPickItm: selItmVal });
                                   this.props.navigation.navigate(
                                     "InventoryOrder",

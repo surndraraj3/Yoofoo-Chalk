@@ -34,7 +34,7 @@ export default class TransferOrder extends React.Component {
   }
   componentDidMount() {
     // this.setState({ loading: true });
-    console.log("Order Id URL", `${customerOrderURL}${this.state.customerId}`);
+    //console.log("Order Id URL", `${customerOrderURL}${this.state.customerId}`);
     fetch(`${customerOrderURL}${this.state.customerId}`, {
       method: "GET"
     })

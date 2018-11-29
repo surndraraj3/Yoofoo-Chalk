@@ -51,9 +51,9 @@ export default class Home extends React.Component {
           this.props.navigation.navigate("HelpScreen");
         } else if (i === 3) {
           // this.props.navigation.navigate("LoginScreen");
-          console.log(`${e} : ${i}`);
+          //console.log(`${e} : ${i}`);
         } else {
-          console.log(`${e} : ${i}`);
+          //console.log(`${e} : ${i}`);
           // this.props.navigation.navigate("Customer");
         }
       }

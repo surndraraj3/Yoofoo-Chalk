@@ -61,7 +61,7 @@ export default class Orders extends React.Component {
           authToken: responseJson.Token
         });
       });
-    console.log("Order URL", `${getOrdersListURL}${this.state.distributorId}`);
+    //console.log("Order URL", `${getOrdersListURL}${this.state.distributorId}`);
     fetch(
       // "http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/14711",
       `${getOrdersListURL}${this.state.distributorId}`,
@@ -88,19 +88,19 @@ export default class Orders extends React.Component {
       });
   };
   onOpenMenu = openMenuid => {
-    console.log("Ids", openMenuid);
+    //console.log("Ids", openMenuid);
     UIManager.showPopupMenu(
       findNodeHandle(this._button),
       ["Open", "Ressend"],
       () => console.log("something went wrong with the popup menu"),
       (e, i) => {
-        console.log(`${e} : ${i}`);
+        //console.log(`${e} : ${i}`);
         if (i === 0) {
           this.props.navigation.navigate("TransferOrder", {
             customerId: openMenuid
           });
         } else {
-          console.log(`${e} : ${i}`);
+          //console.log(`${e} : ${i}`);
         }
       }
     );
@@ -157,7 +157,7 @@ export default class Orders extends React.Component {
   // Filter by text box search
   onChangeOrder = txtSrchFild => {
     //txtSearchBox
-    console.log("Search Field", txtSrchFild);
+    //console.log("Search Field", txtSrchFild);
     const res = this.state.dataSource.filter(
       v =>
         v.Customer.toLowerCase().includes(txtSrchFild.toLowerCase()) ||

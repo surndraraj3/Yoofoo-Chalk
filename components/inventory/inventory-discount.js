@@ -30,7 +30,7 @@ export default class InventoryOrderDiscount extends React.Component {
     }
 
     render() {
-        console.log('State', this.state.discountPercent, this.state.discountItemId);
+        //console.log('State', this.state.discountPercent, this.state.discountItemId);
         return (
             <Container>
                 <View style={{ padding: 10 }} />
