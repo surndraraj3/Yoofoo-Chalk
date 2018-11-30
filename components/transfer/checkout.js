@@ -107,6 +107,7 @@ export default class Checkout extends React.Component {
       //console.log("Before Quantity", itmVal.Quantity);
       itmVal.Quantity = itmVal.incVal;
       itmVal.Discount = itmVal.discountVal;
+      itmVal.DesignerID = this.state.distributorId;
       //console.log("After Quantity", itmVal.Quantity);
     });
     //console.log("Final Composure Data", this.state.getOrdesFromCart);
@@ -163,9 +164,7 @@ export default class Checkout extends React.Component {
             });
         } else {
           Toast.showWithGravity(
-            `Order Failed: ${
-              resAddOrderJson.OrderID
-            }`,
+            `Order Failed: ${resAddOrderJson.OrderID}`,
             Toast.SHORT,
             Toast.CENTER
           );
@@ -177,7 +176,7 @@ export default class Checkout extends React.Component {
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
-    console.log("OnChange", e);
+    //console.log("OnChange", e);
     if (e !== "Select Customer") {
       this.setState({ customerId: e, selCustomerVal: e });
       //console.log('Order List Before', this.state.getOrdesFromCart);
@@ -250,6 +249,12 @@ export default class Checkout extends React.Component {
           Toast.CENTER
         );
       } else {
+        this.state.getOrdesFromCart.map(itmVal => {
+          //console.log("Before Quantity", itmVal.Quantity);
+          itmVal.Quantity = itmVal.incVal;
+          itmVal.Discount = itmVal.discountVal;
+          //console.log("After Quantity", itmVal.Quantity);
+        });
         //console.log("Data Found", getCustId);
         fetch(`${calculateAddOrdersUrl}`, {
           method: "POST",
@@ -262,7 +267,7 @@ export default class Checkout extends React.Component {
         })
           .then(respCalOrder => respCalOrder.json())
           .then(respCalOrderJson => {
-            console.log("Orders");
+            //console.log("Orders");
             this.setState({ getCalculatedOrders: respCalOrderJson });
           })
           .catch(errCalOrder => {
@@ -399,7 +404,14 @@ export default class Checkout extends React.Component {
                     <Text>Order Total</Text>
                   </Left>
                   <Right>
-                    <Text>{"\u0024"} 9.50</Text>
+                    {this.state.getCalculatedOrders.totalField ? (
+                      <Text>
+                        {"\u0024"}
+                        {this.state.getCalculatedOrders.totalField}
+                      </Text>
+                    ) : (
+                      <Text>{"\u0024"} 0</Text>
+                    )}
                   </Right>
                 </CardItem>
               </Card>
@@ -436,13 +448,14 @@ export default class Checkout extends React.Component {
                         autoCapitalize="sentences"
                         value={this.state.cashVal}
                         onChangeText={txtCashVal => {
-                          this.setState({ cashVal: txtCashVal });
+                          this.setState({ cashVal: txtCashVal, remainingDueVal: this.state.getCalculatedOrders.totalField - txtCashVal});
                         }}
                         keyboardType="numeric"
                         returnKeyType="done"
                         onSubmitEditing={Keyboard.dismiss}
                         autoCapitalize="sentences"
                         placeholder="Enter Cash"
+                        style={{ textAlign: "right" }}
                       />
                     </Item>
                   </Right>
@@ -458,21 +471,7 @@ export default class Checkout extends React.Component {
                     <Text>Remaining Due</Text>
                   </Left>
                   <Right>
-                    <Item>
-                      {/* <Text>{"\u0024"}</Text> */}
-                      <Input
-                        autoCapitalize="sentences"
-                        value={this.state.remainingDueVal}
-                        onChangeText={txtDueVal => {
-                          this.setState({ remainingDueVal: txtDueVal });
-                        }}
-                        keyboardType="numeric"
-                        returnKeyType="done"
-                        onSubmitEditing={Keyboard.dismiss}
-                        autoCapitalize="sentences"
-                        placeholder="Enter Due"
-                      />
-                    </Item>
+                    {this.state.remainingDueVal > 0 ? <Text> {"\u0024"} {this.state.remainingDueVal}</Text> : <Text>{"\u0024"} {this.state.remainingDueVal}</Text>}
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -515,7 +514,7 @@ export default class Checkout extends React.Component {
                     }}
                   >
                     Charge {"\u0024"}{" "}
-                    {this.state.cashVal - this.state.remainingDueVal}
+                    {this.state.cashVal}
                   </Text>
                 </Button>
               </View>

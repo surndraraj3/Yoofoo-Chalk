@@ -115,12 +115,12 @@ export default class InventoryOrder extends React.Component {
             inventoryCount: responseJson.length
           });
           this.state.inventoryList.map(v => {
-            (v.incVal = 0),
-              (v.selectItem = false),
-              (v.discountVal = 0),
-              (v.discountType = ""),
-              (v.btnDollarDiscountVal = false),
-              (v.btnPercentDiscountVal = false);
+            v.incVal = 0;
+              v.selectItem = false;
+              v.discountVal = 0;
+              v.discountType = "";
+              v.btnDollarDiscountVal = false;
+              v.btnPercentDiscountVal = false;
           });
 
           this.setState({ loading: false });
@@ -311,10 +311,10 @@ export default class InventoryOrder extends React.Component {
       }
       // Check Discount Value Condition
       if (c.discountType === "d") {
-        if (discountVal >= c.Price) {
+        if (discountVal >= c.RetailPrice) {
           //console.log('Max Discount Dollar reached');
-          c.discountVal = c.Price;
-          c.Discount = c.Price;
+          c.discountVal = c.RetailPrice;
+          c.Discount = c.RetailPrice;
           Toast.showWithGravity(
             "Max Discount Dollar reached",
             Toast.SHORT,
@@ -454,7 +454,7 @@ export default class InventoryOrder extends React.Component {
                               )}
                             </View>
                             <View style={commonStyles.nestedRow}>
-                              <Text>Msrp </Text>
+                              <Text>Retail</Text>
                               <Text>
                                 {"\u0024"}
                                 {itm.RetailPrice}
@@ -620,7 +620,7 @@ export default class InventoryOrder extends React.Component {
                                 <Text>{srchInvOrdrItm.discountVal} %</Text>
                               </View>
                               <View style={commonStyles.nestedRow}>
-                                <Text>Msrp </Text>
+                                <Text>Retail</Text>
                                 <Text>
                                   {"\u0024"}
                                   {srchInvOrdrItm.RetailPrice}
