@@ -207,26 +207,16 @@ export default class Checkout extends React.Component {
         customerId: this.state.getPrevCustomerId
       });
       // this.handleOnChangeCustomersList();
+      //console.log('Before Cart Items', this.state.getOrdesFromCart);
       this.state.getOrdesFromCart.map(dt => {
         dt.CustomerID = this.state.getPrevCustomerId;
+        dt.Price = dt.RetailPrice;
+        dt.DesignerID = this.state.distributorId;
       });
+      //console.log('Cart Items', this.state.getOrdesFromCart);
       //console.log("-----Get Customer Id----", this.state.getOrdesFromCart);
     }
-    // {
-    //   (this.state.getPrevCustomerId === undefined || this.state.getPrevCustomerId === 'CUSTOMER-ID')
-    //     ? this.setState({
-    //         selCustomerVal: "",
-    //         customerId: ""
-    //       })
-    //     : this.setState({
-    //         selCustomerVal: this.state.getPrevCustomerId,
-    //         customerId: this.state.getPrevCustomerId
-    //       });
-    // }
-    // this.setState({
-    //   selCustomerVal: this.state.getPrevCustomerId,
-    //   customerId: this.state.getPrevCustomerId
-    // });
+    
     if (
       this.state.getOrdesFromCart === undefined ||
       this.state.getOrdesFromCart === null
