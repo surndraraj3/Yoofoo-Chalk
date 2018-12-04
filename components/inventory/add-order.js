@@ -135,7 +135,7 @@ export default class AddInventoryOrder extends React.Component {
     this.props.navigation.navigate("InventoryOrder", { addedCartToItems: this.state.getListofOrdersPrevScreen });
   }
   render() {
-    //console.log('----------------------------', this.state.getListofOrdersPrevScreen);
+    // console.log('----------------------------', this.state.getListofOrdersPrevScreen);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -192,7 +192,7 @@ export default class AddInventoryOrder extends React.Component {
             {this.state.getListofOrdersPrevScreen.map(
               (reviewItmLst, reviewIndex) => (
                 <View key={reviewIndex}>
-                  {reviewItmLst.Quantity !== 0 ? (
+                  {reviewItmLst.incVal !== 0 ? (
                     <Card>
                       <CardItem header>
                         {/* <CheckBox checked={true} /> */}

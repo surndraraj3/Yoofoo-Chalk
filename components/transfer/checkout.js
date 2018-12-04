@@ -6,7 +6,7 @@ import {
   View,
   ScrollView,
   AsyncStorage,
-  TouchableOpacity,
+  ActivityIndicator,
   StyleSheet,
   Picker
 } from "react-native";
@@ -41,6 +41,7 @@ export default class Checkout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       distributorId: "",
       authToken: "",
       getOrdesFromCart: this.props.navigation.getParam("orderDtlsList"),
@@ -257,8 +258,8 @@ export default class Checkout extends React.Component {
         })
           .then(respCalOrder => respCalOrder.json())
           .then(respCalOrderJson => {
-            //console.log("Orders");
-            this.setState({ getCalculatedOrders: respCalOrderJson });
+            //console.log("Orders");this.setState({  });
+            this.setState({ getCalculatedOrders: respCalOrderJson, loading: false });
           })
           .catch(errCalOrder => {
             throw errCalOrder;
@@ -266,6 +267,27 @@ export default class Checkout extends React.Component {
       }
     }
   };
+  renderLoading() {
+    if (this.state.loading) {
+      return (
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: 0
+            // backgroundColor: 'red',
+            // opacity: 0.3
+          }}
+        />
+      );
+    } else {
+      return null;
+    }
+  }
   render() {
     //console.log("Customer Id", this.state.selCustomerVal);
     //console.log('Cal', this.state.getCalculatedOrders);
@@ -363,7 +385,7 @@ export default class Checkout extends React.Component {
                     <Text>Sales Tax</Text>
                   </Left>
                   <Right>
-                    <Text>{"\u0024"} 0.51</Text>
+                    <Text>{"\u0024"} {this.state.getCalculatedOrders.taxTotalField}</Text>
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -511,6 +533,7 @@ export default class Checkout extends React.Component {
             </ScrollView>
           </View>
         </Content>
+        {this.renderLoading()}
       </Container>
     );
   }
