@@ -55,3 +55,5 @@ export const calculateAddOrdersUrl = 'http://ccapiorderservice-dev.us-west-1.ela
 export const zipCodeUrl = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/ValidateZip/';
 //POST Cash Payment
 export const postCashPaymentUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/PostCashPayment';
+//Billing URL Credit Card
+export const payCreditCardUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/PostCreditCardPayment' 

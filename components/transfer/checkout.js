@@ -32,7 +32,8 @@ import {
   addOrdersUrl,
   getCustomerListURL,
   calculateAddOrdersUrl,
-  postCashPaymentUrl
+  postCashPaymentUrl,
+  payCreditCardUrl
 } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
@@ -52,7 +53,12 @@ export default class Checkout extends React.Component {
       customersListData: [],
       getPrevCustomerId: this.props.navigation.getParam("CustomerId"),
       cashVal: 0,
-      remainingDueVal: 0
+      remainingDueVal: 0,
+      cadrNumber:"",
+      expiryMonth: "",
+      expiryYear: "",
+      cvvNumber: "",
+      areaZipCode: ""
     };
   }
   componentDidMount = async () => {
@@ -493,22 +499,27 @@ export default class Checkout extends React.Component {
                 </CardItem>
                 <CardItem>
                   <Item regular>
-                    <Input placeholder="Card Number" />
+                    <Input placeholder="Card Number" value={this.state.cadrNumber} onChange={(crdNum) => {this.setState({cadrNumber: crdNum})}}/>
                   </Item>
                 </CardItem>
                 <CardItem>
                   <Item regular>
-                    <Input placeholder="Exp. dd/mm" />
+                    <Input placeholder="Expiry Month" value={this.state.expiryMonth} onChange={(expMnth) => this.setState({ expiryMonth: expMnth})} />
                   </Item>
                 </CardItem>
                 <CardItem>
                   <Item regular>
-                    <Input placeholder="CVV" />
+                    <Input placeholder="Expiry Year" value={this.state.expiryYear} onChange={(expYr) => this.setState({ expiryYear: expYr})} />
                   </Item>
                 </CardItem>
                 <CardItem>
                   <Item regular>
-                    <Input placeholder="Zip" />
+                    <Input placeholder="CVV" value={this.state.cvvNumber} onChange={(cvvNum) => {this.setState({ cvvNumber: cvvNum})}} />
+                  </Item>
+                </CardItem>
+                <CardItem>
+                  <Item regular>
+                    <Input placeholder="Zip" value={this.state.areaZipCode} onChange={(areaZip) => {this.setState({ areaZipCode: areaZip})}} />
                   </Item>
                 </CardItem>
               </Card>
