@@ -61,9 +61,9 @@ export default class Settings extends React.Component {
   };
   //Validate Zip Code
   validateZipCode = () => {
-    //console.log("Welcome Zip", this.state.distributorZipCode);
+    console.log("Welcome Zip", `${zipCodeUrl}${this.state.distributorZipCode}/${this.state.distributorId}`);
     if (this.state.distributorZipCode !== 0) {
-      fetch(`${zipCodeUrl}${this.state.distributorZipCode}`, {
+      fetch(`${zipCodeUrl}${this.state.distributorZipCode}/${this.state.distributorId}`, {
         method: "GET",
         headers: {
           Accept: "application/json",
