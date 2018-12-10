@@ -395,6 +395,7 @@ export default class InventoryOrder extends React.Component {
             </View>
           </View>
           <ScrollView>
+            {this.state.inventoryList.length === 0 ? <Text style={commonStyles.warningMessage}> No records found !</Text>: <View />}
             {this.state.searchInventoryOrdersList.length === 0
               ? this.state.inventoryList.map((itm, i) => (
                   <View key={i}>

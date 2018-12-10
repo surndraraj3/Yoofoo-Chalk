@@ -8,7 +8,8 @@ import {
   AsyncStorage,
   ActivityIndicator,
   StyleSheet,
-  Picker
+  Picker,
+  KeyboardAvoidingView
 } from "react-native";
 import {
   Container,
@@ -54,7 +55,8 @@ export default class Checkout extends React.Component {
       getPrevCustomerId: this.props.navigation.getParam("CustomerId"),
       cashVal: 0,
       remainingDueVal: 0,
-      cadrNumber:"",
+      cardName: "",
+      cadrNumber: "",
       expiryMonth: "",
       expiryYear: "",
       cvvNumber: "",
@@ -110,76 +112,75 @@ export default class Checkout extends React.Component {
   };
   //save checkout orders
   saveOrderDtls = () => {
-    this.state.getOrdesFromCart.map(itmVal => {
-      //console.log("Before Quantity", itmVal.Quantity);
-      itmVal.Quantity = itmVal.incVal;
-      itmVal.Discount = itmVal.discountVal;
-      itmVal.DesignerID = this.state.distributorId;
-      //console.log("After Quantity", itmVal.Quantity);
-    });
-    //console.log("Final Composure Data", this.state.getOrdesFromCart);
-    fetch(`${addOrdersUrl}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.state.authToken}`
-      },
-      body: JSON.stringify(this.state.getOrdesFromCart)
-    })
-      .then(response => response.json())
-      .then(resAddOrderJson => {
-        //console.log("resAddOrderJson", resAddOrderJson);
-        // const resMessage = `Order placed successfully Order Id: ${
-        //   resAddOrderJson.OrderID
-        // }`;
-
-        if (resAddOrderJson.OrderID !== "0") {
-          fetch(`${postCashPaymentUrl}`, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.state.authToken}`
-            },
-            body: JSON.stringify({
-              CustomerID: this.state.selCustomerVal,
-              OrderID: resAddOrderJson.OrderID,
-              PaymentAmount: this.state.cashVal - this.state.remainingDueVal
-            })
-          })
-            .then(responseCashPayment => responseCashPayment.json())
-            .then(resCashPaymentJson => {
-              //console.log('resCashPaymentJson', resCashPaymentJson.Message, resCashPaymentJson)
-
-              Toast.showWithGravity(
-                `Order placed successfully Order Id: ${
-                  resAddOrderJson.OrderID
-                }`,
-                Toast.SHORT,
-                Toast.CENTER
-              );
-              this.setState({
-                getOrdesFromCart: [],
-                selCustomerVal: "",
-                customerId: ""
-              });
-
-              setTimeout(() => {
-                this.props.navigation.navigate("Home");
-              }, 2000);
-            });
-        } else {
-          Toast.showWithGravity(
-            `Order Failed: ${resAddOrderJson.OrderID}`,
-            Toast.SHORT,
-            Toast.CENTER
-          );
-        }
-      })
-      .catch(error => {
-        console.error(error);
+    console.log('Cart', this.state.getOrdesFromCart);
+    console.log("resAddOrderJson", this.state.cashVal);
+    if(this.state.getOrdesFromCart !== undefined) {
+      this.state.getOrdesFromCart.map(itmVal => {
+        //console.log("Before Quantity", itmVal.Quantity);
+        itmVal.Quantity = itmVal.incVal;
+        itmVal.Discount = itmVal.discountVal;
+        itmVal.DesignerID = this.state.distributorId;
+        //console.log("After Quantity", itmVal.Quantity);
       });
+      //console.log("Final Composure Data", this.state.getOrdesFromCart);
+      fetch(`${addOrdersUrl}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.state.authToken}`
+        },
+        body: JSON.stringify(this.state.getOrdesFromCart)
+      })
+        .then(response => response.json())
+        .then(resAddOrderJson => {
+          console.log("resAddOrderJson", this.state.cashVal);
+          
+          if (resAddOrderJson.OrderID !== "0") {
+            fetch(`${postCashPaymentUrl}`, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.state.authToken}`
+              },
+              body: JSON.stringify({
+                CustomerID: this.state.selCustomerVal,
+                OrderID: resAddOrderJson.OrderID,
+                PaymentAmount: this.state.cashVal - this.state.remainingDueVal
+              })
+            })
+              .then(responseCashPayment => responseCashPayment.json())
+              .then(resCashPaymentJson => {              
+                Toast.showWithGravity(
+                  `Order placed successfully Order Id: ${
+                    resAddOrderJson.OrderID
+                  }`,
+                  Toast.SHORT,
+                  Toast.CENTER
+                );
+                this.setState({
+                  getOrdesFromCart: [],
+                  selCustomerVal: "",
+                  customerId: ""
+                });
+  
+                setTimeout(() => {
+                  this.props.navigation.navigate("Home");
+                }, 2000);
+              });
+          } else {
+            Toast.showWithGravity(
+              `Order Failed: ${resAddOrderJson.OrderID}`,
+              Toast.SHORT,
+              Toast.CENTER
+            );
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }    
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
@@ -223,7 +224,7 @@ export default class Checkout extends React.Component {
       //console.log('Cart Items', this.state.getOrdesFromCart);
       //console.log("-----Get Customer Id----", this.state.getOrdesFromCart);
     }
-    
+
     if (
       this.state.getOrdesFromCart === undefined ||
       this.state.getOrdesFromCart === null
@@ -265,7 +266,10 @@ export default class Checkout extends React.Component {
           .then(respCalOrder => respCalOrder.json())
           .then(respCalOrderJson => {
             //console.log("Orders");this.setState({  });
-            this.setState({ getCalculatedOrders: respCalOrderJson, loading: false });
+            this.setState({
+              getCalculatedOrders: respCalOrderJson,
+              loading: false
+            });
           })
           .catch(errCalOrder => {
             throw errCalOrder;
@@ -391,7 +395,9 @@ export default class Checkout extends React.Component {
                     <Text>Sales Tax</Text>
                   </Left>
                   <Right>
-                    <Text>{"\u0024"} {this.state.getCalculatedOrders.taxTotalField}</Text>
+                    <Text>
+                      {"\u0024"} {this.state.getCalculatedOrders.taxTotalField}
+                    </Text>
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -466,7 +472,12 @@ export default class Checkout extends React.Component {
                         autoCapitalize="sentences"
                         value={this.state.cashVal}
                         onChangeText={txtCashVal => {
-                          this.setState({ cashVal: txtCashVal, remainingDueVal: this.state.getCalculatedOrders.totalField - txtCashVal});
+                          this.setState({
+                            cashVal: txtCashVal,
+                            remainingDueVal:
+                              this.state.getCalculatedOrders.totalField -
+                              txtCashVal
+                          });
                         }}
                         keyboardType="numeric"
                         returnKeyType="done"
@@ -489,39 +500,223 @@ export default class Checkout extends React.Component {
                     <Text>Remaining Due</Text>
                   </Left>
                   <Right>
-                    {this.state.remainingDueVal > 0 ? <Text> {"\u0024"} {this.state.remainingDueVal}</Text> : <Text>{"\u0024"} {this.state.remainingDueVal}</Text>}
+                    {isNaN(this.state.remainingDueVal) > 0 ? (
+                      <Text>
+                        {"\u0024"} {this.state.remainingDueVal}
+                      </Text>
+                    ) : (
+                      <Text>
+                        {"\u0024"} {this.state.remainingDueVal}
+                      </Text>
+                    )}
                   </Right>
                 </CardItem>
-                <CardItem>
+                <KeyboardAvoidingView
+                  // style={{ flex: 1 }}
+                  // behavior={"padding"}
+                  enabled
+                >
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Name On Card</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={crdNm => {
+                          this.setState({ cardName: crdNm });
+                          console.log("CrdNm", crdNm);
+                        }}
+                        value={this.state.cardName}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        ref={ref => {
+                          this._cardName = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._cadrNumber && this._cadrNumber.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Card Number</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={crdNum => {
+                          this.setState({ cadrNumber: crdNum });
+                        }}
+                        value={this.state.cadrNumber}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        keyboardType="numeric"
+                        ref={ref => {
+                          this._cadrNumber = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._expiryMonth && this._expiryMonth.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                  </View>
+                </KeyboardAvoidingView>
+                <KeyboardAvoidingView
+                  style={{ flex: 1 }}
+                  behavior={"position"}
+                  enabled
+                >
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Expiry Month</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={expMnth =>
+                          this.setState({ expiryMonth: expMnth })
+                        }
+                        value={this.state.expiryMonth}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        keyboardType="numeric"
+                        ref={ref => {
+                          this._expiryMonth = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._expiryYear && this._expiryYear.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Expiry Year</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={expYr =>
+                          this.setState({ expiryYear: expYr })
+                        }
+                        value={this.state.expiryYear}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        keyboardType="numeric"
+                        ref={ref => {
+                          this._expiryYear = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._cvvNum && this._cvvNum.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>CVV</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={cvvNum => {
+                          this.setState({ cvvNumber: cvvNum });
+                        }}
+                        value={this.state.cvvNumber}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        keyboardType="numeric"
+                        ref={ref => {
+                          this._cvvNum = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._areaZip && this._areaZip.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Zip</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={areaZip => {
+                          this.setState({ areaZipCode: areaZip });
+                        }}
+                        value={this.state.areaZipCode}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        keyboardType="numeric"
+                        ref={ref => {
+                          this._areaZip = ref;
+                        }}
+                        returnKeyType="done"
+                        onSubmitEditing={Keyboard.dismiss}
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                  </View>
+                </KeyboardAvoidingView>
+                {/* <CardItem>
                   <Item regular>
                     <Input placeholder="Name On Card" />
                   </Item>
-                </CardItem>
-                <CardItem>
+                </CardItem> */}
+                {/* <CardItem>
                   <Item regular>
-                    <Input placeholder="Card Number" value={this.state.cadrNumber} onChange={(crdNum) => {this.setState({cadrNumber: crdNum})}}/>
+                    <Input
+                      placeholder="Card Number"
+                      value={this.state.cadrNumber}
+                      onChange={crdNum => {
+                        this.setState({ cadrNumber: crdNum });
+                      }}
+                    />
+                  </Item>
+                </CardItem> */}
+                {/* <CardItem>
+                  <Item regular>
+                    <Input
+                      placeholder="Expiry Month"
+                      value={this.state.expiryMonth}
+                      onChange={expMnth =>
+                        this.setState({ expiryMonth: expMnth })
+                      }
+                    />
+                  </Item>
+                </CardItem> */}
+                {/* <CardItem>
+                  <Item regular>
+                    <Input
+                      placeholder="Expiry Year"
+                      value={this.state.expiryYear}
+                      onChange={expYr => this.setState({ expiryYear: expYr })}
+                    />
                   </Item>
                 </CardItem>
                 <CardItem>
                   <Item regular>
-                    <Input placeholder="Expiry Month" value={this.state.expiryMonth} onChange={(expMnth) => this.setState({ expiryMonth: expMnth})} />
+                    <Input
+                      placeholder="CVV"
+                      value={this.state.cvvNumber}
+                      onChange={cvvNum => {
+                        this.setState({ cvvNumber: cvvNum });
+                      }}
+                    />
                   </Item>
-                </CardItem>
-                <CardItem>
+                </CardItem> */}
+                {/* <CardItem>
                   <Item regular>
-                    <Input placeholder="Expiry Year" value={this.state.expiryYear} onChange={(expYr) => this.setState({ expiryYear: expYr})} />
+                    <Input
+                      placeholder="Zip"
+                      value={this.state.areaZipCode}
+                      onChange={areaZip => {
+                        this.setState({ areaZipCode: areaZip });
+                      }}
+                    />
                   </Item>
-                </CardItem>
-                <CardItem>
-                  <Item regular>
-                    <Input placeholder="CVV" value={this.state.cvvNumber} onChange={(cvvNum) => {this.setState({ cvvNumber: cvvNum})}} />
-                  </Item>
-                </CardItem>
-                <CardItem>
-                  <Item regular>
-                    <Input placeholder="Zip" value={this.state.areaZipCode} onChange={(areaZip) => {this.setState({ areaZipCode: areaZip})}} />
-                  </Item>
-                </CardItem>
+                </CardItem> */}
               </Card>
               <View style={{ margin: 10 }}>
                 <Button
@@ -536,8 +731,7 @@ export default class Checkout extends React.Component {
                       fontWeight: "bold"
                     }}
                   >
-                    Charge {"\u0024"}{" "}
-                    {this.state.cashVal}
+                    Charge {"\u0024"} {this.state.cashVal}
                   </Text>
                 </Button>
               </View>
