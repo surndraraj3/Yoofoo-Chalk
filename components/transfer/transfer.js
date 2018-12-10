@@ -37,7 +37,7 @@ export default class Transfer extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Transfer</Title>
+            <Title>Transfer Order</Title>
           </Body>
           <Right>
             <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
@@ -50,7 +50,24 @@ export default class Transfer extends React.Component {
         </Header>
         <Content>
           <ScrollView>
-            <Text>Welcome To Transfer</Text>
+          <View style={{ backgroundColor: "#e6e6e6" }}>
+            <Text style={{ margin: 15, fontSize: 12 }}>
+              Designer Id
+            </Text>
+            <View style={{ margin: 15 }}>
+              <Item>
+                <Input
+                  placeholder="Search by Designer Id"
+                  style={{
+                    textAlign: "center",
+                    height: 50                    
+                  }}
+                  onChangeText={() => {}}
+                />
+                <Icon active name="search" />
+              </Item>
+            </View>
+          </View>
             {/* <KeyboardAvoidingView
               style={{ flex: 1 }}
               keyboardVerticalOffset={100}

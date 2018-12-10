@@ -24,7 +24,7 @@ import {
   Content,
   Fab
 } from "native-base";
-import App from '../../App'
+import App from "../../App";
 import OptionsMenu from "react-native-options-menu";
 import commonStyles from "../styles/styles";
 
@@ -71,7 +71,7 @@ export default class Home extends React.Component {
   goToHelp = () => {
     this.props.navigation.navigate("HelpScreen");
   };
-  goToSignout = () => {    
+  goToSignout = () => {
     AsyncStorage.removeItem("LoginDetails");
     this.props.navigation.navigate("Login");
   };
@@ -210,10 +210,14 @@ export default class Home extends React.Component {
             </View>
             <View
               style={{
+                // flex: 1,
+                // flexDirection: "row",
+                // marginLeft: 40,
+                // marginTop: 5,
+                // justifyContent: 'space-between'
                 flex: 1,
                 flexDirection: "row",
-                marginLeft: 40,
-                marginTop: 5
+                justifyContent: "space-around"
               }}
             >
               <View>
@@ -234,6 +238,25 @@ export default class Home extends React.Component {
                 </TouchableHighlight>
                 <Text>C & T Fee</Text>
               </View>
+              <View>
+                <TouchableHighlight
+                  onPress={() => this.props.navigation.navigate("Designer to Designer")}
+                >
+                  {Platform.OS === "ios" ? (
+                    <Image
+                      source={require("../../assets/transfer.png")}
+                      style={commonStyles.iosDashboardIcon}
+                    />
+                  ) : (
+                    <Image
+                      source={require("../../assets/transfer.png")}
+                      style={commonStyles.imgDashboardIcon}
+                    />
+                  )}
+                </TouchableHighlight>
+                <Text>Designer To Designer</Text>
+              </View>
+              <View />  
             </View>
           </View>
         </Content>
@@ -254,8 +277,8 @@ export default class Home extends React.Component {
             <ImageBackground
               resizeMode={"stretch"} // or cover
               style={{
-                height: '100%',
-                width: '100%'
+                height: "100%",
+                width: "100%"
               }}
               source={require("../../assets/start.png")}
             />
@@ -268,13 +291,19 @@ export default class Home extends React.Component {
                 style={commonStyles.fabIcon}
               />
             </Button>
-            <Button style={{ backgroundColor: "#3B5998" }} onPress={() => this.props.navigation.navigate("InventoryOrder")}>
+            <Button
+              style={{ backgroundColor: "#3B5998" }}
+              onPress={() => this.props.navigation.navigate("InventoryOrder")}
+            >
               <Image
                 source={require("../../assets/cart.png")}
                 style={commonStyles.fabIcon}
               />
             </Button>
-            <Button style={{ backgroundColor: "#DD5144" }} onPress={() => this.props.navigation.navigate("AddCutsomer")}>
+            <Button
+              style={{ backgroundColor: "#DD5144" }}
+              onPress={() => this.props.navigation.navigate("AddCutsomer")}
+            >
               <Image
                 source={require("../../assets/new_customer.png")}
                 style={commonStyles.fabIcon}
