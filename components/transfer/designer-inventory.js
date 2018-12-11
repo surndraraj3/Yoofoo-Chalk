@@ -41,6 +41,8 @@ export default class DesignerInventory extends React.Component {
       loading: true,
       active: "true",
       distributorId: "",
+      designerIdVal: this.props.navigation.getParam("searchedDesignerId"),
+      designerIdName:this.props.navigation.getParam("searchDesignerName"),
       authToken: "",
       inventoryList: [],
       inventoryCount: 0,
@@ -371,7 +373,7 @@ export default class DesignerInventory extends React.Component {
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
             <Text style={{ margin: 15, fontSize: 20 }}>
-              {this.state.inventoryCount} Order
+              {this.state.inventoryCount} Order, ID: {this.state.designerIdVal} {this.state.designerIdName}
             </Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
@@ -791,7 +793,7 @@ export default class DesignerInventory extends React.Component {
               onPress={() =>
                 this.props.navigation.navigate("AddInventoryOrder", {
                   reviewOrderDetailsList: this.state.addToOrderList,
-                  customerId: cstmrId
+                  customerId: this.state.designerIdVal
                 })
               }
             >

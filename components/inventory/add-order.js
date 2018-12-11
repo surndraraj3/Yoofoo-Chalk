@@ -135,7 +135,7 @@ export default class AddInventoryOrder extends React.Component {
     this.props.navigation.navigate("InventoryOrder", { addedCartToItems: this.state.getListofOrdersPrevScreen });
   }
   render() {
-    // console.log('----------------------------', this.state.getListofOrdersPrevScreen);
+    //console.log('----------------------------', this.state.getCustomerId);
     return (
       <Container>
         <View style={{ padding: 10 }} />

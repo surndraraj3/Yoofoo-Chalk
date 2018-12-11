@@ -55,7 +55,7 @@ export default class Transfer extends React.Component {
   };
   //Handle To load designer list
   handleDesignerList = () => {
-    console.log("Welcome Search", this.state.srchDsgnrId);
+    //console.log("Welcome Search", this.state.srchDsgnrId);
     this.renderLoading();
     this.setState({ loading: true });
     if (this.state.srchDsgnrId !== "") {
@@ -69,7 +69,7 @@ export default class Transfer extends React.Component {
       })
         .then(rspDsgnrs => rspDsgnrs.json())
         .then(respDsgnrJson => {
-          console.log("test", respDsgnrJson);
+          //console.log("test", respDsgnrJson);
           if (!respDsgnrJson.Message) {
             this.setState({ designerList: respDsgnrJson, loading: false });
             this.handleLoadDesignersListView();
@@ -100,7 +100,10 @@ export default class Transfer extends React.Component {
           <Right>
             <TouchableHighlight
               onPress={() =>
-                this.props.navigation.navigate("DesignerInventory")
+                this.props.navigation.navigate("DesignerInventory", {
+                  searchedDesignerId: this.state.srchDsgnrId,
+                  searchDesignerName: this.state.designerList.LastName
+                })
               }
             >
               {this.state.designerList.LastName ? (

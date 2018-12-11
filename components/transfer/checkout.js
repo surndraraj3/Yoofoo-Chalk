@@ -112,8 +112,8 @@ export default class Checkout extends React.Component {
   };
   //save checkout orders
   saveOrderDtls = () => {
-    console.log('Cart', this.state.getOrdesFromCart);
-    console.log("resAddOrderJson", this.state.cashVal);
+    //console.log('Cart', this.state.getOrdesFromCart);
+    //console.log("resAddOrderJson", this.state.cashVal);
     if(this.state.getOrdesFromCart !== undefined) {
       this.state.getOrdesFromCart.map(itmVal => {
         //console.log("Before Quantity", itmVal.Quantity);
@@ -134,7 +134,7 @@ export default class Checkout extends React.Component {
       })
         .then(response => response.json())
         .then(resAddOrderJson => {
-          console.log("resAddOrderJson", this.state.cashVal);
+         // console.log("resAddOrderJson", this.state.cashVal);
           
           if (resAddOrderJson.OrderID !== "0") {
             fetch(`${postCashPaymentUrl}`, {
