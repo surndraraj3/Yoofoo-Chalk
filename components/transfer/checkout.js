@@ -147,7 +147,7 @@ export default class Checkout extends React.Component {
               body: JSON.stringify({
                 CustomerID: this.state.selCustomerVal,
                 OrderID: resAddOrderJson.OrderID,
-                PaymentAmount: this.state.cashVal - this.state.remainingDueVal
+                PaymentAmount: this.state.cashVal // - this.state.remainingDueVal
               })
             })
               .then(responseCashPayment => responseCashPayment.json())
