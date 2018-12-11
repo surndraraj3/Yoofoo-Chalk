@@ -56,4 +56,6 @@ export const zipCodeUrl = 'http://customerservices-dev.us-west-1.elasticbeanstal
 //POST Cash Payment
 export const postCashPaymentUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/PostCashPayment';
 //Billing URL Credit Card
-export const payCreditCardUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/PostCreditCardPayment' 
+export const payCreditCardUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/PostCreditCardPayment';
+//GET Designers List
+export const getDesignerListUrl = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/GetDesigners/'; 

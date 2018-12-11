@@ -345,7 +345,7 @@ export default class DesignerInventory extends React.Component {
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{ flex: 1 }}>
+          <Left>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -354,7 +354,7 @@ export default class DesignerInventory extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Order</Title>
+            <Title>Designer to Designer</Title>
           </Body>
           <Right>
             <Button
