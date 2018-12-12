@@ -64,7 +64,8 @@ export default class DesignerInventory extends React.Component {
       valDiscountType: "",
       btnDollarDiscount: false,
       btnPercentDiscount: false,
-      getCartItems: this.props.navigation.getParam("addedCartToItems")
+      getCartItems: this.props.navigation.getParam("addedCartToItems"),
+      getObjDsgnr: this.props.navigation.getParam("objDesigner")
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -342,7 +343,7 @@ export default class DesignerInventory extends React.Component {
       "customerDistributorId",
       "CUSTOMER_DIST_ID"
     );
-    // console.log("ID", cstmrId, cstmrDistributorId);
+    //console.log("Desgnr Obj", this.state.getObjDsgnr);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -793,7 +794,8 @@ export default class DesignerInventory extends React.Component {
               onPress={() =>
                 this.props.navigation.navigate("AddInventoryOrder", {
                   reviewOrderDetailsList: this.state.addToOrderList,
-                  customerId: this.state.designerIdVal
+                  customerId: this.state.designerIdVal,
+                  designerDtls: this.state.getObjDsgnr
                 })
               }
             >

@@ -40,7 +40,8 @@ export default class AddInventoryOrder extends React.Component {
       distributorId: "",
       authToken: "",
       count: 0,
-      msgData: ""
+      msgData: "",
+      getDesignerObject: this.props.navigation.getParam("designerDtls")
     };
   }
   componentDidMount = async () => {
@@ -312,7 +313,8 @@ export default class AddInventoryOrder extends React.Component {
               onPress={() => {
                 this.props.navigation.navigate("Checkout", {
                   orderDtlsList: this.state.getListofOrdersPrevScreen,
-                  CustomerId: this.state.getCustomerId
+                  CustomerId: this.state.getCustomerId,
+                  DesignerObJ: this.state.getDesignerObject
                 });
               }}
             >

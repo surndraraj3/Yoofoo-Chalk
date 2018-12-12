@@ -88,6 +88,7 @@ export default class Transfer extends React.Component {
   };
   //----Load designer in form of list view------
   handleLoadDesignersListView = () => {
+    // console.log('this.state.designerList', this.state.designerList)
     return (
       <List>
         <ListItem selected>
@@ -102,7 +103,8 @@ export default class Transfer extends React.Component {
               onPress={() =>
                 this.props.navigation.navigate("DesignerInventory", {
                   searchedDesignerId: this.state.srchDsgnrId,
-                  searchDesignerName: this.state.designerList.LastName
+                  searchDesignerName: this.state.designerList.LastName,
+                  objDesigner: this.state.designerList
                 })
               }
             >

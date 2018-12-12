@@ -60,7 +60,8 @@ export default class Checkout extends React.Component {
       expiryMonth: "",
       expiryYear: "",
       cvvNumber: "",
-      areaZipCode: ""
+      areaZipCode: "",
+      getDesignerObject: this.props.navigation.getParam("DesignerObJ")
     };
   }
   componentDidMount = async () => {
@@ -86,7 +87,7 @@ export default class Checkout extends React.Component {
     });
   }
   //Load Checkout Details
-  loadCheckoutDetails = () => {
+  loadCheckoutDetails = () => {    
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -97,7 +98,12 @@ export default class Checkout extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        // console.log(responseJson);
+        if(this.state.getDesignerObject !== undefined) responseJson.push(this.state.getDesignerObject);
+       // console.log('Test Designer Obj inside Fetch', this.state.getDesignerObject);
+        // console.log(
+        //   "Customer Data",
+        //   responseJson
+        // );
         this.setState({
           customersListData: responseJson
         });
@@ -114,7 +120,7 @@ export default class Checkout extends React.Component {
   saveOrderDtls = () => {
     //console.log('Cart', this.state.getOrdesFromCart);
     //console.log("resAddOrderJson", this.state.cashVal);
-    if(this.state.getOrdesFromCart !== undefined) {
+    if (this.state.getOrdesFromCart !== undefined) {
       this.state.getOrdesFromCart.map(itmVal => {
         //console.log("Before Quantity", itmVal.Quantity);
         itmVal.Quantity = itmVal.incVal;
@@ -134,8 +140,8 @@ export default class Checkout extends React.Component {
       })
         .then(response => response.json())
         .then(resAddOrderJson => {
-         // console.log("resAddOrderJson", this.state.cashVal);
-          
+          // console.log("resAddOrderJson", this.state.cashVal);
+
           if (resAddOrderJson.OrderID !== "0") {
             fetch(`${postCashPaymentUrl}`, {
               method: "POST",
@@ -151,7 +157,7 @@ export default class Checkout extends React.Component {
               })
             })
               .then(responseCashPayment => responseCashPayment.json())
-              .then(resCashPaymentJson => {              
+              .then(resCashPaymentJson => {
                 Toast.showWithGravity(
                   `Order placed successfully Order Id: ${
                     resAddOrderJson.OrderID
@@ -164,7 +170,7 @@ export default class Checkout extends React.Component {
                   selCustomerVal: "",
                   customerId: ""
                 });
-  
+
                 setTimeout(() => {
                   this.props.navigation.navigate("Home");
                 }, 2000);
@@ -180,7 +186,7 @@ export default class Checkout extends React.Component {
         .catch(error => {
           console.error(error);
         });
-    }    
+    }
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
@@ -300,7 +306,8 @@ export default class Checkout extends React.Component {
   }
   render() {
     //console.log("Customer Id", this.state.selCustomerVal);
-    //console.log('Cal', this.state.getCalculatedOrders);
+    //console.log('-------------', this.state.customersListData);
+    //console.log('Test Designer Obj', this.state.getDesignerObject);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -523,7 +530,7 @@ export default class Checkout extends React.Component {
                         style={{ flex: 1, color: "#413E4F" }}
                         onChangeText={crdNm => {
                           this.setState({ cardName: crdNm });
-                          console.log("CrdNm", crdNm);
+                          //console.log("CrdNm", crdNm);
                         }}
                         value={this.state.cardName}
                         placeholderTextColor="#413E4F"
