@@ -224,7 +224,7 @@ export default class Checkout extends React.Component {
           dt.Price = dt.Price;
           dt.DesignerID = this.state.distributorId;
         });
-        console.log("-----Get Customer Id----", this.state.getDesignerObject.CustomerID);
+        // console.log("-----Get Customer Id----", this.state.getDesignerObject.CustomerID);
       } else{
         this.setState({
           selCustomerVal: this.state.getPrevCustomerId,
@@ -239,7 +239,7 @@ export default class Checkout extends React.Component {
       // this.handleOnChangeCustomersList();
       //console.log('Before Cart Items', this.state.getOrdesFromCart);
       
-      console.log('Cart Items', this.state.getOrdesFromCart);
+     //console.log('Cart Items', this.state.getOrdesFromCart);
       //console.log("-----Get Customer Id----", this.state.getOrdesFromCart);
     }
 
