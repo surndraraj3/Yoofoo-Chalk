@@ -256,7 +256,7 @@ export default class AddInventoryOrder extends React.Component {
                               </Left>
                               <Right>
                                 <Text>
-                                  {"\u0024"} {reviewItmLst.Price}
+                                  {"\u0024"} {reviewItmLst.RetailPrice}
                                 </Text>
                               </Right>
                             </View>

@@ -98,12 +98,10 @@ export default class Checkout extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        if(this.state.getDesignerObject !== undefined) responseJson.push(this.state.getDesignerObject);
-       // console.log('Test Designer Obj inside Fetch', this.state.getDesignerObject);
-        // console.log(
-        //   "Customer Data",
-        //   responseJson
-        // );
+        if(this.state.getDesignerObject !== undefined) {
+          responseJson.push(this.state.getDesignerObject);
+          console.log('CustId', this.state.getDesignerObject.CustomerID)          
+        }      
         this.setState({
           customersListData: responseJson
         });
@@ -190,7 +188,7 @@ export default class Checkout extends React.Component {
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
-    //console.log("OnChange", e);
+    console.log("OnChange", e);
     if (e !== "Select Customer") {
       this.setState({ customerId: e, selCustomerVal: e });
       //console.log('Order List Before', this.state.getOrdesFromCart);
@@ -210,24 +208,38 @@ export default class Checkout extends React.Component {
   };
 
   handleCalculateOrder = () => {
-    //console.log("No Customer", this.state.getPrevCustomerId);
+    console.log("No Customer", this.state.getPrevCustomerId);
     if (isNaN(this.state.getPrevCustomerId)) {
       //console.log("Get Customer Id", this.state.getPrevCustomerId);
       //this.setState({ selCustomerVal: "", customerId: "" });
     } else {
-      //console.log("-----Get Customer Id----", this.state.getPrevCustomerId);
-      this.setState({
-        selCustomerVal: this.state.getPrevCustomerId,
-        customerId: this.state.getPrevCustomerId
-      });
+      
+      if(this.state.getDesignerObject !== undefined) {
+        this.setState({
+          selCustomerVal: this.state.getDesignerObject.CustomerID,
+          customerId: this.state.getDesignerObject.CustomerID
+        });
+        this.state.getOrdesFromCart.map(dt => {
+          dt.CustomerID = this.state.getDesignerObject.CustomerID;
+          dt.Price = dt.Price;
+          dt.DesignerID = this.state.distributorId;
+        });
+        console.log("-----Get Customer Id----", this.state.getDesignerObject.CustomerID);
+      } else{
+        this.setState({
+          selCustomerVal: this.state.getPrevCustomerId,
+          customerId: this.state.getPrevCustomerId
+        });
+        this.state.getOrdesFromCart.map(dt => {
+          dt.CustomerID = this.state.getPrevCustomerId;
+          dt.Price = dt.RetailPrice;
+          dt.DesignerID = this.state.distributorId;
+        });
+      }      
       // this.handleOnChangeCustomersList();
       //console.log('Before Cart Items', this.state.getOrdesFromCart);
-      this.state.getOrdesFromCart.map(dt => {
-        dt.CustomerID = this.state.getPrevCustomerId;
-        dt.Price = dt.RetailPrice;
-        dt.DesignerID = this.state.distributorId;
-      });
-      //console.log('Cart Items', this.state.getOrdesFromCart);
+      
+      console.log('Cart Items', this.state.getOrdesFromCart);
       //console.log("-----Get Customer Id----", this.state.getOrdesFromCart);
     }
 
