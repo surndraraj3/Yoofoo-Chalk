@@ -26,6 +26,8 @@
 // export const zipCodeUrl = 'http://chalkcoutureapicustomerservices-prod.us-west-1.elasticbeanstalk.com/api/customer/ValidateZip/';
 // //POST Cash Payment
 // export const postCashPaymentUrl = 'http://chalkcoutureapiorderservice-prod.us-west-1.elasticbeanstalk.com/api/orders/PostCashPayment';
+//GET Designers List
+// export const getDesignerListUrl = 'http://chalkcoutureapicustomerservices-prod.us-west-1.elasticbeanstalk.com/api/Customer/GetDesigners/';
 
 
 //------------------Development URLS--------------------
