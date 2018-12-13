@@ -10,7 +10,8 @@ import {
   StyleSheet,
   Picker,
   KeyboardAvoidingView,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from "react-native";
 import {
   Container,
@@ -87,7 +88,7 @@ export default class Checkout extends React.Component {
     });
   }
   //Load Checkout Details
-  loadCheckoutDetails = () => {    
+  loadCheckoutDetails = () => {
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -98,10 +99,10 @@ export default class Checkout extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        if(this.state.getDesignerObject !== undefined) {
+        if (this.state.getDesignerObject !== undefined) {
           responseJson.push(this.state.getDesignerObject);
-          console.log('CustId', this.state.getDesignerObject.CustomerID)          
-        }      
+          //console.log("CustId", this.state.getDesignerObject.CustomerID);
+        }
         this.setState({
           customersListData: responseJson
         });
@@ -156,12 +157,30 @@ export default class Checkout extends React.Component {
             })
               .then(responseCashPayment => responseCashPayment.json())
               .then(resCashPaymentJson => {
-                Toast.showWithGravity(
+                // Toast.showWithGravity(
+                //   `Order placed successfully Order Id: ${
+                //     resAddOrderJson.OrderID
+                //   }`,
+                //   Toast.LONG,
+                //   Toast.CENTER
+                // );
+                Alert.alert(
+                  "Orders",
                   `Order placed successfully Order Id: ${
                     resAddOrderJson.OrderID
                   }`,
-                  Toast.SHORT,
-                  Toast.CENTER
+                  [
+                    // {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+                    // {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                    {
+                      text: "OK",
+                      onPress: () =>
+                        setTimeout(() => {
+                          this.props.navigation.navigate("Home");
+                        }, 2000)
+                    }
+                  ],
+                  { cancelable: false }
                 );
                 this.setState({
                   getOrdesFromCart: [],
@@ -169,9 +188,9 @@ export default class Checkout extends React.Component {
                   customerId: ""
                 });
 
-                setTimeout(() => {
-                  this.props.navigation.navigate("Home");
-                }, 2000);
+                // setTimeout(() => {
+                //   this.props.navigation.navigate("Home");
+                // }, 2000);
               });
           } else {
             Toast.showWithGravity(
@@ -208,13 +227,12 @@ export default class Checkout extends React.Component {
   };
 
   handleCalculateOrder = () => {
-    console.log("No Customer", this.state.getPrevCustomerId);
+    //console.log("No Customer", this.state.getPrevCustomerId);
     if (isNaN(this.state.getPrevCustomerId)) {
       //console.log("Get Customer Id", this.state.getPrevCustomerId);
       //this.setState({ selCustomerVal: "", customerId: "" });
     } else {
-      
-      if(this.state.getDesignerObject !== undefined) {
+      if (this.state.getDesignerObject !== undefined) {
         this.setState({
           selCustomerVal: this.state.getDesignerObject.CustomerID,
           customerId: this.state.getDesignerObject.CustomerID
@@ -225,7 +243,7 @@ export default class Checkout extends React.Component {
           dt.DesignerID = this.state.distributorId;
         });
         // console.log("-----Get Customer Id----", this.state.getDesignerObject.CustomerID);
-      } else{
+      } else {
         this.setState({
           selCustomerVal: this.state.getPrevCustomerId,
           customerId: this.state.getPrevCustomerId
@@ -235,11 +253,11 @@ export default class Checkout extends React.Component {
           dt.Price = dt.RetailPrice;
           dt.DesignerID = this.state.distributorId;
         });
-      }      
+      }
       // this.handleOnChangeCustomersList();
       //console.log('Before Cart Items', this.state.getOrdesFromCart);
-      
-     //console.log('Cart Items', this.state.getOrdesFromCart);
+
+      //console.log('Cart Items', this.state.getOrdesFromCart);
       //console.log("-----Get Customer Id----", this.state.getOrdesFromCart);
     }
 
@@ -379,7 +397,7 @@ export default class Checkout extends React.Component {
                   this.goToHelp,
                   this.goToSignout
                 ]}
-              />  
+              />
             </TouchableHighlight>
           </Right>
         </Header>
