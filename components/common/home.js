@@ -240,7 +240,9 @@ export default class Home extends React.Component {
               </View>
               <View>
                 <TouchableHighlight
-                  onPress={() => this.props.navigation.navigate("Designer to Designer")}
+                  onPress={() =>
+                    this.props.navigation.navigate("Designer to Designer")
+                  }
                 >
                   {Platform.OS === "ios" ? (
                     <Image
@@ -256,7 +258,7 @@ export default class Home extends React.Component {
                 </TouchableHighlight>
                 <Text>Designer To Designer</Text>
               </View>
-              <View />  
+              <View />
             </View>
           </View>
         </Content>
@@ -284,7 +286,12 @@ export default class Home extends React.Component {
             />
 
             {/* <Icon name="sun-o" type="FontAwesome" /> */}
-            <Button style={{ backgroundColor: "#34A34F" }}>
+            <Button
+              style={{ backgroundColor: "#34A34F" }}
+              onPress={() =>
+                this.props.navigation.navigate("Designer to Designer")
+              }
+            >
               {/* <Icon name="logo-whatsapp" /> */}
               <Image
                 source={require("../../assets/transfer.png")}

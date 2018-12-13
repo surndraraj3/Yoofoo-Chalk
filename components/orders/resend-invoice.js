@@ -6,7 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,
+  TouchableHighlight
 } from "react-native";
 import {
   Container,
@@ -26,6 +27,7 @@ import {
   Label
 } from "native-base";
 import _ from "lodash";
+import OptionsMenu from "react-native-options-menu";
 import Modal from "react-native-modal";
 //import HTMLView from "react-native-htmlview";
 import { getInvoiceDetailsByOrderIdUrl } from "../common/url_config";
@@ -77,6 +79,23 @@ export default class ResendInvoice extends React.Component {
   };
   _toggleModal = () =>
     this.setState({ isModalVisible: !this.state.isModalVisible });
+  
+    //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
 
   render() {
     const getLineDetailInfosDtls = _.get(
@@ -113,9 +132,25 @@ export default class ResendInvoice extends React.Component {
             >
               <Icon name="home" />
             </Button>
-            <Button transparent>
-              <Icon name="more" />
-            </Button>
+            <TouchableHighlight style={commonStyles.ellipsBtnTouch}>
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />  
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content>
@@ -322,7 +357,7 @@ export default class ResendInvoice extends React.Component {
                   </Text>
                 </Right>
               </CardItem>
-            </Card>            
+            </Card>
             {/* <Card>
               <CardItem header bordered>
                 <Text>Order Number</Text>
@@ -367,7 +402,7 @@ export default class ResendInvoice extends React.Component {
               >
                 <View style={styles.box}>
                   <Text>Quantity</Text>
-                </View>                
+                </View>
                 <View style={styles.box}>
                   <Text>Item Number</Text>
                 </View>
@@ -375,33 +410,31 @@ export default class ResendInvoice extends React.Component {
                   <Text style={{ flex: 1, flexWrap: "wrap" }}>Description</Text>
                 </View>
                 <View style={styles.box}>
-                  <Text style={{ flex: 1, flexWrap: "wrap" }}>
-                    Price
-                  </Text>
+                  <Text style={{ flex: 1, flexWrap: "wrap" }}>Price</Text>
                 </View>
                 <View style={styles.box}>
                   <Text>Total</Text>
                 </View>
               </View>
-              {_.map(getLineDetailInfosDtls, (item,indx) => (
-              <View style={styles.container} key={indx}>                
-                <View style={styles.box}>
-                  <Text>{item.Quantity}</Text>
+              {_.map(getLineDetailInfosDtls, (item, indx) => (
+                <View style={styles.container} key={indx}>
+                  <View style={styles.box}>
+                    <Text>{item.Quantity}</Text>
+                  </View>
+                  <View style={styles.box}>
+                    <Text>{item.ItemCode}</Text>
+                  </View>
+                  <View style={styles.box}>
+                    <Text>Description</Text>
+                  </View>
+                  <View style={styles.box}>
+                    <Text>{item.Price}</Text>
+                  </View>
+                  <View style={styles.box}>
+                    <Text>{item.LineTotal}</Text>
+                  </View>
                 </View>
-                <View style={styles.box}>
-                  <Text>{item.ItemCode}</Text>
-                </View>  
-                <View style={styles.box}>
-                  <Text>Description</Text>
-                </View> 
-                <View style={styles.box}>
-                  <Text>{item.Price}</Text>
-                </View>  
-                <View style={styles.box}>
-                  <Text>{item.LineTotal}</Text>
-                </View>                            
-              </View>
-            ))}
+              ))}
               {/* <View style={styles.container}>
                 <View style={styles.box}>
                   <Text>B18352</Text>
