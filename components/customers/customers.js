@@ -2,16 +2,14 @@ import React from "react";
 import {
   StyleSheet,
   Text,
-  Image,
   ScrollView,
   View,
   UIManager,
   findNodeHandle,
-  TouchableOpacity,
   ActivityIndicator,
   AsyncStorage,
   ImageBackground,
-  RefreshControl
+  TouchableHighlight
 } from "react-native";
 import {
   Container,
@@ -23,8 +21,6 @@ import {
   Icon,
   Title,
   Content,
-  List,
-  ListItem,
   Item,
   Input,
   Card,
@@ -32,6 +28,7 @@ import {
   Fab,
   Picker
 } from "native-base";
+import OptionsMenu from "react-native-options-menu";
 import { getCustomerListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
@@ -58,20 +55,20 @@ export default class Customers extends React.Component {
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         // console.log(responseJson.message, responseJson.DistributorID);
-        if(this._isMounted) {
+        if (this._isMounted) {
           this.setState({
             distributorId: responseJson.DistributorID,
             authToken: responseJson.Token
           });
-        }        
-      });    
-      if(this._isMounted) this.loadCustomerDetails();
+        }
+      });
+    if (this._isMounted) this.loadCustomerDetails();
   };
   componentWillUnmount() {
     this._isMounted = false;
   }
   //Load Customer Details
-   loadCustomerDetails = () => {
+  loadCustomerDetails = () => {
     //console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -95,7 +92,7 @@ export default class Customers extends React.Component {
         this.setState({ customersListData: [] });
         this.setState({ loading: false });
       });
-   }
+  };
   //
   componentWillMount = () => {
     this.setState({ customersListData: [] });
@@ -204,6 +201,23 @@ export default class Customers extends React.Component {
     //console.log("ListCustomer", rsSrchCustomer.length);
   };
 
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
+
   render() {
     return (
       <Container>
@@ -227,9 +241,25 @@ export default class Customers extends React.Component {
             >
               <Icon name="home" />
             </Button>
-            <Button transparent>
-              <Icon name="more" />
-            </Button>
+            <TouchableHighlight style={commonStyles.ellipsBtnTouch}>
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content>
@@ -368,7 +398,8 @@ export default class Customers extends React.Component {
                                     "InventoryOrder",
                                     {
                                       customerID: srchCustItm.CustomerID,
-                                      customerDistributorId: this.state.distributorId
+                                      customerDistributorId: this.state
+                                        .distributorId
                                     }
                                   );
                                 }}

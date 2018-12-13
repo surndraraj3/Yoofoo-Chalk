@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   AsyncStorage,
   Keyboard,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  TouchableHighlight
 } from "react-native";
 import {
   Container,
@@ -28,6 +29,7 @@ import {
   CardItem,
   Card
 } from "native-base";
+import OptionsMenu from "react-native-options-menu";
 import Toast from "react-native-simple-toast";
 import { add_customerURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
@@ -63,12 +65,12 @@ export default class AddCutsomer extends React.Component {
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
         //console.log(responseJson.message, responseJson.DistributorID);
-        if(this._isMounted) {
+        if (this._isMounted) {
           this.setState({
             distributorId: responseJson.DistributorID,
             authToken: responseJson.Token
           });
-        }        
+        }
       });
   };
   componentWillUnmount() {
@@ -119,13 +121,9 @@ export default class AddCutsomer extends React.Component {
         errorEmail: true
       });
       return false;
-    } else if(isNaN(phoneNum) || phoneNum.length !== 10 || phoneNum == '') {
-      Toast.showWithGravity(
-        "Invalid Phone Number",
-        Toast.SHORT,
-        Toast.CENTER
-      )
-    }else {
+    } else if (isNaN(phoneNum) || phoneNum.length !== 10 || phoneNum == "") {
+      Toast.showWithGravity("Invalid Phone Number", Toast.SHORT, Toast.CENTER);
+    } else {
       this.setState({ validateEmail: "Email is Correct", errorEmail: false });
       // console.log("Email is Correct");
       this.setState({ loadSpinner: true });
@@ -191,6 +189,23 @@ export default class AddCutsomer extends React.Component {
     }
   };
 
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
+
   render() {
     return (
       <Container>
@@ -214,9 +229,25 @@ export default class AddCutsomer extends React.Component {
             >
               <Icon name="home" />
             </Button>
-            <Button transparent>
-              <Icon name="more" />
-            </Button>
+            <TouchableHighlight style={commonStyles.ellipsBtnTouch}>
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content>

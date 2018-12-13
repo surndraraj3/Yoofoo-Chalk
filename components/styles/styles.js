@@ -185,8 +185,15 @@ const commonStyles = StyleSheet.create({
   },
   footerText: {
     color: "#000000",
-    fontSize: 15,
+    fontSize: 15
     // margin: 10
+  },
+  ellipsBtnTouch: {
+    borderWidth: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 40,
+    height: 40
   }
 });
 
