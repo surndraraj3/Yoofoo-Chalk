@@ -23,13 +23,7 @@ import {
   Input,
   Fab
 } from "native-base";
-// import {
-//   Menu,
-//   MenuProvider,
-//   MenuOptions,
-//   MenuOption,
-//   MenuTrigger
-// } from "react-native-popup-menu";
+import OptionsMenu from "react-native-options-menu";
 import { getOrdersListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
@@ -123,13 +117,13 @@ export default class Orders extends React.Component {
       >
         {/* <Icon name="folder-open" type="FontAwesome" style={{ fontSize:30}}/> */}
         <ImageBackground
-              resizeMode={"stretch"} // or cover
-              style={{
-                height: '100%',
-                width: '100%'
-              }}
-              source={require("../../assets/cart.png")}
-            />
+          resizeMode={"stretch"} // or cover
+          style={{
+            height: "100%",
+            width: "100%"
+          }}
+          source={require("../../assets/cart.png")}
+        />
         {/* <ImageBackground
           resizeMode={"stretch"} // or cover
           style={{
@@ -167,6 +161,22 @@ export default class Orders extends React.Component {
     );
     this.setState({ searchOrdersList: res, orderCount: res.length });
   };
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
 
   render() {
     // console.log("Lang", this.state.language);
@@ -192,9 +202,36 @@ export default class Orders extends React.Component {
             >
               <Icon name="home" />
             </Button>
-            <Button transparent>
+            {/* <Button transparent>
               <Icon name="more" />
-            </Button>
+            </Button> */}
+            <TouchableHighlight
+              style={{
+                borderWidth: 0,
+                alignItems: "center",
+                justifyContent: "center",
+                width: 40,
+                height: 40
+              }}
+            >
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />             
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content>
@@ -274,7 +311,7 @@ export default class Orders extends React.Component {
                   </Text>
                   <View style={commonStyles.row}>
                     <Text>{orderItem.Customer}</Text>
-                    <Text>{orderItem.OrderDate}</Text>                    
+                    <Text>{orderItem.OrderDate}</Text>
                     <TouchableHighlight
                       onPress={() =>
                         this.props.navigation.navigate("ResendInvoice")
