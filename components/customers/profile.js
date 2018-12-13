@@ -1,5 +1,11 @@
 import React from "react";
-import { Text, View, ActivityIndicator, AsyncStorage } from "react-native";
+import {
+  Text,
+  View,
+  ActivityIndicator,
+  AsyncStorage,
+  TouchableHighlight
+} from "react-native";
 import {
   Container,
   Content,
@@ -15,6 +21,7 @@ import {
   Right,
   Title
 } from "native-base";
+import OptionsMenu from "react-native-options-menu";
 import commonStyles from "../styles/styles";
 import { custPrflURL } from "../common/url_config";
 
@@ -26,23 +33,27 @@ export default class CustomerProfile extends React.Component {
       customerProfileData: "",
       loading: true,
       distributorId: "",
-      authToken:"",
+      authToken: "",
       zipCode: ""
     };
   }
-  componentDidMount = async () => {   
+  componentDidMount = async () => {
     this._isMounted = true;
-    await AsyncStorage.getItem('LoginDetails')
-    // .then(response => response.json())
-    .then(responseJson => {
-      responseJson = JSON.parse(responseJson);
-      // console.log(responseJson.message, responseJson.DistributorID);
-      if(this._isMounted) {
-        this.setState({ distributorId: responseJson.DistributorID, authToken: responseJson.Token, zipCode: responseJson.ZipCode })
-      }      
-    }) 
-    if(this._isMounted) this.loadProfileData();
-    // console.log(`${custPrflURL}${this.state.distributorId}`);    
+    await AsyncStorage.getItem("LoginDetails")
+      // .then(response => response.json())
+      .then(responseJson => {
+        responseJson = JSON.parse(responseJson);
+        // console.log(responseJson.message, responseJson.DistributorID);
+        if (this._isMounted) {
+          this.setState({
+            distributorId: responseJson.DistributorID,
+            authToken: responseJson.Token,
+            zipCode: responseJson.ZipCode
+          });
+        }
+      });
+    if (this._isMounted) this.loadProfileData();
+    // console.log(`${custPrflURL}${this.state.distributorId}`);
   };
   componentWillUnmount() {
     this._isMounted = false;
@@ -51,9 +62,9 @@ export default class CustomerProfile extends React.Component {
     fetch(`${custPrflURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.state.authToken}`
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
       }
     })
       .then(response => response.json())
@@ -69,7 +80,7 @@ export default class CustomerProfile extends React.Component {
         //console.error(error);
         this.setState({ loading: false });
       });
-  }
+  };
   renderLoading() {
     if (this.state.loading) {
       return (
@@ -81,9 +92,9 @@ export default class CustomerProfile extends React.Component {
             left: 0,
             right: 0,
             bottom: 0,
-            top: 0,
+            top: 0
             // backgroundColor: 'red',
-            // opacity: 0.3            
+            // opacity: 0.3
           }}
         />
       );
@@ -91,6 +102,23 @@ export default class CustomerProfile extends React.Component {
       return null;
     }
   }
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
+
   render() {
     return (
       <Container>
@@ -99,7 +127,7 @@ export default class CustomerProfile extends React.Component {
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>Profile</Text>
         </Button> */}
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{flex: 1}}>
+          <Left style={{ flex: 1 }}>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -111,12 +139,37 @@ export default class CustomerProfile extends React.Component {
             <Title>Profile</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Home")}
+            >
               <Icon name="home" />
             </Button>
-            <Button transparent>
-              <Icon name="more" />
-            </Button>
+            <TouchableHighlight style={{
+                borderWidth: 0,
+                alignItems: "center",
+                justifyContent: "center",
+                width: 40,
+                height: 40
+              }}>
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />  
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content>
@@ -153,15 +206,13 @@ export default class CustomerProfile extends React.Component {
             </Item>
             <Label style={commonStyles.labelPos}>Zip</Label>
             <Item>
-              <Text style={{ padding: 10 }}>
-                {this.state.zipCode}
-              </Text>
+              <Text style={{ padding: 10 }}>{this.state.zipCode}</Text>
             </Item>
             {/* <View style={commonStyles.buttonCommonMargin}>
               <Button block>
                 <Text style={{ fontSize: 20, fontWeight: "bold" }}>Submit</Text>
               </Button>
-            </View> */}            
+            </View> */}
             {this.renderLoading()}
           </Form>
         </Content>

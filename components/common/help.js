@@ -1,10 +1,9 @@
 import React from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, AsyncStorage, TouchableHighlight } from "react-native";
 import {
   Container,
   Content,
   Text,
-  Input,
   Icon,
   Label,
   Header,
@@ -16,10 +15,27 @@ import {
   Card,
   CardItem
 } from "native-base";
+import OptionsMenu from "react-native-options-menu";
 import commonStyles from "../styles/styles";
 
-const deviceWidth = Dimensions.get("window").width;
+
 export default class Help extends React.Component {
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
   render() {
     return (
       <Container>
@@ -40,9 +56,31 @@ export default class Help extends React.Component {
             <Button transparent onPress={() => this.props.navigation.navigate("Home")}>
               <Icon name="home" />
             </Button>
-            <Button transparent>
-              <Icon name="more" />
-            </Button>
+            <TouchableHighlight style={{
+                borderWidth: 0,
+                alignItems: "center",
+                justifyContent: "center",
+                width: 40,
+                height: 40
+              }}>
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />  
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content padder>
