@@ -22,6 +22,7 @@ import {
   Card,
   CardItem
 } from "native-base";
+import OptionsMenu from "react-native-options-menu";
 import { addOrdersUrl } from "../common/url_config";
 import Toast from "react-native-simple-toast";
 import commonStyles from "../styles/styles";
@@ -135,6 +136,25 @@ export default class AddInventoryOrder extends React.Component {
     // AsyncStorage.setItem("AddedCartItems", this.state.getListofOrdersPrevScreen)
     this.props.navigation.navigate("InventoryOrder", { addedCartToItems: this.state.getListofOrdersPrevScreen });
   }
+  //-----------------------------------------------------
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
+  //-----------------------------------------------------
+
   render() {
     //console.log('----------------------------', this.state.getCustomerId);
     return (
@@ -159,9 +179,25 @@ export default class AddInventoryOrder extends React.Component {
             >
               <Icon name="home" />
             </Button>
-            <Button transparent>
-              <Icon name="more" />
-            </Button>
+            <TouchableHighlight style={commonStyles.ellipsBtnTouch}>
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />  
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content padder>

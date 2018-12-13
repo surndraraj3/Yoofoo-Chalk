@@ -7,7 +7,6 @@ import {
   Keyboard,
   TextInput,
   AsyncStorage,
-  TouchableOpacity,
   TouchableHighlight,
   Dimensions,
   Image
@@ -26,10 +25,9 @@ import {
   Title,
   Card,
   CardItem,
-  CheckBox,
-  Accordion,
-  Picker
+  CheckBox
 } from "native-base";
+import OptionsMenu from "react-native-options-menu";
 import Toast from "react-native-simple-toast";
 import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
@@ -72,17 +70,17 @@ export default class InventoryOrder extends React.Component {
   componentDidMount = async () => {
     this._isMounted = true;
     //if (this._isMounted) {
-      await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
-        resLoginDtls = JSON.parse(resLoginDtls);
-        if (this._isMounted) {
-          this.setState({
-            distributorId: resLoginDtls.DistributorID,
-            authToken: resLoginDtls.Token
-          });
-        }        
-      });
-      if (this._isMounted) this.loadInventoryOrderData();
-    //}    
+    await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
+      resLoginDtls = JSON.parse(resLoginDtls);
+      if (this._isMounted) {
+        this.setState({
+          distributorId: resLoginDtls.DistributorID,
+          authToken: resLoginDtls.Token
+        });
+      }
+    });
+    if (this._isMounted) this.loadInventoryOrderData();
+    //}
   };
   componentWillUnmount() {
     this._isMounted = false;
@@ -90,14 +88,14 @@ export default class InventoryOrder extends React.Component {
       inventoryList: [],
       inventoryCount: 0,
       distributorId: "",
-      authToken: "",
+      authToken: ""
     });
-    clearInterval(this.loadInventoryOrderData)
+    clearInterval(this.loadInventoryOrderData);
   }
   //Load Inventory Order data
-   loadInventoryOrderData = () => {
-     //Get Inventory List data
-     //console.log('asdsasdasasasdas');
+  loadInventoryOrderData = () => {
+    //Get Inventory List data
+    //console.log('asdsasdasasasdas');
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -116,11 +114,11 @@ export default class InventoryOrder extends React.Component {
           });
           this.state.inventoryList.map(v => {
             v.incVal = 0;
-              v.selectItem = false;
-              v.discountVal = 0;
-              v.discountType = "";
-              v.btnDollarDiscountVal = false;
-              v.btnPercentDiscountVal = false;
+            v.selectItem = false;
+            v.discountVal = 0;
+            v.discountType = "";
+            v.btnDollarDiscountVal = false;
+            v.btnPercentDiscountVal = false;
           });
 
           this.setState({ loading: false });
@@ -130,7 +128,7 @@ export default class InventoryOrder extends React.Component {
         console.error(error);
         if (this._isMounted) this.setState({ loading: false });
       });
-   }
+  };
   // Loading Spinner
   renderLoading() {
     if (this.state.loading) {
@@ -164,8 +162,8 @@ export default class InventoryOrder extends React.Component {
       } else {
         //console.log("Lesser Val");
         c.incVal = c.incVal + 1;
-        c.Quantity = c.Quantity - 1
-        this.setState({ orderItemCounter: this.state.orderItemCounter + 1})
+        c.Quantity = c.Quantity - 1;
+        this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
         // res.map(
         //   v => ((v.incVal = v.incVal + 1), (v.Quantity = v.Quantity - 1))
         // );
@@ -222,18 +220,25 @@ export default class InventoryOrder extends React.Component {
   addListOfOrders = () => {
     //console.log("Welcome To Cart Items", this.state.getCartItems);
     let cartArr = [];
-    if(this.state.getCartItems !== undefined) {this.state.getCartItems.map((cartData) => cartArr.push(cartData))}
+    if (this.state.getCartItems !== undefined) {
+      this.state.getCartItems.map(cartData => cartArr.push(cartData));
+    }
     const addedOrderToCart = this.state.inventoryList.filter(
       addedItems => addedItems.selectItem === true
     );
     if (addedOrderToCart.length === 0) {
       //Toast.show('No Items are in cart.', Toast.TOP);
       Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);
-    } else {      
-      if(this.state.getCartItems !== undefined) addedOrderToCart.map((cartNewData) => cartArr.push(cartNewData))
+    } else {
+      if (this.state.getCartItems !== undefined)
+        addedOrderToCart.map(cartNewData => cartArr.push(cartNewData));
       //cartArr.push(addedOrderToCart);
       //console.log("Added List Before", cartArr);
-      {this.state.getCartItems === undefined ? this.setState({ addToOrderList: addedOrderToCart }) : this.setState({ addToOrderList: cartArr })}
+      {
+        this.state.getCartItems === undefined
+          ? this.setState({ addToOrderList: addedOrderToCart })
+          : this.setState({ addToOrderList: cartArr });
+      }
       //this.setState({ addToOrderList: addedOrderToCart });
       //console.log("Added List After", cartArr);
       Toast.showWithGravity(
@@ -335,6 +340,22 @@ export default class InventoryOrder extends React.Component {
     });
     //console.log("Discount Res", fltrItemId);
   };
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
 
   render() {
     const { navigation } = this.props;
@@ -366,9 +387,25 @@ export default class InventoryOrder extends React.Component {
             >
               <Icon name="home" />
             </Button>
-            <Button transparent>
-              <Icon name="more" />
-            </Button>
+            <TouchableHighlight style={commonStyles.ellipsBtnTouch}>
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content>
@@ -395,7 +432,14 @@ export default class InventoryOrder extends React.Component {
             </View>
           </View>
           <ScrollView>
-            {this.state.inventoryList.length === 0 ? <Text style={commonStyles.warningMessage}> No records found !</Text>: <View />}
+            {this.state.inventoryList.length === 0 ? (
+              <Text style={commonStyles.warningMessage}>
+                {" "}
+                No records found !
+              </Text>
+            ) : (
+              <View />
+            )}
             {this.state.searchInventoryOrdersList.length === 0
               ? this.state.inventoryList.map((itm, i) => (
                   <View key={i}>

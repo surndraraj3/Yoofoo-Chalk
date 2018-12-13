@@ -12,10 +12,8 @@ import {
 import {
   Container,
   Content,
-  Form,
   Item,
   Input,
-  Label,
   Icon,
   Button,
   Header,
@@ -27,6 +25,7 @@ import {
   CardItem,
   Fab
 } from "native-base";
+import OptionsMenu from "react-native-options-menu";
 import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
@@ -42,26 +41,26 @@ export default class Inventory extends React.Component {
       inventoryList: [],
       inventoryCount: 0,
       searchInventoryList: [],
-      isMounted: false,
+      isMounted: false
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
-  componentDidMount = async() => {
+  componentDidMount = async () => {
     this._isMounted = true;
-    if (this._isMounted) { 
+    if (this._isMounted) {
       await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
         resLoginDtls = JSON.parse(resLoginDtls);
         //if (this._isMounted) {
-          this.setState({
-            distributorId: resLoginDtls.DistributorID,
-            authToken: resLoginDtls.Token
-          });
-        //}     
-       // console.log(this.state.distributorId, 'Dis');
+        this.setState({
+          distributorId: resLoginDtls.DistributorID,
+          authToken: resLoginDtls.Token
+        });
+        //}
+        // console.log(this.state.distributorId, 'Dis');
       });
       this.loadInventoryDetails();
     }
-  };  
+  };
   componentWillUnmount() {
     this._isMounted = false;
     // this.setState({
@@ -70,12 +69,12 @@ export default class Inventory extends React.Component {
     //   distributorId: "",
     //   authToken: "",
     // });
-   // clearInterval(this.loadInventoryDetails)
+    // clearInterval(this.loadInventoryDetails)
   }
   //Load Inventory Details
   loadInventoryDetails = () => {
-   // console.log('Inventory', `${getInventoryListURL}${this.state.distributorId}`);
-    //Get Inventory List   
+    // console.log('Inventory', `${getInventoryListURL}${this.state.distributorId}`);
+    //Get Inventory List
     //console.log('distributorId', this.state.distributorId);
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -100,7 +99,7 @@ export default class Inventory extends React.Component {
         console.error(error);
         if (this._isMounted) this.setState({ loading: false });
       });
-  }
+  };
   // Loading Spinner
   renderLoading() {
     if (this.state.loading) {
@@ -164,6 +163,23 @@ export default class Inventory extends React.Component {
       </Fab>
     );
   }
+  //Go to Profile Screen
+  gotoProfile = () => {
+    this.props.navigation.navigate("Profile");
+  };
+  //Go To Settings
+  goToSettings = () => {
+    this.props.navigation.navigate("SettingsScreen");
+  };
+  //Go To Help
+  goToHelp = () => {
+    this.props.navigation.navigate("HelpScreen");
+  };
+  goToSignout = () => {
+    AsyncStorage.removeItem("LoginDetails");
+    this.props.navigation.navigate("Login");
+  };
+
   render() {
     //console.log('Inventory', this.state.inventoryList);
     return (
@@ -188,9 +204,25 @@ export default class Inventory extends React.Component {
             >
               <Icon name="home" />
             </Button>
-            <Button transparent>
-              <Icon name="more" />
-            </Button>
+            <TouchableHighlight style={commonStyles.ellipsBtnTouch}>
+              <OptionsMenu
+                customButton={
+                  <Icon
+                    name="ellipsis-v"
+                    type="FontAwesome"
+                    style={{ color: "#f2f2f2" }}
+                  />
+                }
+                destructiveIndex={1}
+                options={["Profile", "Settings", "Help", "Signout"]}
+                actions={[
+                  this.gotoProfile,
+                  this.goToSettings,
+                  this.goToHelp,
+                  this.goToSignout
+                ]}
+              />
+            </TouchableHighlight>
           </Right>
         </Header>
         <Content>
@@ -217,7 +249,14 @@ export default class Inventory extends React.Component {
             </View>
           </View>
           <ScrollView>
-          {this.state.inventoryList.length === 0 ? <Text style={commonStyles.warningMessage}> No records found !</Text>: <View />}
+            {this.state.inventoryList.length === 0 ? (
+              <Text style={commonStyles.warningMessage}>
+                {" "}
+                No records found !
+              </Text>
+            ) : (
+              <View />
+            )}
             {this.state.searchInventoryList.length === 0
               ? this.state.inventoryList.map((itm, i) => (
                   <View key={i}>
@@ -232,10 +271,10 @@ export default class Inventory extends React.Component {
                               style={{ color: "#ff6666" }}
                             /> */}
                             <Image
-                              source={{uri: `${itm.SmallPicture}`}}
+                              source={{ uri: `${itm.SmallPicture}` }}
                               style={{
                                 height: 60,
-                                width: '100%',
+                                width: "100%"
                                 // borderRadius: 40 / 2
                               }}
                             />
@@ -275,10 +314,10 @@ export default class Inventory extends React.Component {
                               style={{ color: "#ff6666" }}
                             /> */}
                             <Image
-                              source={{uri: `${srchItm.SmallPicture}`}}
+                              source={{ uri: `${srchItm.SmallPicture}` }}
                               style={{
                                 height: 60,
-                                width: '100%',
+                                width: "100%"
                                 // borderRadius: 40 / 2
                               }}
                             />
