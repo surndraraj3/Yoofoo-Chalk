@@ -139,10 +139,9 @@ export default class Checkout extends React.Component {
       })
         .then(response => response.json())
         .then(resAddOrderJson => {
-          // console.log("resAddOrderJson", this.state.cashVal);
-
+          //console.log("resAddOrderJson", resAddOrderJson.OrderID);          
           if (resAddOrderJson.OrderID !== "0") {
-            fetch(`${postCashPaymentUrl}`, {
+            fetch(`${payCreditCardUrl}`, {
               method: "POST",
               headers: {
                 Accept: "application/json",
@@ -150,9 +149,19 @@ export default class Checkout extends React.Component {
                 Authorization: `Bearer ${this.state.authToken}`
               },
               body: JSON.stringify({
-                CustomerID: this.state.selCustomerVal,
-                OrderID: resAddOrderJson.OrderID,
-                PaymentAmount: this.state.cashVal // - this.state.remainingDueVal
+                paymentDetail: {
+                  CustomerID: this.state.selCustomerVal,
+                  OrderID: resAddOrderJson.OrderID,
+                  CashPaymentAmount: this.state.cashVal,
+                  CreditPaymentAmount: this.state.remainingDueVal,
+                  CreditCardNumber: this.state.cadrNumber,
+                  CVV: this.state.cvvNumber,
+                  ExpMonth: this.state.expiryMonth,
+                  ExpYear: this.state.expiryYear,
+                  CustomerFirstName: this.state.cardName,
+                  CustomerLastName: this.state.cardName
+                },
+                OrderDetail: this.state.getOrdesFromCart
               })
             })
               .then(responseCashPayment => responseCashPayment.json())
@@ -174,10 +183,13 @@ export default class Checkout extends React.Component {
                     // {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                     {
                       text: "OK",
-                      onPress: () =>
-                        setTimeout(() => {
-                          this.props.navigation.navigate("Home");
-                        }, 2000)
+                      onPress: () => {
+                        if (resAddOrderJson.OrderID !== undefined) {
+                          setTimeout(() => {
+                            this.props.navigation.navigate("Home");
+                          }, 2000);
+                        }
+                      }
                     }
                   ],
                   { cancelable: false }
@@ -207,7 +219,7 @@ export default class Checkout extends React.Component {
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
-    console.log("OnChange", e);
+    //console.log("OnChange", e);
     if (e !== "Select Customer") {
       this.setState({ customerId: e, selCustomerVal: e });
       //console.log('Order List Before', this.state.getOrdesFromCart);
@@ -301,7 +313,7 @@ export default class Checkout extends React.Component {
         })
           .then(respCalOrder => respCalOrder.json())
           .then(respCalOrderJson => {
-            //console.log("Orders");this.setState({  });
+            //console.log("Orders", respCalOrderJson);
             this.setState({
               getCalculatedOrders: respCalOrderJson,
               loading: false
@@ -636,11 +648,7 @@ export default class Checkout extends React.Component {
                     </Item>
                   </View>
                 </KeyboardAvoidingView>
-                <KeyboardAvoidingView
-                  style={{ flex: 1 }}
-                  behavior={"position"}
-                  enabled
-                >
+                <KeyboardAvoidingView enabled>
                   <View style={commonStyles.setMargin}>
                     <Text style={commonStyles.setMargin}>Expiry Month</Text>
                     <Item>
@@ -687,6 +695,8 @@ export default class Checkout extends React.Component {
                       />
                     </Item>
                   </View>
+                </KeyboardAvoidingView>
+                <KeyboardAvoidingView style={{ flex: 1 }} behavior={"padding"} enabled>
                   <View style={commonStyles.setMargin}>
                     <Text style={commonStyles.setMargin}>CVV</Text>
                     <Item>
@@ -804,7 +814,7 @@ export default class Checkout extends React.Component {
                       fontWeight: "bold"
                     }}
                   >
-                    Charge {"\u0024"} {this.state.cashVal}
+                    Charge {"\u0024"} {this.state.remainingDueVal}
                   </Text>
                 </Button>
               </View>
