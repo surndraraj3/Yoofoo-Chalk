@@ -195,7 +195,7 @@ export default class Inventory extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Inventory</Title>
+            <Title>Items</Title>
           </Body>
           <Right>
             <Button
@@ -228,12 +228,12 @@ export default class Inventory extends React.Component {
         <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
             <Text style={{ margin: 15, fontSize: 20 }}>
-              {this.state.inventoryCount} Inventory
+              {this.state.inventoryCount} Items
             </Text>
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
-                  placeholder="Search Inventory"
+                  placeholder="Search Items"
                   style={{
                     textAlign: "center",
                     height: 50,
@@ -263,7 +263,7 @@ export default class Inventory extends React.Component {
                     <Card>
                       <CardItem bordered>
                         <View style={commonStyles.row}>
-                          <View style={commonStyles.column}>
+                          <View style={{flexDirection: "column",width: 100, height: 50}}>
                             {/* <Icon
                               active
                               name="birthday-cake"
@@ -273,7 +273,7 @@ export default class Inventory extends React.Component {
                             <Image
                               source={{ uri: `${itm.SmallPicture}` }}
                               style={{
-                                height: 60,
+                                height: 100,
                                 width: "100%"
                                 // borderRadius: 40 / 2
                               }}
@@ -286,7 +286,13 @@ export default class Inventory extends React.Component {
                             <View style={commonStyles.nestedRow}>
                               <Text>SKU</Text>
                               <Text>{itm.ItemID}</Text>
-                              <Text>MSRP</Text>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Retail Price</Text>
+                              <Text>{itm.RetailPrice}</Text>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Designer Price</Text>
                               <Text>{itm.Price}</Text>
                             </View>
                             <View style={commonStyles.nestedRow}>
