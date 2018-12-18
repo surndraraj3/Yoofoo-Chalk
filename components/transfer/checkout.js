@@ -118,7 +118,11 @@ export default class Checkout extends React.Component {
   //save checkout orders
   saveOrderDtls = () => {
     //console.log('Cart', this.state.getOrdesFromCart);
-    //console.log("resAddOrderJson", this.state.cashVal);
+    // console.log("resAddOrderJson", this.state.cadrNumber);
+    // console.log(
+    //   "JSONOBJ",
+    //   this.state.getOrdesFromCart
+    // );
     if (this.state.getOrdesFromCart !== undefined) {
       this.state.getOrdesFromCart.map(itmVal => {
         //console.log("Before Quantity", itmVal.Quantity);
@@ -128,6 +132,7 @@ export default class Checkout extends React.Component {
         //console.log("After Quantity", itmVal.Quantity);
       });
       //console.log("Final Composure Data", this.state.getOrdesFromCart);
+
       fetch(`${addOrdersUrl}`, {
         method: "POST",
         headers: {
@@ -135,75 +140,78 @@ export default class Checkout extends React.Component {
           "Content-Type": "application/json",
           Authorization: `Bearer ${this.state.authToken}`
         },
-        body: JSON.stringify(this.state.getOrdesFromCart)
+        body: JSON.stringify({
+          paymentDetail: {
+            CustomerID: this.state.selCustomerVal,
+            DesignerID:this.state.distributorId,
+            OrderID: "",
+            CashPaymentAmount: this.state.cashVal,
+            CreditPaymentAmount: this.state.remainingDueVal,
+            CreditCardNumber: this.state.cadrNumber,
+            CVV: this.state.cvvNumber,
+            ExpMonth: this.state.expiryMonth,
+            ExpYear: this.state.expiryYear,
+            CustomerFirstName: this.state.cardName,
+            CustomerLastName: this.state.cardName
+          },
+          OrderDetail: this.state.getOrdesFromCart
+        })
       })
         .then(response => response.json())
         .then(resAddOrderJson => {
-          //console.log("resAddOrderJson", resAddOrderJson.OrderID);          
+          console.log("resAddOrderJson", resAddOrderJson);
           if (resAddOrderJson.OrderID !== "0") {
-            fetch(`${payCreditCardUrl}`, {
-              method: "POST",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.state.authToken}`
-              },
-              body: JSON.stringify({
-                paymentDetail: {
-                  CustomerID: this.state.selCustomerVal,
-                  OrderID: resAddOrderJson.OrderID,
-                  CashPaymentAmount: this.state.cashVal,
-                  CreditPaymentAmount: this.state.remainingDueVal,
-                  CreditCardNumber: this.state.cadrNumber,
-                  CVV: this.state.cvvNumber,
-                  ExpMonth: this.state.expiryMonth,
-                  ExpYear: this.state.expiryYear,
-                  CustomerFirstName: this.state.cardName,
-                  CustomerLastName: this.state.cardName
-                },
-                OrderDetail: this.state.getOrdesFromCart
-              })
-            })
-              .then(responseCashPayment => responseCashPayment.json())
-              .then(resCashPaymentJson => {
-                // Toast.showWithGravity(
-                //   `Order placed successfully Order Id: ${
-                //     resAddOrderJson.OrderID
-                //   }`,
-                //   Toast.LONG,
-                //   Toast.CENTER
-                // );
-                Alert.alert(
-                  "Orders",
-                  `Order placed successfully Order Id: ${
-                    resAddOrderJson.OrderID
-                  }`,
-                  [
-                    // {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-                    // {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                    {
-                      text: "OK",
-                      onPress: () => {
-                        if (resAddOrderJson.OrderID !== undefined) {
-                          setTimeout(() => {
-                            this.props.navigation.navigate("Home");
-                          }, 2000);
-                        }
-                      }
+            Alert.alert(
+              "Orders",
+              `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
+              [
+                // {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+                // {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {
+                  text: "OK",
+                  onPress: () => {
+                    if (resAddOrderJson.OrderID !== undefined) {
+                      setTimeout(() => {
+                        this.props.navigation.navigate("Home");
+                      }, 2000);
                     }
-                  ],
-                  { cancelable: false }
-                );
-                this.setState({
-                  getOrdesFromCart: [],
-                  selCustomerVal: "",
-                  customerId: ""
-                });
+                  }
+                }
+              ],
+              { cancelable: false }
+            );
+            this.setState({
+              getOrdesFromCart: [],
+              selCustomerVal: "",
+              customerId: ""
+            });
+            // fetch(`${payCreditCardUrl}`, {
+            //   method: "POST",
+            //   headers: {
+            //     Accept: "application/json",
+            //     "Content-Type": "application/json",
+            //     Authorization: `Bearer ${this.state.authToken}`
+            //   },
+            //   body: JSON.stringify({
+            //     paymentDetail: {
+            //       CustomerID: this.state.selCustomerVal,
+            //       OrderID: resAddOrderJson.OrderID,
+            //       CashPaymentAmount: this.state.cashVal,
+            //       CreditPaymentAmount: this.state.remainingDueVal,
+            //       CreditCardNumber: this.state.cadrNumber,
+            //       CVV: this.state.cvvNumber,
+            //       ExpMonth: this.state.expiryMonth,
+            //       ExpYear: this.state.expiryYear,
+            //       CustomerFirstName: this.state.cardName,
+            //       CustomerLastName: this.state.cardName
+            //     },
+            //     OrderDetail: this.state.getOrdesFromCart
+            //   })
+            // })
+            //   .then(responseCashPayment => responseCashPayment.json())
+            //   .then(resCashPaymentJson => {
 
-                // setTimeout(() => {
-                //   this.props.navigation.navigate("Home");
-                // }, 2000);
-              });
+            //   });
           } else {
             Toast.showWithGravity(
               `Order Failed: ${resAddOrderJson.OrderID}`,
@@ -239,7 +247,7 @@ export default class Checkout extends React.Component {
   };
 
   handleCalculateOrder = () => {
-    //console.log("No Customer", this.state.getPrevCustomerId);
+    console.log("No Customer", this.state.getPrevCustomerId);
     if (isNaN(this.state.getPrevCustomerId)) {
       //console.log("Get Customer Id", this.state.getPrevCustomerId);
       //this.setState({ selCustomerVal: "", customerId: "" });
@@ -696,7 +704,11 @@ export default class Checkout extends React.Component {
                     </Item>
                   </View>
                 </KeyboardAvoidingView>
-                <KeyboardAvoidingView style={{ flex: 1 }} behavior={"padding"} enabled>
+                <KeyboardAvoidingView
+                  style={{ flex: 1 }}
+                  behavior={"padding"}
+                  enabled
+                >
                   <View style={commonStyles.setMargin}>
                     <Text style={commonStyles.setMargin}>CVV</Text>
                     <Item>
