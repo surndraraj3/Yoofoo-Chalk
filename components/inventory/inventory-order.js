@@ -457,17 +457,11 @@ export default class InventoryOrder extends React.Component {
                       </CardItem>
                       <CardItem bordered>
                         <View style={commonStyles.row}>
-                          <View style={commonStyles.column}>
-                            {/* <Icon
-                              active
-                              name="birthday-cake"
-                              type="FontAwesome"
-                              style={{ color: "#ff6666" }}
-                            /> */}
+                          <View style={{flexDirection: "column",width: 100, height: 50}}>                            
                             <Image
                               source={{ uri: `${itm.SmallPicture}` }}
                               style={{
-                                height: 60,
+                                height: 100,
                                 width: "100%"
                                 // borderRadius: 40 / 2
                               }}
@@ -629,19 +623,13 @@ export default class InventoryOrder extends React.Component {
 
                         <CardItem bordered>
                           <View style={commonStyles.row}>
-                            <View style={commonStyles.column}>
-                              {/* <Icon
-                                active
-                                name="birthday-cake"
-                                type="FontAwesome"
-                                style={{ color: "#ff6666" }}
-                              /> */}
+                            <View style={{flexDirection: "column",width: 100, height: 50}}>                              
                               <Image
                                 source={{
                                   uri: `${srchInvOrdrItm.SmallPicture}`
                                 }}
                                 style={{
-                                  height: 60,
+                                  height: 100,
                                   width: "100%"
                                   // borderRadius: 40 / 2
                                 }}

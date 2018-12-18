@@ -121,9 +121,11 @@ export default class AddCutsomer extends React.Component {
         errorEmail: true
       });
       return false;
-    } else if (isNaN(phoneNum) || phoneNum.length !== 10 || phoneNum == "") {
-      Toast.showWithGravity("Invalid Phone Number", Toast.SHORT, Toast.CENTER);
-    } else {
+    } 
+    // else if (isNaN(phoneNum) || phoneNum.length !== 10 || phoneNum == "") {
+    //   Toast.showWithGravity("Invalid Phone Number", Toast.SHORT, Toast.CENTER);
+    // } 
+    else {
       this.setState({ validateEmail: "Email is Correct", errorEmail: false });
       // console.log("Email is Correct");
       this.setState({ loadSpinner: true });

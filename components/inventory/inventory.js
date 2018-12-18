@@ -312,17 +312,11 @@ export default class Inventory extends React.Component {
                     <Card>
                       <CardItem bordered>
                         <View style={commonStyles.row}>
-                          <View style={commonStyles.column}>
-                            {/* <Icon
-                              active
-                              name="birthday-cake"
-                              type="FontAwesome"
-                              style={{ color: "#ff6666" }}
-                            /> */}
+                          <View style={{flexDirection: "column",width: 100, height: 50}}>                            
                             <Image
                               source={{ uri: `${srchItm.SmallPicture}` }}
                               style={{
-                                height: 60,
+                                height: 100,
                                 width: "100%"
                                 // borderRadius: 40 / 2
                               }}
@@ -335,9 +329,15 @@ export default class Inventory extends React.Component {
                             <View style={commonStyles.nestedRow}>
                               <Text>SKU</Text>
                               <Text>{srchItm.ItemID}</Text>
-                              <Text>MSRP</Text>
-                              <Text>{srchItm.Price}</Text>
                             </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Retail Price</Text>
+                              <Text>{srchItm.RetailPrice}</Text>
+                            </View>
+                            <View style={commonStyles.nestedRow}>
+                              <Text>Designer Price</Text>
+                              <Text>{srchItm.Price}</Text>
+                            </View>                            
                             <View style={commonStyles.nestedRow}>
                               <Text>Size </Text>
                               <Text>{srchItm.Quantity}</Text>

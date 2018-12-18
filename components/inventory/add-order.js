@@ -50,27 +50,27 @@ export default class AddInventoryOrder extends React.Component {
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
       //console.log(responseJson.message, responseJson.DistributorID);
-      if(this._isMounted) {
+      if (this._isMounted) {
         this.setState({
           distributorId: responseJson.DistributorID,
           authToken: responseJson.Token
         });
-      }      
+      }
     });
-    if(this._isMounted) this.loadCartItems();
+    if (this._isMounted) this.loadCartItems();
   };
   componentWillUnmount() {
     this._isMounted = false;
   }
   //load Details
-  loadCartItems = () =>{
+  loadCartItems = () => {
     this.state.getListofOrdersPrevScreen.map(v => {
       (v.OrderID = ""),
         (v.DesignerID = this.state.distributorId),
         (v.CustomerID = this.state.getCustomerId),
         (v.Discount = 0);
     });
-  }
+  };
   //save checkout orders
   saveOrderDtls = () => {
     // console.log(
@@ -131,11 +131,13 @@ export default class AddInventoryOrder extends React.Component {
       getListofOrdersPrevScreen: this.state.getListofOrdersPrevScreen
     });
   };
-// Handle Added Items in cart on continue shopping
+  // Handle Added Items in cart on continue shopping
   handleAddedItemsToCart = () => {
     // AsyncStorage.setItem("AddedCartItems", this.state.getListofOrdersPrevScreen)
-    this.props.navigation.navigate("InventoryOrder", { addedCartToItems: this.state.getListofOrdersPrevScreen });
-  }
+    this.props.navigation.navigate("InventoryOrder", {
+      addedCartToItems: this.state.getListofOrdersPrevScreen
+    });
+  };
   //-----------------------------------------------------
   //Go to Profile Screen
   gotoProfile = () => {
@@ -196,7 +198,7 @@ export default class AddInventoryOrder extends React.Component {
                   this.goToHelp,
                   this.goToSignout
                 ]}
-              />  
+              />
             </TouchableHighlight>
           </Right>
         </Header>
@@ -251,12 +253,22 @@ export default class AddInventoryOrder extends React.Component {
 
                       <CardItem>
                         <View style={commonStyles.row}>
-                          <View style={commonStyles.column}>
-                            <Icon
-                              active
-                              name="birthday-cake"
-                              type="FontAwesome"
-                              style={{ color: "#ff6666" }}
+                          <View
+                            style={{
+                              flexDirection: "column",
+                              width: 100,
+                              height: 50
+                            }}
+                          >
+                            <Image
+                              source={{
+                                uri: `${reviewItmLst.SmallPicture}`
+                              }}
+                              style={{
+                                height: 100,
+                                width: "100%"
+                                // borderRadius: 40 / 2
+                              }}
                             />
                           </View>
                           <View style={commonStyles.column}>
@@ -335,9 +347,7 @@ export default class AddInventoryOrder extends React.Component {
         <View style={commonStyles.footerContainer}>
           <View style={commonStyles.footerInnerContainer}>
             <View style={{ margin: 20 }}>
-              <TouchableHighlight
-                onPress={this.handleAddedItemsToCart}
-              >
+              <TouchableHighlight onPress={this.handleAddedItemsToCart}>
                 <Text
                   style={{ color: "#42f4f1", fontSize: 20, fontWeight: "bold" }}
                 >
