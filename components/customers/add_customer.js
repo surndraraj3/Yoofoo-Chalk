@@ -285,7 +285,7 @@ export default class AddCutsomer extends React.Component {
             <KeyboardAvoidingView
               style={{ flex: 1 }}
               // keyboardVerticalOffset={65}
-              behavior={"position"}
+              behavior={"padding"}
               enabled
             >
               <View style={commonStyles.setMargin}>
