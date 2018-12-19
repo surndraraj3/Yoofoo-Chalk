@@ -67,7 +67,10 @@ export default class Checkout extends React.Component {
       billingAddress2: "",
       billingCity: "",
       billingState: "",
-      errMsgBillingAddress1: ""
+      errMsgBillingAddress1: "",
+      errMsgBillingCity: "",
+      errMsgBillingState: "",
+      errMsgBillingZipCode: ""
     };
   }
   componentDidMount = async () => {
@@ -121,89 +124,124 @@ export default class Checkout extends React.Component {
       });
   };
   //save checkout orders
-  saveOrderDtls = () => {    
+  saveOrderDtls = () => {
     this.setState({ loading: true });
-    if (this.state.getOrdesFromCart !== undefined) {
-      this.state.getOrdesFromCart.map(itmVal => {
-        //console.log("Before Quantity", itmVal.Quantity);
-        itmVal.Quantity = itmVal.incVal;
-        itmVal.Discount = itmVal.discountVal;
-        itmVal.DesignerID = this.state.distributorId;
-        //console.log("After Quantity", itmVal.Quantity);
-      });
-      //console.log("Final Composure Data", this.state.getOrdesFromCart);
-
-      fetch(`${addOrdersUrl}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.state.authToken}`
-        },
-        body: JSON.stringify({
-          paymentDetail: {
-            CustomerID: this.state.selCustomerVal,
-            DesignerID: this.state.distributorId,
-            OrderID: "",
-            CashPaymentAmount: this.state.cashVal,
-            CreditPaymentAmount: this.state.remainingDueVal,
-            CreditCardNumber: this.state.cadrNumber,
-            CVV: this.state.cvvNumber,
-            ExpMonth: this.state.expiryMonth,
-            ExpYear: this.state.expiryYear,
-            CustomerFirstName: this.state.cardName,
-            CustomerLastName: this.state.cardName,
-            Address1: this.state.billingAddress1,
-            Address2: this.state.billingAddress2,
-            City: this.state.billingCity,
-            State: this.state.billingState,
-            Zip: this.state.areaZipCode
+    // console.log(
+    //   "Payemnet",
+    //   JSON.stringify({
+    //     paymentDetail: {
+    //       CustomerID: this.state.selCustomerVal,
+    //       DesignerID: this.state.distributorId,
+    //       OrderID: "",
+    //       CashPaymentAmount: this.state.cashVal,
+    //       CreditPaymentAmount: this.state.remainingDueVal,
+    //       CreditCardNumber: this.state.cadrNumber,
+    //       CVV: this.state.cvvNumber,
+    //       ExpMonth: this.state.expiryMonth,
+    //       ExpYear: this.state.expiryYear,
+    //       CustomerFirstName: this.state.cardName,
+    //       CustomerLastName: this.state.cardName,
+    //       Address1: this.state.billingAddress1,
+    //       Address2: this.state.billingAddress2,
+    //       City: this.state.billingCity,
+    //       State: this.state.billingState,
+    //       Zip: this.state.areaZipCode
+    //     },
+    //     OrderDetail: this.state.getOrdesFromCart
+    //   })
+    // );
+    if(this.state.billingAddress1 === "") {
+      this.setState({ errMsgBillingAddress1: 'Please enter required data'});
+    } else if(this.state.billingCity === "") {
+      this.setState({ errMsgBillingCity: 'Please enter required data'});
+    } else if(this.state.areaZipCode === "") {
+      this.setState({ errMsgBillingZipCode: 'Please enter required data'});
+    } else {
+      if (this.state.getOrdesFromCart !== undefined) {
+        this.state.getOrdesFromCart.map(itmVal => {
+          //console.log("Before Quantity", itmVal.Quantity);
+          itmVal.Quantity = itmVal.incVal;
+          itmVal.Discount = itmVal.discountVal;
+          itmVal.DesignerID = this.state.distributorId;
+          //console.log("After Quantity", itmVal.Quantity);
+        });
+        //console.log("Final Composure Data", this.state.getOrdesFromCart);
+  
+        fetch(`${addOrdersUrl}`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.state.authToken}`
           },
-          OrderDetail: this.state.getOrdesFromCart
+          body: JSON.stringify({
+            paymentDetail: {
+              CustomerID: this.state.selCustomerVal,
+              DesignerID: this.state.distributorId,
+              OrderID: "",
+              CashPaymentAmount: this.state.cashVal,
+              CreditPaymentAmount: this.state.remainingDueVal,
+              CreditCardNumber: this.state.cadrNumber,
+              CVV: this.state.cvvNumber,
+              ExpMonth: this.state.expiryMonth,
+              ExpYear: this.state.expiryYear,
+              CustomerFirstName: this.state.cardName,
+              CustomerLastName: this.state.cardName,
+              Address1: this.state.billingAddress1,
+              Address2: this.state.billingAddress2,
+              City: this.state.billingCity,
+              State: this.state.billingState,
+              Zip: this.state.areaZipCode
+            },
+            OrderDetail: this.state.getOrdesFromCart
+          })
         })
-      })
-        .then(response => response.json())
-        .then(resAddOrderJson => {
-          console.log("resAddOrderJson", resAddOrderJson);
-          if (resAddOrderJson.OrderID !== "0") {
-            Alert.alert(
-              "Orders",
-              `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
-              [
-                // {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-                // {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                {
-                  text: "OK",
-                  onPress: () => {
-                    if (resAddOrderJson.OrderID !== undefined) {
-                      setTimeout(() => {
-                        this.props.navigation.navigate("Home");
-                      }, 2000);
+          .then(response => response.json())
+          .then(resAddOrderJson => {
+            console.log("resAddOrderJson", resAddOrderJson);
+            if (
+              resAddOrderJson.OrderID === null ||
+              resAddOrderJson.OrderID === "null"
+            ) {
+              //console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
+              Toast.showWithGravity(
+                `Order Failed: ${resAddOrderJson.message}`,
+                Toast.SHORT,
+                Toast.CENTER
+              );
+              this.setState({ loading: false });
+            } else {
+              //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
+              Alert.alert(
+                "Orders",
+                `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
+                [
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      if (resAddOrderJson.OrderID !== undefined) {
+                        setTimeout(() => {
+                          this.props.navigation.navigate("Home");
+                        }, 2000);
+                      }
                     }
                   }
-                }
-              ],
-              { cancelable: false }
-            );
-            this.setState({
-              getOrdesFromCart: [],
-              selCustomerVal: "",
-              customerId: ""
-            });
-            this.setState({ loading: false });
-            //   });
-          } else {
-            Toast.showWithGravity(
-              `Order Failed: ${resAddOrderJson.message}`,
-              Toast.SHORT,
-              Toast.CENTER
-            );
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
+                ],
+                { cancelable: false }
+              );
+              this.setState({
+                getOrdesFromCart: [],
+                selCustomerVal: "",
+                customerId: ""
+              });
+              this.setState({ loading: false });
+            }
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+    }    
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
@@ -223,6 +261,7 @@ export default class Checkout extends React.Component {
       }
     } else {
       console.log("Default Value");
+      this.setState({ customerId: e, selCustomerVal: e });
     }
   };
 
@@ -346,6 +385,30 @@ export default class Checkout extends React.Component {
       } else {
         this.setState({
           errMsgBillingAddress1: ""
+        });
+      }
+    }
+    if (type === "city") {
+      if (txt.length > 0) {
+        this.setState({
+          errMsgBillingCity: ""
+        });
+        //console.log("Length Exceeds", this.state.errMsgBillingAddress1);
+      } else {
+        this.setState({
+          errMsgBillingCity: "Please enter required data"
+        });
+      }
+    }
+    //zipcode
+    if (type === "zipcode") {
+      if (txt.length > 0) {
+        this.setState({
+          errMsgBillingZipCode: ""
+        });        
+      } else {
+        this.setState({
+          errMsgBillingZipCode: "Please enter required data"
         });
       }
     }
@@ -753,7 +816,7 @@ export default class Checkout extends React.Component {
                       />
                     </Item>
                     {this.state.errMsgBillingAddress1 !== "" ? (
-                      <Text style={commonStyles.warningMessage}>                       
+                      <Text style={commonStyles.warningMessage}>
                         {this.state.errMsgBillingAddress1}
                       </Text>
                     ) : (
@@ -788,6 +851,10 @@ export default class Checkout extends React.Component {
                       <TextInput
                         style={{ flex: 1, color: "#413E4F" }}
                         onChangeText={bllngCity => {
+                          this.handleValidateBillingDtls(
+                            bllngCity,
+                            "city"
+                          );
                           this.setState({ billingCity: bllngCity });
                         }}
                         value={this.state.billingCity}
@@ -803,6 +870,13 @@ export default class Checkout extends React.Component {
                         blurOnSubmit={false}
                       />
                     </Item>
+                    {this.state.errMsgBillingCity !== "" ? (
+                      <Text style={commonStyles.warningMessage}>
+                        {this.state.errMsgBillingCity}
+                      </Text>
+                    ) : (
+                      <View />
+                    )}
                   </View>
                   <View style={commonStyles.setMargin}>
                     <Text style={commonStyles.setMargin}>State</Text>
@@ -879,6 +953,10 @@ export default class Checkout extends React.Component {
                       <TextInput
                         style={{ flex: 1, color: "#413E4F" }}
                         onChangeText={areaZip => {
+                          this.handleValidateBillingDtls(
+                            areaZip,
+                            "zipcode"
+                          );
                           this.setState({ areaZipCode: areaZip });
                         }}
                         value={this.state.areaZipCode}
@@ -893,66 +971,15 @@ export default class Checkout extends React.Component {
                         blurOnSubmit={false}
                       />
                     </Item>
+                    {this.state.errMsgBillingZipCode !== "" ? (
+                      <Text style={commonStyles.warningMessage}>
+                        {this.state.errMsgBillingZipCode}
+                      </Text>
+                    ) : (
+                      <View />
+                    )}
                   </View>
                 </KeyboardAvoidingView>
-                {/* <CardItem>
-                  <Item regular>
-                    <Input placeholder="Name On Card" />
-                  </Item>
-                </CardItem> */}
-                {/* <CardItem>
-                  <Item regular>
-                    <Input
-                      placeholder="Card Number"
-                      value={this.state.cadrNumber}
-                      onChange={crdNum => {
-                        this.setState({ cadrNumber: crdNum });
-                      }}
-                    />
-                  </Item>
-                </CardItem> */}
-                {/* <CardItem>
-                  <Item regular>
-                    <Input
-                      placeholder="Expiry Month"
-                      value={this.state.expiryMonth}
-                      onChange={expMnth =>
-                        this.setState({ expiryMonth: expMnth })
-                      }
-                    />
-                  </Item>
-                </CardItem> */}
-                {/* <CardItem>
-                  <Item regular>
-                    <Input
-                      placeholder="Expiry Year"
-                      value={this.state.expiryYear}
-                      onChange={expYr => this.setState({ expiryYear: expYr })}
-                    />
-                  </Item>
-                </CardItem>
-                <CardItem>
-                  <Item regular>
-                    <Input
-                      placeholder="CVV"
-                      value={this.state.cvvNumber}
-                      onChange={cvvNum => {
-                        this.setState({ cvvNumber: cvvNum });
-                      }}
-                    />
-                  </Item>
-                </CardItem> */}
-                {/* <CardItem>
-                  <Item regular>
-                    <Input
-                      placeholder="Zip"
-                      value={this.state.areaZipCode}
-                      onChange={areaZip => {
-                        this.setState({ areaZipCode: areaZip });
-                      }}
-                    />
-                  </Item>
-                </CardItem> */}
               </Card>
               <View style={{ margin: 10 }}>
                 <Button
@@ -967,7 +994,9 @@ export default class Checkout extends React.Component {
                       fontWeight: "bold"
                     }}
                   >
-                    Charge {"\u0024"} {this.state.remainingDueVal}
+                    Charge {"\u0024"}{" "}
+                    {this.state.getCalculatedOrders.totalField -
+                      this.state.cashVal}
                   </Text>
                 </Button>
               </View>
