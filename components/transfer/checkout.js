@@ -62,7 +62,12 @@ export default class Checkout extends React.Component {
       expiryYear: "",
       cvvNumber: "",
       areaZipCode: "",
-      getDesignerObject: this.props.navigation.getParam("DesignerObJ")
+      getDesignerObject: this.props.navigation.getParam("DesignerObJ"),
+      billingAddress1: "",
+      billingAddress2: "",
+      billingCity: "",
+      billingState: "",
+      errMsgBillingAddress1: ""
     };
   }
   componentDidMount = async () => {
@@ -116,13 +121,8 @@ export default class Checkout extends React.Component {
       });
   };
   //save checkout orders
-  saveOrderDtls = () => {
-    //console.log('Cart', this.state.getOrdesFromCart);
-    // console.log("resAddOrderJson", this.state.cadrNumber);
-    // console.log(
-    //   "JSONOBJ",
-    //   this.state.getOrdesFromCart
-    // );
+  saveOrderDtls = () => {    
+    this.setState({ loading: true });
     if (this.state.getOrdesFromCart !== undefined) {
       this.state.getOrdesFromCart.map(itmVal => {
         //console.log("Before Quantity", itmVal.Quantity);
@@ -143,7 +143,7 @@ export default class Checkout extends React.Component {
         body: JSON.stringify({
           paymentDetail: {
             CustomerID: this.state.selCustomerVal,
-            DesignerID:this.state.distributorId,
+            DesignerID: this.state.distributorId,
             OrderID: "",
             CashPaymentAmount: this.state.cashVal,
             CreditPaymentAmount: this.state.remainingDueVal,
@@ -152,7 +152,12 @@ export default class Checkout extends React.Component {
             ExpMonth: this.state.expiryMonth,
             ExpYear: this.state.expiryYear,
             CustomerFirstName: this.state.cardName,
-            CustomerLastName: this.state.cardName
+            CustomerLastName: this.state.cardName,
+            Address1: this.state.billingAddress1,
+            Address2: this.state.billingAddress2,
+            City: this.state.billingCity,
+            State: this.state.billingState,
+            Zip: this.state.areaZipCode
           },
           OrderDetail: this.state.getOrdesFromCart
         })
@@ -185,36 +190,11 @@ export default class Checkout extends React.Component {
               selCustomerVal: "",
               customerId: ""
             });
-            // fetch(`${payCreditCardUrl}`, {
-            //   method: "POST",
-            //   headers: {
-            //     Accept: "application/json",
-            //     "Content-Type": "application/json",
-            //     Authorization: `Bearer ${this.state.authToken}`
-            //   },
-            //   body: JSON.stringify({
-            //     paymentDetail: {
-            //       CustomerID: this.state.selCustomerVal,
-            //       OrderID: resAddOrderJson.OrderID,
-            //       CashPaymentAmount: this.state.cashVal,
-            //       CreditPaymentAmount: this.state.remainingDueVal,
-            //       CreditCardNumber: this.state.cadrNumber,
-            //       CVV: this.state.cvvNumber,
-            //       ExpMonth: this.state.expiryMonth,
-            //       ExpYear: this.state.expiryYear,
-            //       CustomerFirstName: this.state.cardName,
-            //       CustomerLastName: this.state.cardName
-            //     },
-            //     OrderDetail: this.state.getOrdesFromCart
-            //   })
-            // })
-            //   .then(responseCashPayment => responseCashPayment.json())
-            //   .then(resCashPaymentJson => {
-
+            this.setState({ loading: false });
             //   });
           } else {
             Toast.showWithGravity(
-              `Order Failed: ${resAddOrderJson.OrderID}`,
+              `Order Failed: ${resAddOrderJson.message}`,
               Toast.SHORT,
               Toast.CENTER
             );
@@ -354,7 +334,22 @@ export default class Checkout extends React.Component {
       return null;
     }
   }
-
+  // Validate billing address fields
+  handleValidateBillingDtls = (txt, type) => {
+    //console.log("Address Dteails", txt, type);
+    if (type === "address1") {
+      if (txt.length >= 128) {
+        this.setState({
+          errMsgBillingAddress1: "The text can not exceed 128 characters long"
+        });
+        //console.log("Length Exceeds", this.state.errMsgBillingAddress1);
+      } else {
+        this.setState({
+          errMsgBillingAddress1: ""
+        });
+      }
+    }
+  };
   //--------------------------------------------------------------
   //Go to Profile Screen
   gotoProfile = () => {
@@ -726,10 +721,156 @@ export default class Checkout extends React.Component {
                         }}
                         returnKeyType="next"
                         onSubmitEditing={() =>
-                          this._areaZip && this._areaZip.focus()
+                          this._address1 && this._address1.focus()
                         }
                         blurOnSubmit={false}
                       />
+                    </Item>
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Address1</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        value={this.state.billingAddress1}
+                        onChangeText={bllngAddress1 => {
+                          this.handleValidateBillingDtls(
+                            bllngAddress1,
+                            "address1"
+                          );
+                          this.setState({ billingAddress1: bllngAddress1 });
+                        }}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        ref={ref => {
+                          this._address1 = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._address2 && this._address2.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                    {this.state.errMsgBillingAddress1 !== "" ? (
+                      <Text style={commonStyles.warningMessage}>                       
+                        {this.state.errMsgBillingAddress1}
+                      </Text>
+                    ) : (
+                      <View />
+                    )}
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>Address2</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={bllngAddress2 => {
+                          this.setState({ billingAddress2: bllngAddress2 });
+                        }}
+                        value={this.state.billingAddress2}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        ref={ref => {
+                          this._address2 = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._cityName && this._cityName.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>City</Text>
+                    <Item>
+                      <TextInput
+                        style={{ flex: 1, color: "#413E4F" }}
+                        onChangeText={bllngCity => {
+                          this.setState({ billingCity: bllngCity });
+                        }}
+                        value={this.state.billingCity}
+                        placeholderTextColor="#413E4F"
+                        autoCapitalize="sentences"
+                        ref={ref => {
+                          this._cityName = ref;
+                        }}
+                        returnKeyType="next"
+                        onSubmitEditing={() =>
+                          this._stateName && this._stateName.focus()
+                        }
+                        blurOnSubmit={false}
+                      />
+                    </Item>
+                  </View>
+                  <View style={commonStyles.setMargin}>
+                    <Text style={commonStyles.setMargin}>State</Text>
+                    <Item>
+                      <Picker
+                        mode="dialog"
+                        selectedValue={this.state.billingState}
+                        style={{ height: 50, width: "100%" }}
+                        onValueChange={(itemValue, itemIndex) =>
+                          this.setState({ billingState: itemValue })
+                        }
+                      >
+                        <Picker.Item
+                          label="select state"
+                          value="select state"
+                        />
+                        <Picker.Item label="AL" value="AL" />
+                        <Picker.Item label="AK" value="AK" />
+                        <Picker.Item label="AZ" value="AZ" />
+                        <Picker.Item label="AR" value="AR" />
+                        <Picker.Item label="CA" value="CA" />
+                        <Picker.Item label="CO" value="CO" />
+                        <Picker.Item label="CT" value="CT" />
+                        <Picker.Item label="DE" value="DE" />
+                        <Picker.Item label="DC" value="DC" />
+                        <Picker.Item label="FL" value="FL" />
+                        <Picker.Item label="GA" value="GA" />
+                        <Picker.Item label="HI" value="HI" />
+                        <Picker.Item label="ID" value="ID" />
+                        <Picker.Item label="IL" value="IL" />
+                        <Picker.Item label="IN" value="IN" />
+                        <Picker.Item label="IA" value="IA" />
+                        <Picker.Item label="KS" value="KS" />
+                        <Picker.Item label="KY" value="KY" />
+                        <Picker.Item label="LA" value="LA" />
+                        <Picker.Item label="ME" value="ME" />
+                        <Picker.Item label="MD" value="MD" />
+                        <Picker.Item label="MA" value="MA" />
+                        <Picker.Item label="MI" value="MI" />
+                        <Picker.Item label="MN" value="MN" />
+                        <Picker.Item label="MS" value="MS" />
+                        <Picker.Item label="MO" value="MO" />
+                        <Picker.Item label="MT" value="MT" />
+                        <Picker.Item label="NE" value="NE" />
+                        <Picker.Item label="NV" value="NV" />
+                        <Picker.Item label="NH" value="NH" />
+                        <Picker.Item label="NJ" value="NJ" />
+                        <Picker.Item label="NM" value="NM" />
+                        <Picker.Item label="NY" value="NY" />
+                        <Picker.Item label="NC" value="NC" />
+                        <Picker.Item label="ND" value="ND" />
+                        <Picker.Item label="OH" value="OH" />
+                        <Picker.Item label="OK" value="OK" />
+                        <Picker.Item label="OR" value="OR" />
+                        <Picker.Item label="PA" value="PA" />
+                        <Picker.Item label="RI" value="RI" />
+                        <Picker.Item label="SC" value="SC" />
+                        <Picker.Item label="SD" value="SD" />
+                        <Picker.Item label="TN" value="TN" />
+                        <Picker.Item label="TX" value="TX" />
+                        <Picker.Item label="UT" value="UT" />
+                        <Picker.Item label="VT" value="VT" />
+                        <Picker.Item label="VA" value="VA" />
+                        <Picker.Item label="WA" value="WA" />
+                        <Picker.Item label="WV" value="WV" />
+                        <Picker.Item label="WI" value="WI" />
+                        <Picker.Item label="WY" value="WY" />
+                      </Picker>
                     </Item>
                   </View>
                   <View style={commonStyles.setMargin}>
