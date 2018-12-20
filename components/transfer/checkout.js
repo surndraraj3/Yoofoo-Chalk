@@ -126,47 +126,60 @@ export default class Checkout extends React.Component {
   //save checkout orders
   saveOrderDtls = () => {
     this.setState({ loading: true });
-    // console.log(
-    //   "Payemnet",
-    //   JSON.stringify({
-    //     paymentDetail: {
-    //       CustomerID: this.state.selCustomerVal,
-    //       DesignerID: this.state.distributorId,
-    //       OrderID: "",
-    //       CashPaymentAmount: this.state.cashVal,
-    //       CreditPaymentAmount: this.state.remainingDueVal,
-    //       CreditCardNumber: this.state.cadrNumber,
-    //       CVV: this.state.cvvNumber,
-    //       ExpMonth: this.state.expiryMonth,
-    //       ExpYear: this.state.expiryYear,
-    //       CustomerFirstName: this.state.cardName,
-    //       CustomerLastName: this.state.cardName,
-    //       Address1: this.state.billingAddress1,
-    //       Address2: this.state.billingAddress2,
-    //       City: this.state.billingCity,
-    //       State: this.state.billingState,
-    //       Zip: this.state.areaZipCode
-    //     },
-    //     OrderDetail: this.state.getOrdesFromCart
-    //   })
-    // );
-    if(this.state.billingAddress1 === "") {
-      this.setState({ errMsgBillingAddress1: 'Please enter required data'});
-    } else if(this.state.billingCity === "") {
-      this.setState({ errMsgBillingCity: 'Please enter required data'});
-    } else if(this.state.areaZipCode === "") {
-      this.setState({ errMsgBillingZipCode: 'Please enter required data'});
+    if (this.state.billingAddress1 === "") {
+      this.setState({ errMsgBillingAddress1: "Please enter required data" });
+    } else if (this.state.billingCity === "") {
+      this.setState({ errMsgBillingCity: "Please enter required data" });
+    } else if (this.state.areaZipCode === "") {
+      this.setState({ errMsgBillingZipCode: "Please enter required data" });
     } else {
       if (this.state.getOrdesFromCart !== undefined) {
+        let payloadData = [];
         this.state.getOrdesFromCart.map(itmVal => {
           //console.log("Before Quantity", itmVal.Quantity);
           itmVal.Quantity = itmVal.incVal;
           itmVal.Discount = itmVal.discountVal;
           itmVal.DesignerID = this.state.distributorId;
+          const objPay = { 
+            Description: itmVal.Description,
+            ItemID: itmVal.ItemID,
+            Quantity: itmVal.Quantity,
+            Discount: itmVal.Discount,
+            DiscountType: itmVal.discountType,
+            Price: itmVal.Price,
+            DiscountedPrice: 0.0
+          };
+          payloadData.push(objPay);
           //console.log("After Quantity", itmVal.Quantity);
         });
-        //console.log("Final Composure Data", this.state.getOrdesFromCart);
-  
+
+        const creditVal =
+          this.state.getCalculatedOrders.totalField - this.state.cashVal;
+        console.log("Credit Val", creditVal);
+        // console.log(
+        //   "Final Composure Data",
+        //   JSON.stringify({
+        //     paymentDetail: {
+        //       CustomerID: this.state.selCustomerVal,
+        //       DesignerID: this.state.distributorId,
+        //       OrderID: "",
+        //       CustomerFirstName: this.state.cardName,
+        //       CustomerLastName: this.state.cardName,
+        //       Address1: this.state.billingAddress1,
+        //       Address2: this.state.billingAddress2,
+        //       City: this.state.billingCity,
+        //       State: this.state.billingState,
+        //       Zip: this.state.areaZipCode,
+        //       CashPaymentAmount: this.state.cashVal,
+        //       CreditPaymentAmount: creditVal,
+        //       CreditCardNumber: this.state.cadrNumber,
+        //       CVV: this.state.cvvNumber,
+        //       ExpMonth: this.state.expiryMonth,
+        //       ExpYear: this.state.expiryYear
+        //     },
+        //     OrderDetail: payloadData
+        //   })
+        // );
         fetch(`${addOrdersUrl}`, {
           method: "POST",
           headers: {
@@ -179,22 +192,22 @@ export default class Checkout extends React.Component {
               CustomerID: this.state.selCustomerVal,
               DesignerID: this.state.distributorId,
               OrderID: "",
-              CashPaymentAmount: this.state.cashVal,
-              CreditPaymentAmount: this.state.remainingDueVal,
-              CreditCardNumber: this.state.cadrNumber,
-              CVV: this.state.cvvNumber,
-              ExpMonth: this.state.expiryMonth,
-              ExpYear: this.state.expiryYear,
               CustomerFirstName: this.state.cardName,
               CustomerLastName: this.state.cardName,
               Address1: this.state.billingAddress1,
               Address2: this.state.billingAddress2,
               City: this.state.billingCity,
               State: this.state.billingState,
-              Zip: this.state.areaZipCode
+              Zip: this.state.areaZipCode,
+              CashPaymentAmount: this.state.cashVal,
+              CreditPaymentAmount: creditVal,
+              CreditCardNumber: this.state.cadrNumber,
+              CVV: this.state.cvvNumber,
+              ExpMonth: this.state.expiryMonth,
+              ExpYear: this.state.expiryYear
             },
-            OrderDetail: this.state.getOrdesFromCart
-          })
+            OrderDetail: payloadData
+          })          
         })
           .then(response => response.json())
           .then(resAddOrderJson => {
@@ -214,7 +227,9 @@ export default class Checkout extends React.Component {
               //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
               Alert.alert(
                 "Orders",
-                `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
+                `Order placed successfully Order Id: ${
+                  resAddOrderJson.OrderID
+                }`,
                 [
                   {
                     text: "OK",
@@ -241,7 +256,7 @@ export default class Checkout extends React.Component {
             console.error(error);
           });
       }
-    }    
+    }
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
@@ -405,7 +420,7 @@ export default class Checkout extends React.Component {
       if (txt.length > 0) {
         this.setState({
           errMsgBillingZipCode: ""
-        });        
+        });
       } else {
         this.setState({
           errMsgBillingZipCode: "Please enter required data"
@@ -851,10 +866,7 @@ export default class Checkout extends React.Component {
                       <TextInput
                         style={{ flex: 1, color: "#413E4F" }}
                         onChangeText={bllngCity => {
-                          this.handleValidateBillingDtls(
-                            bllngCity,
-                            "city"
-                          );
+                          this.handleValidateBillingDtls(bllngCity, "city");
                           this.setState({ billingCity: bllngCity });
                         }}
                         value={this.state.billingCity}
@@ -953,10 +965,7 @@ export default class Checkout extends React.Component {
                       <TextInput
                         style={{ flex: 1, color: "#413E4F" }}
                         onChangeText={areaZip => {
-                          this.handleValidateBillingDtls(
-                            areaZip,
-                            "zipcode"
-                          );
+                          this.handleValidateBillingDtls(areaZip, "zipcode");
                           this.setState({ areaZipCode: areaZip });
                         }}
                         value={this.state.areaZipCode}
