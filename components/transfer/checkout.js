@@ -155,7 +155,7 @@ export default class Checkout extends React.Component {
 
         const creditVal =
           this.state.getCalculatedOrders.totalField - this.state.cashVal;
-        console.log("Credit Val", creditVal);
+        //console.log("Credit Val", creditVal);
         // console.log(
         //   "Final Composure Data",
         //   JSON.stringify({
@@ -211,7 +211,7 @@ export default class Checkout extends React.Component {
         })
           .then(response => response.json())
           .then(resAddOrderJson => {
-            console.log("resAddOrderJson", resAddOrderJson);
+            //console.log("resAddOrderJson", resAddOrderJson);
             if (
               resAddOrderJson.OrderID === null ||
               resAddOrderJson.OrderID === "null"
@@ -281,7 +281,7 @@ export default class Checkout extends React.Component {
   };
 
   handleCalculateOrder = () => {
-    console.log("No Customer", this.state.getPrevCustomerId);
+    //console.log("No Customer", this.state.getPrevCustomerId);
     if (isNaN(this.state.getPrevCustomerId)) {
       //console.log("Get Customer Id", this.state.getPrevCustomerId);
       //this.setState({ selCustomerVal: "", customerId: "" });
