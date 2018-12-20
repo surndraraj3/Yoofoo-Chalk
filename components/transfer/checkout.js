@@ -140,7 +140,7 @@ export default class Checkout extends React.Component {
           itmVal.Quantity = itmVal.incVal;
           itmVal.Discount = itmVal.discountVal;
           itmVal.DesignerID = this.state.distributorId;
-          const objPay = { 
+          const objPay = {
             Description: itmVal.Description,
             ItemID: itmVal.ItemID,
             Quantity: itmVal.Quantity,
@@ -207,7 +207,7 @@ export default class Checkout extends React.Component {
               ExpYear: this.state.expiryYear
             },
             OrderDetail: payloadData
-          })          
+          })
         })
           .then(response => response.json())
           .then(resAddOrderJson => {
@@ -709,12 +709,12 @@ export default class Checkout extends React.Component {
                     <Text style={commonStyles.setMargin}>Card Number</Text>
                     <Item>
                       <TextInput
-                        style={{ flex: 1, color: "#413E4F" }}
+                        style={{ flex: 1}}
                         onChangeText={crdNum => {
                           this.setState({ cadrNumber: crdNum });
                         }}
                         value={this.state.cadrNumber}
-                        placeholderTextColor="#413E4F"
+                        // placeholderTextColor="#413E4F"
                         autoCapitalize="sentences"
                         keyboardType="numeric"
                         ref={ref => {
@@ -730,16 +730,28 @@ export default class Checkout extends React.Component {
                   </View>
                 </KeyboardAvoidingView>
                 <KeyboardAvoidingView enabled>
-                  <View style={commonStyles.setMargin}>
-                    <Text style={commonStyles.setMargin}>Expiry Month</Text>
-                    <Item>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-evenly"
+                    }}
+                  >
+                    <View style={commonStyles.setMargin}>
+                      <Text style={commonStyles.setMargin}>Expiry Month</Text>
                       <TextInput
-                        style={{ flex: 1, color: "#413E4F" }}
+                        style={{
+                          flex: 1,
+                          color: "#413E4F",
+                          borderWidth: 1,
+                          width: 80,
+                          height: 30
+                        }}
                         onChangeText={expMnth =>
                           this.setState({ expiryMonth: expMnth })
                         }
                         value={this.state.expiryMonth}
                         placeholderTextColor="#413E4F"
+                        placeholder="mm"
                         autoCapitalize="sentences"
                         keyboardType="numeric"
                         ref={ref => {
@@ -751,18 +763,24 @@ export default class Checkout extends React.Component {
                         }
                         blurOnSubmit={false}
                       />
-                    </Item>
-                  </View>
-                  <View style={commonStyles.setMargin}>
-                    <Text style={commonStyles.setMargin}>Expiry Year</Text>
-                    <Item>
+                    </View>
+                    <View style={commonStyles.setMargin}>
+                      <Text style={commonStyles.setMargin}>Expiry Year</Text>
+
                       <TextInput
-                        style={{ flex: 1, color: "#413E4F" }}
+                        style={{
+                          flex: 1,
+                          color: "#413E4F",
+                          borderWidth: 1,
+                          width: 80,
+                          height: 30
+                        }}
                         onChangeText={expYr =>
                           this.setState({ expiryYear: expYr })
                         }
                         value={this.state.expiryYear}
                         placeholderTextColor="#413E4F"
+                        placeholder="YYYY"
                         autoCapitalize="sentences"
                         keyboardType="numeric"
                         ref={ref => {
@@ -774,7 +792,7 @@ export default class Checkout extends React.Component {
                         }
                         blurOnSubmit={false}
                       />
-                    </Item>
+                    </View>
                   </View>
                 </KeyboardAvoidingView>
                 <KeyboardAvoidingView
