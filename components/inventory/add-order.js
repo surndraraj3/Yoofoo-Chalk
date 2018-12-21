@@ -42,7 +42,8 @@ export default class AddInventoryOrder extends React.Component {
       authToken: "",
       count: 0,
       msgData: "",
-      getDesignerObject: this.props.navigation.getParam("designerDtls")
+      getDesignerObject: this.props.navigation.getParam("designerDtls"),
+      orderItemQtyCounter: 0,
     };
   }
   componentDidMount = async () => {
@@ -138,6 +139,40 @@ export default class AddInventoryOrder extends React.Component {
       addedCartToItems: this.state.getListofOrdersPrevScreen
     });
   };
+  //Increment the order quantity
+  incrementQuantityOrder = (itmId, itmQty) => {
+    //console.log('Item Id', itmId, itmQty);
+    const incQtyRes = this.state.getListofOrdersPrevScreen.filter(v => v.ItemID === itmId);
+    //console.log('response', incQtyRes);
+    incQtyRes.map(c => {
+      //console.log("-----", c.incVal, qty);
+      const incremntVal = c.incVal + 1;
+      if (incremntVal > itmQty) {
+        alert("Max Quantity Reached");
+      } else {
+        //console.log("Lesser Val");
+        c.incVal = c.incVal + 1;
+        c.Quantity = c.Quantity - 1;
+        this.setState({ orderItemQtyCounter: this.state.orderItemQtyCounter + 1 });        
+        //this.state.getListofOrdersPrevScreen.push(incQtyRes);
+      }
+    });
+  }
+  // Decrement The order Quantity
+  decrementQuantityOrder = (decItmId, decItmQty) => {
+    const res = this.state.getListofOrdersPrevScreen.filter(v => v.ItemID === decItmId);
+    res.map(resp => {      
+      const decrementVal = resp.incVal - 1;     
+      if (decrementVal < 0) {
+        alert(`Can't decrement value`);
+      } else {
+        resp.incVal = resp.incVal - 1;
+        resp.Quantity = resp.Quantity + 1;
+        this.setState({ orderItemQtyCounter: this.state.orderItemQtyCounter - 1 });
+      }
+    });
+  }
+
   //-----------------------------------------------------
   //Go to Profile Screen
   gotoProfile = () => {
@@ -311,19 +346,23 @@ export default class AddInventoryOrder extends React.Component {
                           </View>
                           <View style={commonStyles.column}>
                             <Right>
+                              <TouchableHighlight onPress={() => this.incrementQuantityOrder(reviewItmLst.ItemID, reviewItmLst.Quantity)}>
                               <Icon
                                 name="plus"
                                 type="FontAwesome"
                                 style={{ color: "#f50" }}
                               />
+                              </TouchableHighlight>                              
                               <Text style={{ fontWeight: "bold" }}>
                                 {reviewItmLst.incVal}
                               </Text>
-                              <Icon
-                                name="minus"
-                                type="FontAwesome"
-                                style={{ color: "#f50" }}
-                              />
+                              <TouchableHighlight onPress={() => this.decrementQuantityOrder(reviewItmLst.ItemID, reviewItmLst.Quantity)}>
+                                <Icon
+                                  name="minus"
+                                  type="FontAwesome"
+                                  style={{ color: "#f50" }}
+                                />
+                              </TouchableHighlight>                              
                             </Right>
                           </View>
                         </View>
