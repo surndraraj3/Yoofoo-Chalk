@@ -668,11 +668,15 @@ export default class Checkout extends React.Component {
                   <Right>
                     {isNaN(this.state.remainingDueVal) > 0 ? (
                       <Text>
-                        {"\u0024"} {this.state.remainingDueVal}
+                        {"\u0024"}
+                        {this.state.getCalculatedOrders.totalField -
+                          this.state.cashVal}
                       </Text>
                     ) : (
                       <Text>
-                        {"\u0024"} {this.state.remainingDueVal}
+                        {"\u0024"}
+                        {this.state.getCalculatedOrders.totalField -
+                          this.state.cashVal}
                       </Text>
                     )}
                   </Right>
@@ -709,7 +713,7 @@ export default class Checkout extends React.Component {
                     <Text style={commonStyles.setMargin}>Card Number</Text>
                     <Item>
                       <TextInput
-                        style={{ flex: 1}}
+                        style={{ flex: 1 }}
                         onChangeText={crdNum => {
                           this.setState({ cadrNumber: crdNum });
                         }}
