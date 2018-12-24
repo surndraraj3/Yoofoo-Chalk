@@ -156,30 +156,30 @@ export default class Checkout extends React.Component {
         const creditVal =
           this.state.getCalculatedOrders.totalField - this.state.cashVal;
         //console.log("Credit Val", creditVal);
-        console.log(
-          "Final Composure Data",
-          JSON.stringify({
-            paymentDetail: {
-              CustomerID: this.state.selCustomerVal,
-              DesignerID: this.state.distributorId,
-              OrderID: "",
-              CustomerFirstName: this.state.cardName,
-              CustomerLastName: this.state.cardName,
-              Address1: this.state.billingAddress1,
-              Address2: this.state.billingAddress2,
-              City: this.state.billingCity,
-              State: this.state.billingState,
-              Zip: this.state.areaZipCode,
-              CashPaymentAmount: this.state.cashVal,
-              CreditPaymentAmount: creditVal,
-              CreditCardNumber: this.state.cadrNumber,
-              CVV: this.state.cvvNumber,
-              ExpMonth: this.state.expiryMonth,
-              ExpYear: this.state.expiryYear
-            },
-            OrderDetail: payloadData
-          })
-        );
+        // console.log(
+        //   "Final Composure Data",
+        //   JSON.stringify({
+        //     paymentDetail: {
+        //       CustomerID: this.state.selCustomerVal,
+        //       DesignerID: this.state.distributorId,
+        //       OrderID: "",
+        //       CustomerFirstName: this.state.cardName,
+        //       CustomerLastName: this.state.cardName,
+        //       Address1: this.state.billingAddress1,
+        //       Address2: this.state.billingAddress2,
+        //       City: this.state.billingCity,
+        //       State: this.state.billingState,
+        //       Zip: this.state.areaZipCode,
+        //       CashPaymentAmount: this.state.cashVal,
+        //       CreditPaymentAmount: creditVal,
+        //       CreditCardNumber: this.state.cadrNumber,
+        //       CVV: this.state.cvvNumber,
+        //       ExpMonth: this.state.expiryMonth,
+        //       ExpYear: this.state.expiryYear
+        //     },
+        //     OrderDetail: payloadData
+        //   })
+        // );
         fetch(`${addOrdersUrl}`, {
           method: "POST",
           headers: {
