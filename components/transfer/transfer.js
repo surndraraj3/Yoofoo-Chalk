@@ -165,7 +165,7 @@ export default class Transfer extends React.Component {
       <Container>
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
-          <Left style={{ flex: 1 }}>
+          <Left>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("Home")}
@@ -173,9 +173,9 @@ export default class Transfer extends React.Component {
               <Icon name="arrow-back" />
             </Button>
           </Left>
-          <Body>
-            <Title>Transfer Order</Title>
-          </Body>
+          <View style={{flex:1, justifyContent: 'center'}}>
+            <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: 'bold'}}>Designer to Designer</Text>
+          </View>
           <Right>
             <Button
               transparent

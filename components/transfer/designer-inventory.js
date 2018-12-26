@@ -384,7 +384,7 @@ export default class DesignerInventory extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Designer to Designer</Title>
+            <Title>Order</Title>
           </Body>
           <Right>
             <Button
