@@ -70,7 +70,8 @@ export default class Checkout extends React.Component {
       errMsgBillingAddress1: "",
       errMsgBillingCity: "",
       errMsgBillingState: "",
-      errMsgBillingZipCode: ""
+      errMsgBillingZipCode: "",
+      btnCheckoutStatus: false
     };
   }
   componentDidMount = async () => {
@@ -128,10 +129,13 @@ export default class Checkout extends React.Component {
     this.setState({ loading: true });
     if (this.state.billingAddress1 === "") {
       this.setState({ errMsgBillingAddress1: "Please enter required data" });
+      this.setState({ loading: false });
     } else if (this.state.billingCity === "") {
       this.setState({ errMsgBillingCity: "Please enter required data" });
+      this.setState({ loading: false });
     } else if (this.state.areaZipCode === "") {
       this.setState({ errMsgBillingZipCode: "Please enter required data" });
+      this.setState({ loading: false });
     } else {
       if (this.state.getOrdesFromCart !== undefined) {
         let payloadData = [];
@@ -217,6 +221,7 @@ export default class Checkout extends React.Component {
               resAddOrderJson.OrderID === "null"
             ) {
               //console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
+              this.setState({btnCheckoutStatus: true});
               Toast.showWithGravity(
                 `Order Failed: ${resAddOrderJson.message}`,
                 Toast.SHORT,
@@ -1013,7 +1018,45 @@ export default class Checkout extends React.Component {
                 </KeyboardAvoidingView>
               </Card>
               <View style={{ margin: 10 }}>
-                <Button
+                {((this.state.getCalculatedOrders.totalField -
+                        this.state.cashVal) > 0) ? (
+                  <Button
+                    full
+                    style={{ backgroundColor: "#00ffff" }}
+                    onPress={this.saveOrderDtls}
+                    disabled={this.state.btnCheckoutStatus}
+                  >
+                    <Text
+                      style={{
+                        color: "#ffffff",
+                        fontSize: 20,
+                        fontWeight: "bold"
+                      }}
+                    >                      
+                      Charge {"\u0024"}
+                      {this.state.getCalculatedOrders.totalField -
+                        this.state.cashVal}
+                    </Text>
+                  </Button>
+                ) : (
+                  <Button
+                    full
+                    style={{ backgroundColor: "#00ffff" }}
+                    onPress={this.saveOrderDtls}
+                    disabled={this.state.btnCheckoutStatus}
+                  >
+                    <Text
+                      style={{
+                        color: "#ffffff",
+                        fontSize: 20,
+                        fontWeight: "bold"
+                      }}
+                    >
+                      Complete Order
+                    </Text>
+                  </Button>
+                )}
+                {/* <Button
                   full
                   style={{ backgroundColor: "#00ffff" }}
                   onPress={this.saveOrderDtls}
@@ -1028,8 +1071,10 @@ export default class Checkout extends React.Component {
                     Charge {"\u0024"}{" "}
                     {this.state.getCalculatedOrders.totalField -
                       this.state.cashVal}
+                      -
+                      {this.state.getCalculatedOrders.totalField} - {this.state.cashVal}
                   </Text>
-                </Button>
+                </Button> */}
               </View>
             </ScrollView>
           </View>
