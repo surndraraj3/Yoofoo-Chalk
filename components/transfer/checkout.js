@@ -67,6 +67,10 @@ export default class Checkout extends React.Component {
       billingAddress2: "",
       billingCity: "",
       billingState: "",
+      errCardNumber: "",
+      errMsgExpiryMnth: "",
+      errMsgExpiryYear: "",
+      errMsgCvvNmbr: "",
       errMsgBillingAddress1: "",
       errMsgBillingCity: "",
       errMsgBillingState: "",
@@ -124,143 +128,143 @@ export default class Checkout extends React.Component {
         this.setState({ loading: false });
       });
   };
+  //save checkout Validated orders
+  saveOrderValidatedDtls = () => {
+    console.log("Remaining Due Val Validate", this.state.remainingDueVal);
+    if (this.state.getOrdesFromCart !== undefined) {
+      let payloadData = [];
+      this.state.getOrdesFromCart.map(itmVal => {
+        //console.log("Before Quantity", itmVal.Quantity);
+        itmVal.Quantity = itmVal.incVal;
+        itmVal.Discount = itmVal.discountVal;
+        itmVal.DesignerID = this.state.distributorId;
+        const objPay = {
+          Description: itmVal.Description,
+          ItemID: itmVal.ItemID,
+          Quantity: itmVal.Quantity,
+          Discount: itmVal.Discount,
+          DiscountType: itmVal.discountType,
+          Price: itmVal.Price,
+          DiscountedPrice: 0.0
+        };
+        payloadData.push(objPay);
+        //console.log("After Quantity", itmVal.Quantity);
+      });
+
+      const creditVal =
+        this.state.getCalculatedOrders.totalField - this.state.cashVal;
+
+      fetch(`${addOrdersUrl}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.state.authToken}`
+        },
+        body: JSON.stringify({
+          paymentDetail: {
+            CustomerID: this.state.selCustomerVal,
+            DesignerID: this.state.distributorId,
+            OrderID: "",
+            CustomerFirstName: this.state.cardName,
+            CustomerLastName: this.state.cardName,
+            Address1: this.state.billingAddress1,
+            Address2: this.state.billingAddress2,
+            City: this.state.billingCity,
+            State: this.state.billingState,
+            Zip: this.state.areaZipCode,
+            CashPaymentAmount: this.state.cashVal,
+            CreditPaymentAmount: creditVal,
+            CreditCardNumber: this.state.cadrNumber,
+            CVV: this.state.cvvNumber,
+            ExpMonth: this.state.expiryMonth,
+            ExpYear: this.state.expiryYear
+          },
+          OrderDetail: payloadData
+        })
+      })
+        .then(response => response.json())
+        .then(resAddOrderJson => {
+          //console.log("resAddOrderJson", resAddOrderJson);
+          if (
+            resAddOrderJson.OrderID === null ||
+            resAddOrderJson.OrderID === "null"
+          ) {
+            //console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
+            this.setState({ btnCheckoutStatus: true });
+            Toast.showWithGravity(
+              `Order Failed: ${resAddOrderJson.message}`,
+              Toast.SHORT,
+              Toast.CENTER
+            );
+            this.setState({ loading: false });
+          } else {
+            //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
+            Alert.alert(
+              "Orders",
+              `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
+              [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    if (resAddOrderJson.OrderID !== undefined) {
+                      setTimeout(() => {
+                        this.props.navigation.navigate("Home");
+                      }, 2000);
+                    }
+                  }
+                }
+              ],
+              { cancelable: false }
+            );
+            this.setState({
+              getOrdesFromCart: [],
+              selCustomerVal: "",
+              customerId: ""
+            });
+            this.setState({ loading: false });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  };
   //save checkout orders
   saveOrderDtls = () => {
     this.setState({ loading: true });
-    if (this.state.billingAddress1 === "") {
-      this.setState({ errMsgBillingAddress1: "Please enter required data" });
-      this.setState({ loading: false });
-    } else if (this.state.billingCity === "") {
-      this.setState({ errMsgBillingCity: "Please enter required data" });
-      this.setState({ loading: false });
-    } else if (this.state.areaZipCode === "") {
-      this.setState({ errMsgBillingZipCode: "Please enter required data" });
-      this.setState({ loading: false });
-    } else {
-      if (this.state.getOrdesFromCart !== undefined) {
-        let payloadData = [];
-        this.state.getOrdesFromCart.map(itmVal => {
-          //console.log("Before Quantity", itmVal.Quantity);
-          itmVal.Quantity = itmVal.incVal;
-          itmVal.Discount = itmVal.discountVal;
-          itmVal.DesignerID = this.state.distributorId;
-          const objPay = {
-            Description: itmVal.Description,
-            ItemID: itmVal.ItemID,
-            Quantity: itmVal.Quantity,
-            Discount: itmVal.Discount,
-            DiscountType: itmVal.discountType,
-            Price: itmVal.Price,
-            DiscountedPrice: 0.0
-          };
-          payloadData.push(objPay);
-          //console.log("After Quantity", itmVal.Quantity);
-        });
-
-        const creditVal =
-          this.state.getCalculatedOrders.totalField - this.state.cashVal;
-        //console.log("Credit Val", creditVal);
-        // console.log(
-        //   "Final Composure Data",
-        //   JSON.stringify({
-        //     paymentDetail: {
-        //       CustomerID: this.state.selCustomerVal,
-        //       DesignerID: this.state.distributorId,
-        //       OrderID: "",
-        //       CustomerFirstName: this.state.cardName,
-        //       CustomerLastName: this.state.cardName,
-        //       Address1: this.state.billingAddress1,
-        //       Address2: this.state.billingAddress2,
-        //       City: this.state.billingCity,
-        //       State: this.state.billingState,
-        //       Zip: this.state.areaZipCode,
-        //       CashPaymentAmount: this.state.cashVal,
-        //       CreditPaymentAmount: creditVal,
-        //       CreditCardNumber: this.state.cadrNumber,
-        //       CVV: this.state.cvvNumber,
-        //       ExpMonth: this.state.expiryMonth,
-        //       ExpYear: this.state.expiryYear
-        //     },
-        //     OrderDetail: payloadData
-        //   })
-        // );
-        fetch(`${addOrdersUrl}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.state.authToken}`
-          },
-          body: JSON.stringify({
-            paymentDetail: {
-              CustomerID: this.state.selCustomerVal,
-              DesignerID: this.state.distributorId,
-              OrderID: "",
-              CustomerFirstName: this.state.cardName,
-              CustomerLastName: this.state.cardName,
-              Address1: this.state.billingAddress1,
-              Address2: this.state.billingAddress2,
-              City: this.state.billingCity,
-              State: this.state.billingState,
-              Zip: this.state.areaZipCode,
-              CashPaymentAmount: this.state.cashVal,
-              CreditPaymentAmount: creditVal,
-              CreditCardNumber: this.state.cadrNumber,
-              CVV: this.state.cvvNumber,
-              ExpMonth: this.state.expiryMonth,
-              ExpYear: this.state.expiryYear
-            },
-            OrderDetail: payloadData
-          })
-        })
-          .then(response => response.json())
-          .then(resAddOrderJson => {
-            //console.log("resAddOrderJson", resAddOrderJson);
-            if (
-              resAddOrderJson.OrderID === null ||
-              resAddOrderJson.OrderID === "null"
-            ) {
-              //console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
-              this.setState({btnCheckoutStatus: true});
-              Toast.showWithGravity(
-                `Order Failed: ${resAddOrderJson.message}`,
-                Toast.SHORT,
-                Toast.CENTER
-              );
-              this.setState({ loading: false });
-            } else {
-              //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
-              Alert.alert(
-                "Orders",
-                `Order placed successfully Order Id: ${
-                  resAddOrderJson.OrderID
-                }`,
-                [
-                  {
-                    text: "OK",
-                    onPress: () => {
-                      if (resAddOrderJson.OrderID !== undefined) {
-                        setTimeout(() => {
-                          this.props.navigation.navigate("Home");
-                        }, 2000);
-                      }
-                    }
-                  }
-                ],
-                { cancelable: false }
-              );
-              this.setState({
-                getOrdesFromCart: [],
-                selCustomerVal: "",
-                customerId: ""
-              });
-              this.setState({ loading: false });
-            }
-          })
-          .catch(error => {
-            console.error(error);
-          });
+    // console.log("Remaining Due Val", this.state.remainingDueVal);
+    if (this.state.getCalculatedOrders.totalField - this.state.cashVal > 0) {
+      if(this.state.cadrNumber === "") {
+        this.setState({ errCardNumber: "Please enter card number" });
+        this.setState({ loading: false });
       }
+      else if(this.state.expiryMonth === "") {
+        this.setState({ errMsgExpiryMnth: "Please enter expiry month" });
+        this.setState({ loading: false });
+      }
+      else if(this.state.expiryYear === "") {
+        this.setState({ errMsgExpiryYear: "Please enter expiry year" });
+        this.setState({ loading: false });
+      }
+      else if(this.state.cvvNumber === "") {
+        this.setState({ errMsgCvvNmbr: "Please enter cvv" });
+        this.setState({ loading: false });
+      }
+      else if (this.state.billingAddress1 === "") {
+        this.setState({ errMsgBillingAddress1: "Please enter address1" });
+        this.setState({ loading: false });
+      } else if (this.state.billingCity === "") {
+        this.setState({ errMsgBillingCity: "Please enter city" });
+        this.setState({ loading: false });
+      } else if (this.state.areaZipCode === "") {
+        this.setState({ errMsgBillingZipCode: "Please enter zip" });
+        this.setState({ loading: false });
+      } else {
+        this.saveOrderValidatedDtls();
+      }
+    } else {
+      this.saveOrderValidatedDtls();
     }
   };
   //On Customer Change get value and map it across all orders
@@ -416,7 +420,7 @@ export default class Checkout extends React.Component {
         //console.log("Length Exceeds", this.state.errMsgBillingAddress1);
       } else {
         this.setState({
-          errMsgBillingCity: "Please enter required data"
+          errMsgBillingCity: "Please enter city"
         });
       }
     }
@@ -428,7 +432,55 @@ export default class Checkout extends React.Component {
         });
       } else {
         this.setState({
-          errMsgBillingZipCode: "Please enter required data"
+          errMsgBillingZipCode: "Please enter zip"
+        });
+      }
+    }
+    //Validate Card Number
+    if (type === "cardnumber") {
+      if (txt.length > 0) {
+        this.setState({
+          errCardNumber: ""
+        });
+      } else {
+        this.setState({
+          errCardNumber: "Please enter card number"
+        });
+      }
+    }
+    //Validate ExpiryMonth
+    if (type === "typeExpiryMonth") {
+      if (txt.length > 0) {
+        this.setState({
+          errMsgExpiryMnth: ""
+        });
+      } else {
+        this.setState({
+          errMsgExpiryMnth: "Please enter expiry month"
+        });
+      }
+    }
+    //Validate Expiry Year
+    if (type === "typeExpiryYear") {
+      if (txt.length > 0) {
+        this.setState({
+          errMsgExpiryYear: ""
+        });
+      } else {
+        this.setState({
+          errMsgExpiryYear: "Please enter expiry year"
+        });
+      }
+    }
+    // Validate CVV Number
+    if (type === "typeCvvNumber") {
+      if (txt.length > 0) {
+        this.setState({
+          errMsgCvvNmbr: ""
+        });
+      } else {
+        this.setState({
+          errMsgCvvNmbr: "Please enter cvv"
         });
       }
     }
@@ -720,6 +772,7 @@ export default class Checkout extends React.Component {
                       <TextInput
                         style={{ flex: 1 }}
                         onChangeText={crdNum => {
+                          this.handleValidateBillingDtls(crdNum, "cardnumber");
                           this.setState({ cadrNumber: crdNum });
                         }}
                         value={this.state.cadrNumber}
@@ -736,6 +789,13 @@ export default class Checkout extends React.Component {
                         blurOnSubmit={false}
                       />
                     </Item>
+                    {this.state.errCardNumber !== "" ? (
+                      <Text style={commonStyles.warningMessage}>
+                        {this.state.errCardNumber}
+                      </Text>
+                    ) : (
+                      <View />
+                    )}
                   </View>
                 </KeyboardAvoidingView>
                 <KeyboardAvoidingView enabled>
@@ -755,9 +815,13 @@ export default class Checkout extends React.Component {
                           width: 80,
                           height: 30
                         }}
-                        onChangeText={expMnth =>
-                          this.setState({ expiryMonth: expMnth })
-                        }
+                        onChangeText={expMnth => {
+                          this.handleValidateBillingDtls(
+                            expMnth,
+                            "typeExpiryMonth"
+                          );
+                          this.setState({ expiryMonth: expMnth });
+                        }}
                         value={this.state.expiryMonth}
                         placeholderTextColor="#413E4F"
                         placeholder="mm"
@@ -772,6 +836,13 @@ export default class Checkout extends React.Component {
                         }
                         blurOnSubmit={false}
                       />
+                      {this.state.errMsgExpiryMnth !== "" ? (
+                        <Text style={commonStyles.warningMessage}>
+                          {this.state.errMsgExpiryMnth}
+                        </Text>
+                      ) : (
+                        <View />
+                      )}
                     </View>
                     <View style={commonStyles.setMargin}>
                       <Text style={commonStyles.setMargin}>Expiry Year</Text>
@@ -784,9 +855,13 @@ export default class Checkout extends React.Component {
                           width: 80,
                           height: 30
                         }}
-                        onChangeText={expYr =>
-                          this.setState({ expiryYear: expYr })
-                        }
+                        onChangeText={expYr => {
+                          this.handleValidateBillingDtls(
+                            expYr,
+                            "typeExpiryYear"
+                          );
+                          this.setState({ expiryYear: expYr });
+                        }}
                         value={this.state.expiryYear}
                         placeholderTextColor="#413E4F"
                         placeholder="YYYY"
@@ -801,6 +876,13 @@ export default class Checkout extends React.Component {
                         }
                         blurOnSubmit={false}
                       />
+                      {this.state.errMsgExpiryYear !== "" ? (
+                        <Text style={commonStyles.warningMessage}>
+                          {this.state.errMsgExpiryYear}
+                        </Text>
+                      ) : (
+                        <View />
+                      )}
                     </View>
                   </View>
                 </KeyboardAvoidingView>
@@ -815,6 +897,10 @@ export default class Checkout extends React.Component {
                       <TextInput
                         style={{ flex: 1, color: "#413E4F" }}
                         onChangeText={cvvNum => {
+                          this.handleValidateBillingDtls(
+                            cvvNum,
+                            "typeCvvNumber"
+                          );
                           this.setState({ cvvNumber: cvvNum });
                         }}
                         value={this.state.cvvNumber}
@@ -831,6 +917,13 @@ export default class Checkout extends React.Component {
                         blurOnSubmit={false}
                       />
                     </Item>
+                    {this.state.errMsgCvvNmbr !== "" ? (
+                        <Text style={commonStyles.warningMessage}>
+                          {this.state.errMsgCvvNmbr}
+                        </Text>
+                      ) : (
+                        <View />
+                      )}
                   </View>
                   <View style={commonStyles.setMargin}>
                     <Text style={commonStyles.setMargin}>Address1</Text>
@@ -1018,8 +1111,9 @@ export default class Checkout extends React.Component {
                 </KeyboardAvoidingView>
               </Card>
               <View style={{ margin: 10 }}>
-                {((this.state.getCalculatedOrders.totalField -
-                        this.state.cashVal) > 0) ? (
+                {this.state.getCalculatedOrders.totalField -
+                  this.state.cashVal >
+                0 ? (
                   <Button
                     full
                     style={{ backgroundColor: "#00ffff" }}
@@ -1032,7 +1126,7 @@ export default class Checkout extends React.Component {
                         fontSize: 20,
                         fontWeight: "bold"
                       }}
-                    >                      
+                    >
                       Charge {"\u0024"}
                       {this.state.getCalculatedOrders.totalField -
                         this.state.cashVal}
