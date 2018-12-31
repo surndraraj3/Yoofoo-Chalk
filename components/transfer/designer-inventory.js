@@ -173,7 +173,7 @@ export default class DesignerInventory extends React.Component {
         // res.incVal = this.setState({
         //   orderItemCounter: this.state.orderItemCounter + 1
         // });
-        this.state.inventoryList.push(res);
+        //this.state.inventoryList.push(res);
       }
     });
   };
@@ -197,7 +197,7 @@ export default class DesignerInventory extends React.Component {
         // res.incVal = this.setState({
         //   orderItemCounter: this.state.orderItemCounter - 1
         // });
-        this.state.inventoryList.push(res);
+        //this.state.inventoryList.push(res);
       }
     });
   }

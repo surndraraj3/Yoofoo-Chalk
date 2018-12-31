@@ -130,7 +130,7 @@ export default class Checkout extends React.Component {
   };
   //save checkout Validated orders
   saveOrderValidatedDtls = () => {
-    // console.log("Remaining Due Val Validate", this.state.remainingDueVal);
+    //console.log("Remaining Due Val Validate", this.state.getOrdesFromCart);
     if (this.state.getOrdesFromCart !== undefined) {
       let payloadData = [];
       this.state.getOrdesFromCart.map(itmVal => {
