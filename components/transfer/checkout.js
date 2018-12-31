@@ -152,7 +152,7 @@ export default class Checkout extends React.Component {
       });
 
       const creditVal =
-        this.state.getCalculatedOrders.totalField - this.state.cashVal;
+        (this.state.getCalculatedOrders.totalField - this.state.cashVal).toFixed(2);
 
       fetch(`${addOrdersUrl}`, {
         method: "POST",
@@ -235,23 +235,19 @@ export default class Checkout extends React.Component {
     this.setState({ loading: true });
     // console.log("Remaining Due Val", this.state.remainingDueVal);
     if (this.state.getCalculatedOrders.totalField - this.state.cashVal > 0) {
-      if(this.state.cadrNumber === "") {
+      if (this.state.cadrNumber === "") {
         this.setState({ errCardNumber: "Please enter card number" });
         this.setState({ loading: false });
-      }
-      else if(this.state.expiryMonth === "") {
+      } else if (this.state.expiryMonth === "") {
         this.setState({ errMsgExpiryMnth: "Please enter expiry month" });
         this.setState({ loading: false });
-      }
-      else if(this.state.expiryYear === "") {
+      } else if (this.state.expiryYear === "") {
         this.setState({ errMsgExpiryYear: "Please enter expiry year" });
         this.setState({ loading: false });
-      }
-      else if(this.state.cvvNumber === "") {
+      } else if (this.state.cvvNumber === "") {
         this.setState({ errMsgCvvNmbr: "Please enter cvv" });
         this.setState({ loading: false });
-      }
-      else if (this.state.billingAddress1 === "") {
+      } else if (this.state.billingAddress1 === "") {
         this.setState({ errMsgBillingAddress1: "Please enter address1" });
         this.setState({ loading: false });
       } else if (this.state.billingCity === "") {
@@ -726,14 +722,18 @@ export default class Checkout extends React.Component {
                     {isNaN(this.state.remainingDueVal) > 0 ? (
                       <Text>
                         {"\u0024"}
-                        {this.state.getCalculatedOrders.totalField -
-                          this.state.cashVal}
+                        {(
+                          this.state.getCalculatedOrders.totalField -
+                          this.state.cashVal
+                        ).toFixed(2)}
                       </Text>
                     ) : (
                       <Text>
                         {"\u0024"}
-                        {this.state.getCalculatedOrders.totalField -
-                          this.state.cashVal}
+                        {(
+                          this.state.getCalculatedOrders.totalField -
+                          this.state.cashVal
+                        ).toFixed(2)}
                       </Text>
                     )}
                   </Right>
@@ -918,12 +918,12 @@ export default class Checkout extends React.Component {
                       />
                     </Item>
                     {this.state.errMsgCvvNmbr !== "" ? (
-                        <Text style={commonStyles.warningMessage}>
-                          {this.state.errMsgCvvNmbr}
-                        </Text>
-                      ) : (
-                        <View />
-                      )}
+                      <Text style={commonStyles.warningMessage}>
+                        {this.state.errMsgCvvNmbr}
+                      </Text>
+                    ) : (
+                      <View />
+                    )}
                   </View>
                   <View style={commonStyles.setMargin}>
                     <Text style={commonStyles.setMargin}>Address1</Text>
@@ -1128,8 +1128,8 @@ export default class Checkout extends React.Component {
                       }}
                     >
                       Charge {"\u0024"}
-                      {this.state.getCalculatedOrders.totalField -
-                        this.state.cashVal}
+                      {(this.state.getCalculatedOrders.totalField -
+                        this.state.cashVal).toFixed(2)}
                     </Text>
                   </Button>
                 ) : (
