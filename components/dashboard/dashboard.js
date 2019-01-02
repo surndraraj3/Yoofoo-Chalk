@@ -25,6 +25,8 @@ import ResendInvoice from "../orders/resend-invoice";
 import AddCutsomer from "../customers/add_customer";
 import Checkout from "../transfer/checkout";
 import DesignerInventory from "../transfer/designer-inventory";
+import CustomerTransactionScreen from '../customertransactionfee/customertransaction';
+import CheckoutCustomerTransactionScreen from '../customertransactionfee/checkoutcustomertransaction';
 
 export default class Dashboard extends React.Component {
   render() {
@@ -128,6 +130,18 @@ const AppDrawerNavigator = createDrawerNavigator(
     },
     DesignerInventory: {
       screen: DesignerInventory,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
+    CustomerTransactionScreen:{
+      screen: CustomerTransactionScreen,
+      navigationOptions: {
+        drawerLabel: () => null
+      }
+    },
+    CheckoutCustomerTransactionScreen: {
+      screen: CheckoutCustomerTransactionScreen,
       navigationOptions: {
         drawerLabel: () => null
       }

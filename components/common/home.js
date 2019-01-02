@@ -222,7 +222,7 @@ export default class Home extends React.Component {
             >
               <View>
                 <TouchableHighlight
-                  onPress={() => this.props.navigation.navigate("Checkout")}
+                  onPress={() => this.props.navigation.navigate("CustomerTransactionScreen")}
                 >
                   {Platform.OS === "ios" ? (
                     <Image
