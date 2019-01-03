@@ -31,7 +31,11 @@ import {
 import Toast from "react-native-simple-toast";
 import OptionsMenu from "react-native-options-menu";
 import commonStyles from "../styles/styles";
-import { getCustomerListURL } from "../common/url_config";
+import {
+  getCustomerListURL,
+  calculateAddOrdersUrl,
+  addOrdersUrl
+} from "../common/url_config";
 
 export default class CheckoutCustomerTransactionScreen extends React.Component {
   _isMounted = false;
@@ -43,6 +47,7 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
       authToken: "",
       msgData: "",
       customersListData: [],
+      calculateOrdersData: [],
       selCustomerVal: "",
       customerId: "",
       cashVal: 0,
@@ -66,9 +71,11 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
       errMsgBillingCity: "",
       errMsgBillingState: "",
       errMsgBillingZipCode: "",
-      btnCheckoutStatus: false
+      btnCheckoutStatus: false,
+      getPrevCustomerId: this.props.navigation.getParam("CustomerId")
     };
   }
+  //Get Logindetails of logged in user from localstorage and assign to state variable of distributorId & authToken
   componentDidMount = async () => {
     this._isMounted = true;
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
@@ -90,6 +97,9 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
       authToken: ""
     });
   }
+  //Load List of customers by passing distributorid as a parameter
+  //Assign data to customersListData of a state variable
+  //If catches error make customersListData of a state variable as empty
   loadCustomerDetails = () => {
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -112,42 +122,44 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
         this.setState({ loading: false });
       });
   };
-  //save checkout orders
+  //check total field - cashvalue is > 0 validate the form fields
+  //If all fields are filled save the form data
   validateCheckoutOrderDtls = () => {
     this.setState({ loading: true });
     // console.log("Remaining Due Val", this.state.remainingDueVal);
-    // if (this.state.getCalculatedOrders.totalField - this.state.cashVal > 0) {
-    //   if (this.state.cadrNumber === "") {
-    //     this.setState({ errCardNumber: "Please enter card number" });
-    //     this.setState({ loading: false });
-    //   } else if (this.state.expiryMonth === "") {
-    //     this.setState({ errMsgExpiryMnth: "Please enter expiry month" });
-    //     this.setState({ loading: false });
-    //   } else if (this.state.expiryYear === "") {
-    //     this.setState({ errMsgExpiryYear: "Please enter expiry year" });
-    //     this.setState({ loading: false });
-    //   } else if (this.state.cvvNumber === "") {
-    //     this.setState({ errMsgCvvNmbr: "Please enter cvv" });
-    //     this.setState({ loading: false });
-    //   } else if (this.state.billingAddress1 === "") {
-    //     this.setState({ errMsgBillingAddress1: "Please enter address1" });
-    //     this.setState({ loading: false });
-    //   } else if (this.state.billingCity === "") {
-    //     this.setState({ errMsgBillingCity: "Please enter city" });
-    //     this.setState({ loading: false });
-    //   } else if (this.state.areaZipCode === "") {
-    //     this.setState({ errMsgBillingZipCode: "Please enter zip" });
-    //     this.setState({ loading: false });
-    //   } else {
-    //     //this.saveOrderValidatedDtls();
-    //     console.log('Save');
-    //   }
-    // } else {
-    //   //this.saveOrderValidatedDtls();
-    //   console.log('Save')
-    // }
+    if (this.state.calculateOrdersData.totalField - this.state.cashVal > 0) {
+      if (this.state.cadrNumber === "") {
+        this.setState({ errCardNumber: "Please enter card number" });
+        this.setState({ loading: false });
+      } else if (this.state.expiryMonth === "") {
+        this.setState({ errMsgExpiryMnth: "Please enter expiry month" });
+        this.setState({ loading: false });
+      } else if (this.state.expiryYear === "") {
+        this.setState({ errMsgExpiryYear: "Please enter expiry year" });
+        this.setState({ loading: false });
+      } else if (this.state.cvvNumber === "") {
+        this.setState({ errMsgCvvNmbr: "Please enter cvv" });
+        this.setState({ loading: false });
+      } else if (this.state.billingAddress1 === "") {
+        this.setState({ errMsgBillingAddress1: "Please enter address1" });
+        this.setState({ loading: false });
+      } else if (this.state.billingCity === "") {
+        this.setState({ errMsgBillingCity: "Please enter city" });
+        this.setState({ loading: false });
+      } else if (this.state.areaZipCode === "") {
+        this.setState({ errMsgBillingZipCode: "Please enter zip" });
+        this.setState({ loading: false });
+      } else {
+        this.saveOrderDtls();
+        // console.log('Save');
+      }
+    } else {
+      this.saveOrderDtls();
+      // console.log('Save')
+    }
   };
-  // Validate billing address fields
+
+  // Validate form fields on text change
   handleValidateBillingDtls = (txt, type) => {
     //console.log("Address Dteails", txt, type);
     if (type === "address1") {
@@ -235,7 +247,148 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
       }
     }
   };
-  //loading Icon
+
+  //Calculate order details by posting JSON
+  //Response from the post data and assign to state variable calculateOrdersData
+  calculateOrderDtls = valCtFld => {
+    const jsonOrder = [
+      {
+        OrderDate: "",
+        ShipMethod: "",
+        PriceType: "",
+        OrderTYpe: 3,
+        OrderID: "0",
+        DesignerID: this.state.distributorId,
+        CustomerID: this.state.customerId,
+        ItemID: "CTF",
+        Description: "Create and Take Fee",
+        Quantity: 1,
+        Discount: 0,
+        DiscountType: "",
+        Price: valCtFld,
+        DiscountedPrice: 0.0,
+        CashPaymentAmount: 0.0,
+        CreditPaymentAmount: 0.0,
+        CreditCardNumber: null,
+        CVV: null,
+        ExpMonth: null,
+        ExpYear: null
+      }
+    ];
+
+    fetch(`${calculateAddOrdersUrl}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
+      },
+      body: JSON.stringify(jsonOrder)
+    })
+      .then(respOrderDtls => respOrderDtls.json())
+      .then(respCalOrderJson => {
+        //console.log("Orders", respCalOrderJson);
+        this.setState({
+          calculateOrdersData: respCalOrderJson,
+          loading: false
+        });
+      })
+      .catch(errCalOrder => {
+        throw errCalOrder;
+      });
+  };
+
+  // Save Form data based fileds data entered by user
+  //Post data to the server and capture the response and show it on user screen
+  saveOrderDtls = () => {
+    const creditVal = (
+      this.state.calculateOrdersData.totalField - this.state.cashVal
+    ).toFixed(2);
+    const postJsonForm = {
+      paymentDetail: {
+        CustomerID: this.state.customerId,
+        DesignerID: this.state.distributorId,
+        OrderID: "",
+        CashPaymentAmount: this.state.cashVal,
+        CreditPaymentAmount: creditVal,
+        CreditCardNumber: this.state.cadrNumber,
+        CVV: this.state.cvvNumber,
+        ExpMonth: this.state.expiryMonth,
+        ExpYear: this.state.expiryYear,
+        CustomerFirstName: this.state.cardName,
+        CustomerLastName: this.state.cardName,
+        Address1: this.state.billingAddress1,
+        Address2: this.state.billingAddress2,
+        City: this.state.billingCity,
+        State: this.state.billingState,
+        Zip: this.state.areaZipCode
+      },
+      OrderDetail: [
+        {
+          Description: "Create and Take Fee ",
+          ItemID: "CTF",
+          Quantity: 1,
+          Discount: null,
+          DiscountType: "",
+          Price: 124.99,
+          DiscountedPrice: 0.0
+        }
+      ]
+    };
+    fetch(`${addOrdersUrl}`, {
+      method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.state.authToken}`
+        },
+        body: JSON.stringify(postJsonForm)
+    })
+    .then(responseAddOrder => responseAddOrder.json())
+    .then(resAddOrderJson => {
+      //resAddOrderJson.OrderID !== 0
+      if (
+        resAddOrderJson.OrderID === null ||
+        resAddOrderJson.OrderID === "null"
+      ) {
+        console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
+       
+        Toast.showWithGravity(
+          `Order Failed: ${resAddOrderJson.message}`,
+          Toast.SHORT,
+          Toast.CENTER
+        );
+        this.setState({ loading: false });
+      } else {
+        //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
+        Alert.alert(
+          "Orders",
+          `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                if (resAddOrderJson.OrderID !== undefined) {
+                  setTimeout(() => {
+                    this.props.navigation.navigate("Home");
+                  }, 2000);
+                }
+              }
+            }
+          ],
+          { cancelable: false }
+        );
+        this.setState({
+          calculateOrdersData: [],
+          selCustomerVal: "",
+          customerId: ""
+        });
+        this.setState({ loading: false });
+      }
+    })
+  };
+
+  //Load Indicator icon on intial screen load
   renderLoading() {
     if (this.state.loading) {
       return (
@@ -258,6 +411,7 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
     }
   }
   //--------------------------------------------------------------
+  //Page top right corner menu icon action events
   //Go to Profile Screen
   gotoProfile = () => {
     this.props.navigation.navigate("Profile");
@@ -275,7 +429,9 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
     this.props.navigation.navigate("Login");
   };
   //---------------------------------------------------------------
+
   render() {
+    console.log('Customer Id', this.state.getPrevCustomerId);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -357,15 +513,15 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                     <Text>Sub Total</Text>
                   </Left>
                   <Right>
-                    {/* {this.state.getCalculatedOrders.subTotalField ? (
+                    {this.state.calculateOrdersData.subTotalField ? (
                       <Text>
                         {"\u0024"}
-                        {this.state.getCalculatedOrders.subTotalField}
+                        {this.state.calculateOrdersData.subTotalField}
                       </Text>
                     ) : (
                       <Text>{"\u0024"} 0</Text>
-                    )} */}
-                    <Text>{"\u0024"} 0</Text>
+                    )}
+                    {/* <Text>{"\u0024"} 0</Text> */}
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -373,15 +529,15 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                     <Text>Total Discounts</Text>
                   </Left>
                   <Right>
-                    {/* {this.state.getCalculatedOrders.discountTotalField ? (
+                    {this.state.calculateOrdersData.discountTotalField ? (
                       <Text>
                         {"\u0024"}
-                        {this.state.getCalculatedOrders.discountTotalField}
+                        {this.state.calculateOrdersData.discountTotalField}
                       </Text>
                     ) : (
                       <Text>{"\u0024"} 0</Text>
-                    )} */}
-                    <Text>{"\u0024"} 0</Text>
+                    )}
+                    {/* <Text>{"\u0024"} 0</Text> */}
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -390,8 +546,8 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                   </Left>
                   <Right>
                     <Text>
-                      {/* {"\u0024"} {this.state.getCalculatedOrders.taxTotalField} */}
-                      <Text>{"\u0024"} 0</Text>
+                      {"\u0024"} {this.state.calculateOrdersData.taxTotalField}
+                      {/* <Text>{"\u0024"} 0</Text> */}
                     </Text>
                   </Right>
                 </CardItem>
@@ -400,15 +556,15 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                     <Text>Shipping</Text>
                   </Left>
                   <Right>
-                    {/* {this.state.getCalculatedOrders.shippingTotalField ? (
+                    {this.state.calculateOrdersData.shippingTotalField ? (
                       <Text>
                         {"\u0024"}
-                        {this.state.getCalculatedOrders.shippingTotalField}
+                        {this.state.calculateOrdersData.shippingTotalField}
                       </Text>
                     ) : (
                       <Text>{"\u0024"} 0</Text>
-                    )} */}
-                    <Text>{"\u0024"} 0</Text>
+                    )}
+                    {/* <Text>{"\u0024"} 0</Text> */}
                   </Right>
                 </CardItem>
                 <CardItem>
@@ -420,14 +576,15 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                       <Input
                         autoCapitalize="sentences"
                         value={this.state.cashandTransactionFee}
-                        // onChangeText={txtCashVal => {
-                        //   this.setState({
-                        //     cashVal: txtCashVal,
-                        //     remainingDueVal:
-                        //       this.state.getCalculatedOrders.totalField -
-                        //       txtCashVal
-                        //   });
-                        // }}
+                        onChangeText={txtCTFld => {
+                          // this.setState({
+                          //   cashVal: txtCashVal,
+                          //   remainingDueVal:
+                          //     this.state.calculateOrdersData.totalField -
+                          //     txtCashVal
+                          // });
+                          this.calculateOrderDtls(txtCTFld);
+                        }}
                         keyboardType="numeric"
                         returnKeyType="done"
                         onSubmitEditing={Keyboard.dismiss}
@@ -443,15 +600,15 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                     <Text>Order Total</Text>
                   </Left>
                   <Right>
-                    {/* {this.state.getCalculatedOrders.totalField ? (
+                    {this.state.calculateOrdersData.totalField ? (
                       <Text>
                         {"\u0024"}
-                        {this.state.getCalculatedOrders.totalField}
+                        {this.state.calculateOrdersData.totalField}
                       </Text>
                     ) : (
                       <Text>{"\u0024"} 0</Text>
-                    )} */}
-                    <Text>{"\u0024"} 0</Text>
+                    )}
+                    {/* <Text>{"\u0024"} 0</Text> */}
                   </Right>
                 </CardItem>
               </Card>
@@ -490,9 +647,9 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                         onChangeText={txtCashVal => {
                           this.setState({
                             cashVal: txtCashVal,
-                            remainingDueVal: 1
-                            //   this.state.getCalculatedOrders.totalField -
-                            //   txtCashVal
+                            remainingDueVal:
+                              this.state.calculateOrdersData.totalField -
+                              txtCashVal
                           });
                         }}
                         keyboardType="numeric"
@@ -519,18 +676,18 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                     {isNaN(this.state.remainingDueVal) > 0 ? (
                       <Text>
                         {"\u0024"}
-                        {/* {(
-                          this.state.getCalculatedOrders.totalField -
+                        {(
+                          this.state.calculateOrdersData.totalField -
                           this.state.cashVal
-                        ).toFixed(2)} */}
+                        ).toFixed(2)}
                       </Text>
                     ) : (
                       <Text>
                         {"\u0024"}
-                        {/* {(
-                          this.state.getCalculatedOrders.totalField -
+                        {(
+                          this.state.calculateOrdersData.totalField -
                           this.state.cashVal
-                        ).toFixed(2)} */}
+                        ).toFixed(2)}
                       </Text>
                     )}
                   </Right>
@@ -908,11 +1065,13 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                 </KeyboardAvoidingView>
               </Card>
               <View style={{ margin: 10 }}>
-                {1 - this.state.cashVal > 0 ? (
+                {this.state.calculateOrdersData.totalField -
+                  this.state.cashVal >
+                0 ? (
                   <Button
                     full
                     style={{ backgroundColor: "#00ffff" }}
-                    onPress={this.saveOrderDtls}
+                    onPress={this.validateCheckoutOrderDtls}
                     disabled={this.state.btnCheckoutStatus}
                   >
                     <Text
@@ -923,15 +1082,17 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                       }}
                     >
                       Charge {"\u0024"}
-                      {/* {(this.state.getCalculatedOrders.totalField -
-                        this.state.cashVal).toFixed(2)} */}
+                      {(
+                        this.state.calculateOrdersData.totalField -
+                        this.state.cashVal
+                      ).toFixed(2)}
                     </Text>
                   </Button>
                 ) : (
                   <Button
                     full
                     style={{ backgroundColor: "#00ffff" }}
-                    onPress={this.saveOrderDtls}
+                    onPress={this.validateCheckoutOrderDtls}
                     disabled={this.state.btnCheckoutStatus}
                   >
                     <Text
