@@ -72,7 +72,7 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
       errMsgBillingState: "",
       errMsgBillingZipCode: "",
       btnCheckoutStatus: false,
-      getPrevCustomerId: this.props.navigation.getParam("CustomerId")
+      getPrevCustomerId: this.props.navigation.getParam("customerID")
     };
   }
   //Get Logindetails of logged in user from localstorage and assign to state variable of distributorId & authToken
@@ -101,6 +101,10 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
   //Assign data to customersListData of a state variable
   //If catches error make customersListData of a state variable as empty
   loadCustomerDetails = () => {
+    this.setState({
+      selCustomerVal: this.state.getPrevCustomerId,
+      customerId: this.state.getPrevCustomerId
+    });
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -337,55 +341,55 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
     };
     fetch(`${addOrdersUrl}`, {
       method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.state.authToken}`
-        },
-        body: JSON.stringify(postJsonForm)
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
+      },
+      body: JSON.stringify(postJsonForm)
     })
-    .then(responseAddOrder => responseAddOrder.json())
-    .then(resAddOrderJson => {
-      //resAddOrderJson.OrderID !== 0
-      if (
-        resAddOrderJson.OrderID === null ||
-        resAddOrderJson.OrderID === "null"
-      ) {
-        console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
-       
-        Toast.showWithGravity(
-          `Order Failed: ${resAddOrderJson.message}`,
-          Toast.SHORT,
-          Toast.CENTER
-        );
-        this.setState({ loading: false });
-      } else {
-        //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
-        Alert.alert(
-          "Orders",
-          `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                if (resAddOrderJson.OrderID !== undefined) {
-                  setTimeout(() => {
-                    this.props.navigation.navigate("Home");
-                  }, 2000);
+      .then(responseAddOrder => responseAddOrder.json())
+      .then(resAddOrderJson => {
+        //resAddOrderJson.OrderID !== 0
+        if (
+          resAddOrderJson.OrderID === null ||
+          resAddOrderJson.OrderID === "null"
+        ) {
+          console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
+
+          Toast.showWithGravity(
+            `Order Failed: ${resAddOrderJson.message}`,
+            Toast.SHORT,
+            Toast.CENTER
+          );
+          this.setState({ loading: false });
+        } else {
+          //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
+          Alert.alert(
+            "Orders",
+            `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
+            [
+              {
+                text: "OK",
+                onPress: () => {
+                  if (resAddOrderJson.OrderID !== undefined) {
+                    setTimeout(() => {
+                      this.props.navigation.navigate("Home");
+                    }, 2000);
+                  }
                 }
               }
-            }
-          ],
-          { cancelable: false }
-        );
-        this.setState({
-          calculateOrdersData: [],
-          selCustomerVal: "",
-          customerId: ""
-        });
-        this.setState({ loading: false });
-      }
-    })
+            ],
+            { cancelable: false }
+          );
+          this.setState({
+            calculateOrdersData: [],
+            selCustomerVal: "",
+            customerId: ""
+          });
+          this.setState({ loading: false });
+        }
+      });
   };
 
   //Load Indicator icon on intial screen load
@@ -430,8 +434,7 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
   };
   //---------------------------------------------------------------
 
-  render() {
-    console.log('Customer Id', this.state.getPrevCustomerId);
+  render() {   
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -482,10 +485,8 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                 <Picker
                   mode="dropdown"
                   selectedValue={this.state.selCustomerVal}
-                  style={{ height: 50, width: "100%" }}
-                  //onValueChange={this.handleOnChangeCustomersList}
-                  onValueChange={(itemValue, itemIndex) => {
-                    console.log("itemValue", itemValue, itemIndex);
+                  style={{ height: 50, width: "100%" }}                 
+                  onValueChange={(itemValue, itemIndex) => {                    
                     this.setState({
                       customerId: itemValue,
                       selCustomerVal: itemValue
