@@ -50,11 +50,9 @@ export default class Customers extends React.Component {
   //get Customers list
   componentDidMount = async () => {
     this._isMounted = true;
-    await AsyncStorage.getItem("LoginDetails")
-      // .then(response => response.json())
+    await AsyncStorage.getItem("LoginDetails")      
       .then(responseJson => {
-        responseJson = JSON.parse(responseJson);
-        // console.log(responseJson.message, responseJson.DistributorID);
+        responseJson = JSON.parse(responseJson);       
         if (this._isMounted) {
           this.setState({
             distributorId: responseJson.DistributorID,
