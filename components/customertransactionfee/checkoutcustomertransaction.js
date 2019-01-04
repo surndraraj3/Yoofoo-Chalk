@@ -72,7 +72,8 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
       errMsgBillingState: "",
       errMsgBillingZipCode: "",
       btnCheckoutStatus: false,
-      getPrevCustomerId: this.props.navigation.getParam("customerID")
+      getPrevCustomerId: this.props.navigation.getParam("customerID"),
+      cstmrTransactionFee:""
     };
   }
   //Get Logindetails of logged in user from localstorage and assign to state variable of distributorId & authToken
@@ -334,11 +335,12 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
           Quantity: 1,
           Discount: null,
           DiscountType: "",
-          Price: 124.99,
+          Price: this.state.cstmrTransactionFee,
           DiscountedPrice: 0.0
         }
       ]
     };
+      console.log('JSON', postJsonForm);
     fetch(`${addOrdersUrl}`, {
       method: "POST",
       headers: {
@@ -578,12 +580,9 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                         autoCapitalize="sentences"
                         value={this.state.cashandTransactionFee}
                         onChangeText={txtCTFld => {
-                          // this.setState({
-                          //   cashVal: txtCashVal,
-                          //   remainingDueVal:
-                          //     this.state.calculateOrdersData.totalField -
-                          //     txtCashVal
-                          // });
+                          this.setState({
+                            cstmrTransactionFee: txtCTFld
+                          });
                           this.calculateOrderDtls(txtCTFld);
                         }}
                         keyboardType="numeric"
