@@ -340,7 +340,6 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
         }
       ]
     };
-      console.log('JSON', postJsonForm);
     fetch(`${addOrdersUrl}`, {
       method: "POST",
       headers: {
