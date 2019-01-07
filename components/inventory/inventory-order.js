@@ -154,49 +154,29 @@ export default class InventoryOrder extends React.Component {
   //Increment Counter and check whether it is exceeded more than quantity
   incrementOrder = (id, qty) => {
     const res = this.state.inventoryList.filter(v => v.ItemID === id);
-    res.map(c => {
-      //console.log("-----", c.incVal, qty);
-      const incremntVal = c.incVal + 1;
-      if (incremntVal > qty) {
-        alert("Max Quantity Reached");
-      } else {
-        //console.log("Lesser Val");
-        c.incVal = c.incVal + 1;
-        c.Quantity = c.Quantity - 1;
-        this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
-        // res.map(
-        //   v => ((v.incVal = v.incVal + 1), (v.Quantity = v.Quantity - 1))
-        // );
-        // res.incVal = this.setState({
-        //   orderItemCounter: this.state.orderItemCounter + 1
-        // });
-        //this.state.inventoryList.push(res);
-      }
-    });
+    //console.log("Incremenet Response", res[0], res[0].ItemID);
+    const incremntVal = res[0].incVal + 1;
+    if (incremntVal > qty) {
+      alert("Max Quantity Reached");
+    } else {
+      res[0].incVal = res[0].incVal + 1;
+      res[0].Quantity = res[0].Quantity - 1;
+      this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
+    }
   };
 
   // Decrement Counter by getting current value of an array
   decCounter(itmId, decQty) {
     const res = this.state.inventoryList.filter(v => v.ItemID === itmId);
-    res.map(resp => {
-      // console.log("-----", resp.incVal, decQty);
-      const decrementVal = resp.incVal - 1;
-      // console.log("decrementVal", decrementVal);
-      if (decrementVal < 0) {
-        alert(`Can't decrement value`);
-      } else {
-        resp.incVal = resp.incVal - 1;
-        resp.Quantity = resp.Quantity + 1;
-        this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
-        // res.map(
-        //   v => ((v.incVal = v.incVal - 1), (v.Quantity = v.Quantity + 1))
-        // );
-        // res.incVal = this.setState({
-        //   orderItemCounter: this.state.orderItemCounter - 1
-        // });
-        //this.state.inventoryList.push(res);
-      }
-    });
+    //console.log("Decrement Response", res[0], res[0].ItemID);
+    const decrementVal = res[0].incVal - 1;
+    if (decrementVal < 0) {
+      alert(`Can't decrement value`);
+    } else {
+      res[0].incVal = res[0].incVal - 1;
+      res[0].Quantity = res[0].Quantity + 1;
+      this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
+    }
   }
   //Check which item is checked and get the array and overwrite it
   // If Item IncVal is greaterthan zero prompt a message
@@ -205,20 +185,18 @@ export default class InventoryOrder extends React.Component {
     const checkedItem = this.state.inventoryList.filter(
       chkItm => chkItm.ItemID === itemId
     );
-    checkedItem.map(chkValItm => {
-      if (chkValItm.incVal === 0)
-        alert("Add the item quantity before selecting item");
-      else {
-        if (!chkValItm.selectItem) chkValItm.selectItem = true;
-        else chkValItm.selectItem = false;
-      }
-    });
-    checkedItem.selectItem = this.setState({ checked: true });
-    this.state.inventoryList.push(checkedItem);
+    //console.log('checkedItem', checkedItem);
+    if (checkedItem[0].incVal === 0)
+      alert("Add the item quantity before selecting item");
+    else {
+      if (!checkedItem[0].selectItem) checkedItem[0].selectItem = true;
+      else checkedItem[0].selectItem = false;
+    }
+    checkedItem.selectItem = this.setState({ checked: true });    
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
-    //console.log("Welcome To Cart Items", this.state.getCartItems);
+    //console.log("Welcome To Cart Items", this.state.inventoryList);
     let cartArr = [];
     if (this.state.getCartItems !== undefined) {
       this.state.getCartItems.map(cartData => cartArr.push(cartData));
@@ -226,6 +204,7 @@ export default class InventoryOrder extends React.Component {
     const addedOrderToCart = this.state.inventoryList.filter(
       addedItems => addedItems.selectItem === true
     );
+    //console.log("Welcome To Cart Items", addedOrderToCart);
     if (addedOrderToCart.length === 0) {
       //Toast.show('No Items are in cart.', Toast.TOP);
       Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);
@@ -457,7 +436,13 @@ export default class InventoryOrder extends React.Component {
                       </CardItem>
                       <CardItem bordered>
                         <View style={commonStyles.row}>
-                          <View style={{flexDirection: "column",width: 100, height: 50}}>                            
+                          <View
+                            style={{
+                              flexDirection: "column",
+                              width: 100,
+                              height: 50
+                            }}
+                          >
                             <Image
                               source={{ uri: `${itm.SmallPicture}` }}
                               style={{
@@ -623,7 +608,13 @@ export default class InventoryOrder extends React.Component {
 
                         <CardItem bordered>
                           <View style={commonStyles.row}>
-                            <View style={{flexDirection: "column",width: 100, height: 50}}>                              
+                            <View
+                              style={{
+                                flexDirection: "column",
+                                width: 100,
+                                height: 50
+                              }}
+                            >
                               <Image
                                 source={{
                                   uri: `${srchInvOrdrItm.SmallPicture}`

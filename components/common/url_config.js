@@ -1,4 +1,4 @@
-// ----------------Production Urls----------------------------
+// // ----------------Production Urls----------------------------
 // //Login URL POST
 // // export const baseURL = 'http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/';
 // export const baseURL = 'http://chalkcoutureapiloginservice-prod.us-west-1.elasticbeanstalk.com/api/';
