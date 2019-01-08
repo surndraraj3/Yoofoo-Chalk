@@ -154,7 +154,6 @@ export default class InventoryOrder extends React.Component {
   //Increment Counter and check whether it is exceeded more than quantity
   incrementOrder = (id, qty) => {
     const res = this.state.inventoryList.filter(v => v.ItemID === id);
-    //console.log("Incremenet Response", res[0], res[0].ItemID);
     const incremntVal = res[0].incVal + 1;
     if (incremntVal > qty) {
       alert("Max Quantity Reached");
@@ -168,7 +167,6 @@ export default class InventoryOrder extends React.Component {
   // Decrement Counter by getting current value of an array
   decCounter(itmId, decQty) {
     const res = this.state.inventoryList.filter(v => v.ItemID === itmId);
-    //console.log("Decrement Response", res[0], res[0].ItemID);
     const decrementVal = res[0].incVal - 1;
     if (decrementVal < 0) {
       alert(`Can't decrement value`);
@@ -181,17 +179,15 @@ export default class InventoryOrder extends React.Component {
   //Check which item is checked and get the array and overwrite it
   // If Item IncVal is greaterthan zero prompt a message
   onChangeCheck = itemId => {
-    //console.log("Item Id", itemId);
     const checkedItem = this.state.inventoryList.filter(
       chkItm => chkItm.ItemID === itemId
-    );
-    //console.log('checkedItem', checkedItem);
+    );    
     if (checkedItem[0].incVal === 0)
       alert("Add the item quantity before selecting item");
     else {
       if (!checkedItem[0].selectItem) checkedItem[0].selectItem = true;
       else checkedItem[0].selectItem = false;
-    }
+    }    
     checkedItem.selectItem = this.setState({ checked: true });    
   };
   // Adding the list of selected orders
