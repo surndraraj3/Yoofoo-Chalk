@@ -108,14 +108,9 @@ export default class DesignerInventory extends React.Component {
       }
     })
       .then(response => response.json())
-      .then(responseJson => {
-        //console.log(responseJson);
+      .then(responseJson => {        
         if (this._isMounted) {
-          this.setState({
-            inventoryList: responseJson,
-            inventoryCount: responseJson.length
-          });
-          this.state.inventoryList.map(v => {
+          responseJson.map(v => {
             v.incVal = 0;
             v.selectItem = false;
             v.discountVal = 0;
@@ -123,7 +118,10 @@ export default class DesignerInventory extends React.Component {
             v.btnDollarDiscountVal = false;
             v.btnPercentDiscountVal = false;
           });
-
+          this.setState({
+            inventoryList: responseJson,
+            inventoryCount: responseJson.length
+          });
           this.setState({ loading: false });
         }
       })
