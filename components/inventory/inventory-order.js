@@ -107,7 +107,7 @@ export default class InventoryOrder extends React.Component {
       .then(response => response.json())
       .then(responseJson => {
         //console.log(responseJson);
-        if (this._isMounted) {          
+        if (this._isMounted) {
           responseJson.map(v => {
             v.incVal = 0;
             v.selectItem = false;
@@ -153,8 +153,8 @@ export default class InventoryOrder extends React.Component {
   //Increment Counter and check whether it is exceeded more than quantity
   incrementOrder = (id, qty) => {
     const res = this.state.inventoryList.filter(v => v.ItemID === id);
-    const incremntVal = res[0].incVal + 1;
-    if (incremntVal > qty) {
+    // const incremntVal = res[0].incVal + 1;
+    if (qty === 0) {
       alert("Max Quantity Reached");
     } else {
       res[0].incVal = res[0].incVal + 1;
@@ -180,14 +180,14 @@ export default class InventoryOrder extends React.Component {
   onChangeCheck = itemId => {
     const checkedItem = this.state.inventoryList.filter(
       chkItm => chkItm.ItemID === itemId
-    );    
+    );
     if (checkedItem[0].incVal === 0)
       alert("Add the item quantity before selecting item");
     else {
       if (!checkedItem[0].selectItem) checkedItem[0].selectItem = true;
       else checkedItem[0].selectItem = false;
-    }    
-    checkedItem.selectItem = this.setState({ checked: true });    
+    }
+    checkedItem.selectItem = this.setState({ checked: true });
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
@@ -217,7 +217,7 @@ export default class InventoryOrder extends React.Component {
       //console.log("Added List After", cartArr);
       Toast.showWithGravity(
         "Item has been added to order",
-        Toast.LONG,
+        Toast.SHORT,
         Toast.CENTER
       );
     }
@@ -406,17 +406,20 @@ export default class InventoryOrder extends React.Component {
             </View>
           </View>
           <ScrollView>
-            {this.state.inventoryList.length === 0 ? (
+            {/* {this.state.inventoryList.length === 0 ? (
               <Text style={commonStyles.warningMessage}>
                 {" "}
                 No records found !
               </Text>
             ) : (
               <View />
-            )}
+            )} */}
             {this.state.searchInventoryOrdersList.length === 0
               ? this.state.inventoryList.map((itm, i) => (
                   <View key={i}>
+                    <Text style={commonStyles.warningMessage}>
+                      {itm.length === 0 ? "No records found" : ""}
+                    </Text>
                     <Card>
                       <CardItem>
                         <Left>

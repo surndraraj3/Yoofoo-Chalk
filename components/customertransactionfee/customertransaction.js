@@ -286,9 +286,9 @@ export default class CustomerTransactionScreen extends React.Component {
             </View>
           </View>
           <ScrollView>
-            <Text style={commonStyles.warningMessage}>
+            {/* <Text style={commonStyles.warningMessage}>
               {this.state.customerCount === 0 ? "No Customers Found" : ""}
-            </Text>
+            </Text> */}
             {this.state.searchCustomerList.length === 0
               ? this.state.customersListData.map((itm, i) => (
                   <View key={i}>

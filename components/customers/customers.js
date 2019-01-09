@@ -284,9 +284,9 @@ export default class Customers extends React.Component {
             </View>
           </View>
           <ScrollView>
-            <Text style={commonStyles.warningMessage}>
+            {/* <Text style={commonStyles.warningMessage}>
               {this.state.customerCount === 0 ? "No Customers Found" : ""}
-            </Text>
+            </Text> */}
             {this.state.searchCustomerList.length === 0
               ? this.state.customersListData.map((itm, i) => (
                   <View key={i}>
@@ -324,7 +324,7 @@ export default class Customers extends React.Component {
                                 width: 20
                               }}
                               onValueChange={(selVal, selIndex) => {
-                                //console.log("221", selVal, selIndex);
+                                
                                 this.setState({ selPickItm: selVal });
                                 this.props.navigation.navigate(
                                   "InventoryOrder",

@@ -147,7 +147,7 @@ export default class AddInventoryOrder extends React.Component {
     incQtyRes.map(c => {
       //console.log("-----", c.incVal, qty);
       const incremntVal = c.incVal + 1;
-      if (incremntVal > itmQty) {
+      if (itmQty === 0) {
         alert("Max Quantity Reached");
       } else {
         //console.log("Lesser Val");
