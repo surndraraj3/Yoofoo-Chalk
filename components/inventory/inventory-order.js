@@ -67,7 +67,7 @@ export default class InventoryOrder extends React.Component {
       lowerLimit: 0,
       upperLimit: 2,
       prevScreenTouchPressTargetEvent:0,
-      screenTouchPressTargetEvent: 0
+      screenTouchPressTargetEvent: 10      
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -410,31 +410,60 @@ export default class InventoryOrder extends React.Component {
             </View>
           </View>
           <ScrollView
-            //ref={"scroll"}
-            //showsHorizontalScrollIndicator={false}            
+            scrollEventThrottle={16}         
             onTouchMove={e => {
-              this.setState(prevState => ({
-                lowerLimit: prevState.upperLimit,
-                upperLimit: prevState.upperLimit + 3                 
-              }));
+              // this.setState(prevState => ({
+              //   lowerLimit: prevState.upperLimit,
+              //   upperLimit: prevState.upperLimit + 3                 
+              // }));
               // offset= 0;
               // const currentOffset = e.nativeEvent.target; //locationY
               // const direction = currentOffset > this.offset ? 'down' : 'up';
               // this.offset = currentOffset;
-              // console.log(direction, e.nativeEvent.target);
-              // // const targetVal = e.nativeEvent.target;
-              // console.log(this.state.inventoryList.length, '-', this.state.upperLimit);
+              //console.log(e.nativeEvent);
+              const targetVal = e.nativeEvent.locationY;
+              this.setState(prevState => ({
+                prevScreenTouchPressTargetEvent: prevState.screenTouchPressTargetEvent,
+                screenTouchPressTargetEvent:targetVal
+              }))
+              const direction = targetVal > this.state.prevScreenTouchPressTargetEvent ? 'down' : 'up';
+              //console.log('Directrion', direction, 'Current', targetVal, '--Prev', this.state.prevScreenTouchPressTargetEvent);
+              //
+              // this.setState(prevState => ({
+              //   lowerLimit: prevState.upperLimit,
+              //   upperLimit: prevState.upperLimit + 5                 
+              // }));
+              if(direction === 'down') {
+                this.setState(prevState => ({
+                  lowerLimit: prevState.upperLimit,
+                  upperLimit: prevState.upperLimit + 5                 
+                }));
+              } if (direction === 'up') {
+                this.setState(prevState => ({
+                  lowerLimit: prevState.upperLimit - 2,
+                  upperLimit: prevState.upperLimit - 2             
+                }));
+              }  
+
               // if (this.state.inventoryList.length !== this.state.upperLimit) {
-              //   this.setState(prevState => ({
-              //     lowerLimit: prevState.upperLimit,
-              //     upperLimit: prevState.upperLimit + 3                 
-              //   }));
+              //   if(direction === 'down') {
+              //     this.setState(prevState => ({
+              //       lowerLimit: prevState.upperLimit,
+              //       upperLimit: prevState.upperLimit + 3                 
+              //     }));
+              //   } if (direction === 'up') {
+              //     this.setState(prevState => ({
+              //       lowerLimit: prevState.upperLimit -3,
+              //       upperLimit: prevState.upperLimit                  
+              //     }));
+              //   }                
               // } else {
               //   this.setState({
               //     lowerLimit: this.state.inventoryList.length - 3,
               //     upperLimit: this.state.inventoryList.length
               //   });          
               // }
+              //console.log(this.state.lowerLimit, '-', this.state.upperLimit);
             }}            
           >
             {/* {this.state.inventoryList.length === 0 ? (
@@ -443,11 +472,11 @@ export default class InventoryOrder extends React.Component {
                 No records found !
               </Text>
             ) : (
-              <View />
+              <View /> i >= this.state.lowerLimit && 
             )} */}
             {this.state.searchInventoryOrdersList.length === 0
               ? this.state.inventoryList.map((itm, i) =>
-                  i >= this.state.lowerLimit && i <= this.state.upperLimit ? (
+              i >= 0 && i <= this.state.upperLimit ? (
                     <View key={i}>
                       <Text style={commonStyles.warningMessage}>
                         {itm.length === 0 ? "No records found" : ""}
@@ -620,8 +649,9 @@ export default class InventoryOrder extends React.Component {
                         </View>
                       </Card>
                     </View>
-                  ) : (
-                    <View />
+                  ) 
+                  : (
+                    <View key={i} />   
                   )
                 )
               : this.state.searchInventoryOrdersList.map(
