@@ -66,7 +66,11 @@ export default class DesignerInventory extends React.Component {
       btnDollarDiscount: false,
       btnPercentDiscount: false,
       getCartItems: this.props.navigation.getParam("addedCartToItems"),
-      getObjDsgnr: this.props.navigation.getParam("objDesigner")
+      getObjDsgnr: this.props.navigation.getParam("objDesigner"),
+      lowerLimit: 0,
+      upperLimit: 2,
+      prevScreenTouchPressTargetEvent: 0,
+      screenTouchPressTargetEvent: 10
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -412,7 +416,34 @@ export default class DesignerInventory extends React.Component {
               </Item>
             </View>
           </View>
-          <ScrollView>
+          <ScrollView
+            scrollEventThrottle={16}
+            onTouchMove={e => {
+              const targetVal = e.nativeEvent.locationY;
+              this.setState(prevState => ({
+                prevScreenTouchPressTargetEvent:
+                  prevState.screenTouchPressTargetEvent,
+                screenTouchPressTargetEvent: targetVal
+              }));
+              const direction =
+                targetVal > this.state.prevScreenTouchPressTargetEvent
+                  ? "down"
+                  : "up";
+
+              if (direction === "down") {
+                this.setState(prevState => ({
+                  lowerLimit: prevState.upperLimit,
+                  upperLimit: prevState.upperLimit + 5
+                }));
+              }
+              if (direction === "up") {
+                this.setState(prevState => ({
+                  lowerLimit: prevState.upperLimit - 2,
+                  upperLimit: prevState.upperLimit - 2
+                }));
+              }
+            }}
+          >
             {/* {this.state.inventoryList.length === 0 ? (
               <Text style={commonStyles.warningMessage}>                
                 No records found !
@@ -421,178 +452,185 @@ export default class DesignerInventory extends React.Component {
               <View />
             )} */}
             {this.state.searchInventoryOrdersList.length === 0
-              ? this.state.inventoryList.map((itm, i) => (
-                  <View key={i}>
-                    <Text style={commonStyles.warningMessage}>
-                      {itm.length === 0 ? "No records found" : ""}
-                    </Text>
-                    <Card>
-                      <CardItem>
-                        <Left>
-                          <CheckBox
-                            onPress={() => this.onChangeCheck(itm.ItemID)}
-                            checked={itm.selectItem}
-                          />
-                        </Left>
-                        <Text style={{ fontWeight: "bold" }}>
-                          {itm.Description}
-                        </Text>
-                      </CardItem>
-                      <CardItem bordered>
-                        <View style={commonStyles.row}>
-                          <View
-                            style={{
-                              flexDirection: "column",
-                              width: 100,
-                              height: 50
-                            }}
-                          >
-                            <Image
-                              source={{ uri: `${itm.SmallPicture}` }}
-                              style={{
-                                height: 100,
-                                width: "100%",
-                                marginBottom: 20
-                              }}
+              ? this.state.inventoryList.map((itm, i) =>
+                  i >= 0 && i <= this.state.upperLimit ? (
+                    <View key={i}>
+                      <Text style={commonStyles.warningMessage}>
+                        {itm.length === 0 ? "No records found" : ""}
+                      </Text>
+                      <Card>
+                        <CardItem>
+                          <Left>
+                            <CheckBox
+                              onPress={() => this.onChangeCheck(itm.ItemID)}
+                              checked={itm.selectItem}
                             />
-                          </View>
-                          <View style={commonStyles.column}>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Qty Available </Text>
-                              <Text>{itm.Quantity}</Text>
+                          </Left>
+                          <Text style={{ fontWeight: "bold" }}>
+                            {itm.Description}
+                          </Text>
+                        </CardItem>
+                        <CardItem bordered>
+                          <View style={commonStyles.row}>
+                            <View
+                              style={{
+                                flexDirection: "column",
+                                width: 100,
+                                height: 50
+                              }}
+                            >
+                              <Image
+                                source={{ uri: `${itm.SmallPicture}` }}
+                                style={{
+                                  height: 100,
+                                  width: "100%",
+                                  marginBottom: 20
+                                }}
+                              />
                             </View>
-                            <View style={commonStyles.nestedRow}>
-                              <TouchableHighlight
-                              // onPress={() => {
-                              //   this.props.navigation.navigate(
-                              //     "InventoryOrderDiscount",
-                              //     {
-                              //       inventoryItemId: itm.ItemID
-                              //     }
-                              //   );
-                              // }}
-                              >
-                                <Text> Discount </Text>
-                              </TouchableHighlight>
-                              <Text>{itm.discountVal}</Text>
-                              {itm.discountType === "d" ? (
-                                <Text>{"\u0024"}</Text>
-                              ) : (
-                                <Text>%</Text>
-                              )}
-                            </View>
-                            {/* <View style={commonStyles.nestedRow}>
+                            <View style={commonStyles.column}>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Qty Available </Text>
+                                <Text>{itm.Quantity}</Text>
+                              </View>
+                              <View style={commonStyles.nestedRow}>
+                                <TouchableHighlight
+                                // onPress={() => {
+                                //   this.props.navigation.navigate(
+                                //     "InventoryOrderDiscount",
+                                //     {
+                                //       inventoryItemId: itm.ItemID
+                                //     }
+                                //   );
+                                // }}
+                                >
+                                  <Text> Discount </Text>
+                                </TouchableHighlight>
+                                <Text>{itm.discountVal}</Text>
+                                {itm.discountType === "d" ? (
+                                  <Text>{"\u0024"}</Text>
+                                ) : (
+                                  <Text>%</Text>
+                                )}
+                              </View>
+                              {/* <View style={commonStyles.nestedRow}>
                               <Text>Retail</Text>
                               <Text>
                                 {"\u0024"}
                                 {itm.RetailPrice}
                               </Text>
                             </View> */}
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Designer</Text>
-                              <Text>
-                                {"\u0024"}
-                                {itm.Price}
-                              </Text>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Designer</Text>
+                                <Text>
+                                  {"\u0024"}
+                                  {itm.Price}
+                                </Text>
+                              </View>
                             </View>
-                          </View>
-                          <View style={commonStyles.column}>
-                            <Right>
-                              <TouchableHighlight
-                                onPress={() =>
-                                  this.incrementOrder(itm.ItemID, itm.Quantity)
-                                }
-                              >
-                                <Icon
-                                  name="plus"
-                                  type="FontAwesome"
-                                  style={{ color: "#f50" }}
-                                />
-                              </TouchableHighlight>
+                            <View style={commonStyles.column}>
+                              <Right>
+                                <TouchableHighlight
+                                  onPress={() =>
+                                    this.incrementOrder(
+                                      itm.ItemID,
+                                      itm.Quantity
+                                    )
+                                  }
+                                >
+                                  <Icon
+                                    name="plus"
+                                    type="FontAwesome"
+                                    style={{ color: "#f50" }}
+                                  />
+                                </TouchableHighlight>
 
-                              <Text style={{ fontWeight: "bold" }}>
-                                {itm.incVal}
-                              </Text>
-                              <TouchableHighlight
-                                onPress={() =>
-                                  this.decCounter(itm.ItemID, itm.Quantity)
-                                }
-                              >
-                                <Icon
-                                  name="minus"
-                                  type="FontAwesome"
-                                  style={{ color: "#f50" }}
-                                />
-                              </TouchableHighlight>
-                            </Right>
+                                <Text style={{ fontWeight: "bold" }}>
+                                  {itm.incVal}
+                                </Text>
+                                <TouchableHighlight
+                                  onPress={() =>
+                                    this.decCounter(itm.ItemID, itm.Quantity)
+                                  }
+                                >
+                                  <Icon
+                                    name="minus"
+                                    type="FontAwesome"
+                                    style={{ color: "#f50" }}
+                                  />
+                                </TouchableHighlight>
+                              </Right>
+                            </View>
+                            <View style={commonStyles.column} />
                           </View>
-                          <View style={commonStyles.column} />
-                        </View>
-                      </CardItem>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-around"
-                        }}
-                      >
-                        <Text style={{ marginLeft: 5 }}>Discount</Text>
-
-                        <Button
-                          style={
-                            itm.btnDollarDiscountVal
-                              ? { margin: 5 }
-                              : { margin: 5, backgroundColor: "#61d0c8" }
-                          }
-                          onPress={() => {
-                            this.discountEnable("d", itm.ItemID);
-                          }}
-                          disabled={itm.btnDollarDiscountVal}
-                        >
-                          <Icon
-                            name="dollar"
-                            type="FontAwesome"
-                            style={{ color: "#ffffff" }}
-                          />
-                        </Button>
-                        <Button
-                          style={
-                            itm.btnPercentDiscountVal
-                              ? { margin: 5 }
-                              : { margin: 5, backgroundColor: "#61d0c8" }
-                          }
-                          onPress={() => {
-                            this.discountEnable("p", itm.ItemID);
-                          }}
-                          disabled={itm.btnPercentDiscountVal}
-                        >
-                          <Icon
-                            name="percent"
-                            type="FontAwesome"
-                            style={{ color: "#ffffff" }}
-                          />
-                        </Button>
-                        <TextInput
-                          autoCapitalize="sentences"
-                          value={this.state.selDiscountVal}
-                          onChangeText={txtVal => {
-                            this.discountTextChange(txtVal, itm.ItemID);
-                          }}
-                          placeholder="Discount"
+                        </CardItem>
+                        <View
                           style={{
-                            width: 60,
-                            height: 30,
-                            borderWidth: 1,
-                            margin: 5
+                            flexDirection: "row",
+                            justifyContent: "space-around"
                           }}
-                          keyboardType="numeric"
-                          returnKeyType="done"
-                          onSubmitEditing={Keyboard.dismiss}
-                          autoCapitalize="sentences"
-                        />
-                      </View>
-                    </Card>
-                  </View>
-                ))
+                        >
+                          <Text style={{ marginLeft: 5 }}>Discount</Text>
+
+                          <Button
+                            style={
+                              itm.btnDollarDiscountVal
+                                ? { margin: 5 }
+                                : { margin: 5, backgroundColor: "#61d0c8" }
+                            }
+                            onPress={() => {
+                              this.discountEnable("d", itm.ItemID);
+                            }}
+                            disabled={itm.btnDollarDiscountVal}
+                          >
+                            <Icon
+                              name="dollar"
+                              type="FontAwesome"
+                              style={{ color: "#ffffff" }}
+                            />
+                          </Button>
+                          <Button
+                            style={
+                              itm.btnPercentDiscountVal
+                                ? { margin: 5 }
+                                : { margin: 5, backgroundColor: "#61d0c8" }
+                            }
+                            onPress={() => {
+                              this.discountEnable("p", itm.ItemID);
+                            }}
+                            disabled={itm.btnPercentDiscountVal}
+                          >
+                            <Icon
+                              name="percent"
+                              type="FontAwesome"
+                              style={{ color: "#ffffff" }}
+                            />
+                          </Button>
+                          <TextInput
+                            autoCapitalize="sentences"
+                            value={this.state.selDiscountVal}
+                            onChangeText={txtVal => {
+                              this.discountTextChange(txtVal, itm.ItemID);
+                            }}
+                            placeholder="Discount"
+                            style={{
+                              width: 60,
+                              height: 30,
+                              borderWidth: 1,
+                              margin: 5
+                            }}
+                            keyboardType="numeric"
+                            returnKeyType="done"
+                            onSubmitEditing={Keyboard.dismiss}
+                            autoCapitalize="sentences"
+                          />
+                        </View>
+                      </Card>
+                    </View>
+                  ) : (
+                    <View key={i} />
+                  )
+                )
               : this.state.searchInventoryOrdersList.map(
                   (srchInvOrdrItm, srchInvOrdrItmIndx) => (
                     <View key={srchInvOrdrItmIndx}>
