@@ -194,6 +194,11 @@ const commonStyles = StyleSheet.create({
     justifyContent: "center",
     width: 40,
     height: 40
+  },
+  ordersRow: {
+    margin: 15,
+    flexDirection: "row",
+    justifyContent: "space-around"
   }
 });
 

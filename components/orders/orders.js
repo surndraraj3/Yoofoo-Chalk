@@ -242,7 +242,7 @@ export default class Orders extends React.Component {
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
-                  placeholder="Search"
+                  placeholder="Order Number, Name or DesignerID"
                   style={{
                     textAlign: "center",
                     height: 50,
@@ -257,10 +257,10 @@ export default class Orders extends React.Component {
               </Item>
             </View>
           </View>
-          <View style={commonStyles.row}>
+          <View style={commonStyles.ordersRow}>
             <Text>Customer</Text>
             <Text>Order Date</Text>
-            <Text>Order #</Text>
+            <Text>Order # </Text>
             {/* <Text /> */}
           </View>
           <Text style={commonStyles.warningMessage}>
@@ -272,9 +272,9 @@ export default class Orders extends React.Component {
                   <Text style={commonStyles.warningMessage}>
                     {orderItem.length === 0 ? "No Orders Found" : ""}
                   </Text>
-                  <View style={commonStyles.row}>
-                    <Text>{orderItem.Customer}</Text>
-                    <Text>{orderItem.OrderDate}</Text>
+                  <View style={commonStyles.ordersRow}>
+                    <Text>{orderItem.Customer.trim()}</Text>
+                    <Text>{orderItem.OrderDate.trim()}</Text>
                     <TouchableHighlight
                       onPress={() =>
                         this.props.navigation.navigate("ResendInvoice", {
@@ -282,7 +282,7 @@ export default class Orders extends React.Component {
                         })
                       }
                     >
-                      <Text>{orderItem.OrderNum}</Text>
+                      <Text>{orderItem.OrderNum.trim()}</Text>
                     </TouchableHighlight>
 
                     {/* <Picker
