@@ -541,7 +541,7 @@ export default class DesignerInventory extends React.Component {
                                   <Icon
                                     name="plus"
                                     type="FontAwesome"
-                                    style={{ color: "#f50" }}
+                                    style={{ color: "#61d0c8" }}
                                   />
                                 </TouchableHighlight>
 
@@ -556,7 +556,7 @@ export default class DesignerInventory extends React.Component {
                                   <Icon
                                     name="minus"
                                     type="FontAwesome"
-                                    style={{ color: "#f50" }}
+                                    style={{ color: "#61d0c8" }}
                                   />
                                 </TouchableHighlight>
                               </Right>
@@ -714,7 +714,7 @@ export default class DesignerInventory extends React.Component {
                                   <Icon
                                     name="plus"
                                     type="FontAwesome"
-                                    style={{ color: "#f50" }}
+                                    style={{ color: "#61d0c8" }}
                                   />
                                 </TouchableHighlight>
 
@@ -732,7 +732,7 @@ export default class DesignerInventory extends React.Component {
                                   <Icon
                                     name="minus"
                                     type="FontAwesome"
-                                    style={{ color: "#f50" }}
+                                    style={{ color: "#61d0c8" }}
                                   />
                                 </TouchableHighlight>
                               </Right>
@@ -836,14 +836,16 @@ export default class DesignerInventory extends React.Component {
                 width: 120,
                 height: 40,
                 margin: 10,
-                justifyContent: "center"
+                justifyContent: "center",
+                borderColor:'#ffffff'
               }}
               onPress={this.addListOfOrders}
             >
               <Text
                 style={{
-                  color: "#000000",
-                  fontSize: 15
+                  color: "#ffffff",
+                  fontSize: 15,
+                  fontWeight: 'bold'
                 }}
               >
                 Add to order
@@ -856,7 +858,8 @@ export default class DesignerInventory extends React.Component {
                 width: 120,
                 height: 40,
                 margin: 10,
-                justifyContent: "center"
+                justifyContent: "center",
+                borderColor:'#ffffff'
               }}
               onPress={() =>
                 this.props.navigation.navigate("AddInventoryOrder", {
@@ -868,9 +871,9 @@ export default class DesignerInventory extends React.Component {
             >
               <Text
                 style={{
-                  color: "#000000",
-                  fontSize: 15
-                  // margin: 10
+                  color: "#ffffff",
+                  fontSize: 15,
+                  fontWeight: 'bold'
                 }}
               >
                 Review Order

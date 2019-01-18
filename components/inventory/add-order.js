@@ -239,13 +239,13 @@ export default class AddInventoryOrder extends React.Component {
         </Header>
         <Content padder>
           <View style={{ backgroundColor: "#e6e6e6" }}>
-            <Text style={{ margin: 15, fontSize: 20 }}>
+            {/* <Text style={{ margin: 15, fontSize: 20 }}>
               {this.state.getListofOrdersPrevScreen.length} Review Order
-            </Text>
+            </Text> */}
             <View style={{ margin: 15, borderColor: "#595959" }}>
               <Item rounded>
                 <Input
-                  placeholder="Search Review Order"
+                  placeholder="search order"
                   style={{
                     textAlign: "center",
                     height: 50,
@@ -350,7 +350,7 @@ export default class AddInventoryOrder extends React.Component {
                               <Icon
                                 name="plus"
                                 type="FontAwesome"
-                                style={{ color: "#f50" }}
+                                style={{ color: "#61d0c8" }}
                               />
                               </TouchableHighlight>                              
                               <Text style={{ fontWeight: "bold" }}>
@@ -360,7 +360,7 @@ export default class AddInventoryOrder extends React.Component {
                                 <Icon
                                   name="minus"
                                   type="FontAwesome"
-                                  style={{ color: "#f50" }}
+                                  style={{ color: "#61d0c8" }}
                                 />
                               </TouchableHighlight>                              
                             </Right>
