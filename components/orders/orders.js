@@ -239,17 +239,17 @@ export default class Orders extends React.Component {
             <Text style={{ margin: 10, fontSize: 12 }}>
               {this.state.orderCount} Order
             </Text>
-            <View style={{ margin: 15, borderColor: "#595959" }}>
-              <Item rounded>
+            <View style={{ margin: 15}}>
+              <Item>
                 <Input
                   placeholder="Order Number, Name or DesignerID"
                   style={{
                     textAlign: "center",
                     height: 50,
-                    borderWidth: 2,
-                    borderColor: "#00e6e6",
-                    borderRadius: 20,
-                    backgroundColor: "#FFFFFF"
+                    // borderWidth: 2,
+                    // borderColor: "#00e6e6",
+                    // borderRadius: 20,
+                    // backgroundColor: "#FFFFFF"
                   }}
                   onChangeText={this.onChangeOrder}
                 />

@@ -230,17 +230,17 @@ export default class Inventory extends React.Component {
             <Text style={{ margin: 15, fontSize: 20 }}>
               {this.state.inventoryCount} Items
             </Text>
-            <View style={{ margin: 15, borderColor: "#595959" }}>
-              <Item rounded>
+            <View style={{ margin: 15 }}>
+              <Item>
                 <Input
-                  placeholder="Search Items"
+                  placeholder="search items"
                   style={{
                     textAlign: "center",
                     height: 50,
-                    borderWidth: 2,
-                    borderColor: "#00e6e6",
-                    borderRadius: 20,
-                    backgroundColor: "#FFFFFF"
+                    // borderWidth: 2,
+                    // borderColor: "#00e6e6",
+                    // borderRadius: 20,
+                    // backgroundColor: "#FFFFFF"
                   }}
                   onChangeText={this.onSearchInventory}
                 />

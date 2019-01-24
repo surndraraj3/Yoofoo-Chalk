@@ -237,22 +237,22 @@ export default class AddInventoryOrder extends React.Component {
             </TouchableHighlight>
           </Right>
         </Header>
-        <Content padder>
+        <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
             {/* <Text style={{ margin: 15, fontSize: 20 }}>
               {this.state.getListofOrdersPrevScreen.length} Review Order
             </Text> */}
             <View style={{ margin: 15, borderColor: "#595959" }}>
-              <Item rounded>
+              <Item>
                 <Input
                   placeholder="search order"
                   style={{
                     textAlign: "center",
                     height: 50,
-                    borderWidth: 2,
-                    borderColor: "#00e6e6",
-                    borderRadius: 20,
-                    backgroundColor: "#FFFFFF"
+                    // borderWidth: 2,
+                    // borderColor: "#00e6e6",
+                    // borderRadius: 20,
+                    // backgroundColor: "#FFFFFF"
                   }}
                 />
                 <Icon active name="search" />
@@ -388,7 +388,7 @@ export default class AddInventoryOrder extends React.Component {
             <View style={{ margin: 20 }}>
               <TouchableHighlight onPress={this.handleAddedItemsToCart}>
                 <Text
-                  style={{ color: "#42f4f1", fontSize: 20, fontWeight: "bold" }}
+                  style={{ color: "#61d0c8", fontSize: 20, fontWeight: "bold" }}
                 >
                   Continue Shopping
                 </Text>

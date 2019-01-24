@@ -199,6 +199,9 @@ const commonStyles = StyleSheet.create({
     margin: 15,
     flexDirection: "row",
     justifyContent: "space-around"
+  },
+  designerInventoryRow: {
+    flexDirection: 'row', justifyContent: 'space-evenly'
   }
 });
 

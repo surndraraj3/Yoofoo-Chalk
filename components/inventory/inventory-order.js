@@ -386,22 +386,22 @@ export default class InventoryOrder extends React.Component {
             </TouchableHighlight>
           </Right>
         </Header>
-        <Content padder>
+        <Content>
           <View style={{ backgroundColor: "#e6e6e6" }}>
             {/* <Text style={{ margin: 15, fontSize: 20 }}>
               {this.state.inventoryCount} Order
             </Text> */}
-            <View style={{ margin: 15, borderColor: "#595959" }}>
-              <Item rounded>
+            <View style={{ margin: 15 }}>
+              <Item>
                 <Input
                   placeholder="search items"
                   style={{
                     textAlign: "center",
                     height: 50,
-                    borderWidth: 2,
-                    borderColor: "#00e6e6",
-                    borderRadius: 20,
-                    backgroundColor: "#FFFFFF"
+                    // borderWidth: 2,
+                    // borderColor: "#00e6e6",
+                    // borderRadius: 20,
+                    // backgroundColor: "#FFFFFF"
                   }}
                   onChangeText={this.onSearchInventoryOrder}
                 />
@@ -592,7 +592,7 @@ export default class InventoryOrder extends React.Component {
                             justifyContent: "space-around"
                           }}
                         >
-                          <Text style={{ marginLeft: 5 }}>Discount</Text>
+                          <Text style={{ margin: 10 }}>Discount</Text>
 
                           <Button
                             style={
@@ -768,7 +768,7 @@ export default class InventoryOrder extends React.Component {
                             justifyContent: "space-between"
                           }}
                         >
-                          <Text style={{ marginLeft: 5 }}>Discount</Text>
+                          <Text style={{ margin:10 }}>Discount</Text>
                           <Button
                             style={
                               srchInvOrdrItm.btnDollarDiscountVal
@@ -854,7 +854,7 @@ export default class InventoryOrder extends React.Component {
             <Button
               bordered
               style={{
-                backgroundColor: "#00ffff",
+                backgroundColor: "#61d0c8",
                 width: 120,
                 height: 40,
                 margin: 10,
@@ -876,7 +876,7 @@ export default class InventoryOrder extends React.Component {
             <Button
               bordered
               style={{
-                backgroundColor: "#00ffff",
+                backgroundColor: "#61d0c8",
                 width: 120,
                 height: 40,
                 margin: 10,
