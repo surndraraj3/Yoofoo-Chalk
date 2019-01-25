@@ -1139,7 +1139,7 @@ export default class Checkout extends React.Component {
                 ) : (
                   <Button
                     full
-                    style={{ backgroundColor: "#00ffff" }}
+                    style={{ backgroundColor: "#61d0c8" }}
                     onPress={this.saveOrderDtls}
                     disabled={this.state.btnCheckoutStatus}
                   >
