@@ -331,7 +331,8 @@ export default class Customers extends React.Component {
                                   {
                                     customerID: itm.CustomerID,
                                     customerDistributorId: this.state
-                                      .distributorId
+                                      .distributorId,
+                                    clickOn: 1
                                   }
                                 );
                               }}
@@ -397,7 +398,8 @@ export default class Customers extends React.Component {
                                     {
                                       customerID: srchCustItm.CustomerID,
                                       customerDistributorId: this.state
-                                        .distributorId
+                                        .distributorId,
+                                        clickOn: 1
                                     }
                                   );
                                 }}

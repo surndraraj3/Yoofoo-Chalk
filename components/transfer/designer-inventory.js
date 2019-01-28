@@ -70,7 +70,8 @@ export default class DesignerInventory extends React.Component {
       lowerLimit: 0,
       upperLimit: 2,
       prevScreenTouchPressTargetEvent: 0,
-      screenTouchPressTargetEvent: 10
+      screenTouchPressTargetEvent: 10,
+      clckEvnt: this.props.navigation.getParam("clickOn")
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array

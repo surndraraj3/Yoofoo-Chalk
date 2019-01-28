@@ -136,7 +136,8 @@ export default class AddInventoryOrder extends React.Component {
   handleAddedItemsToCart = () => {
     // AsyncStorage.setItem("AddedCartItems", this.state.getListofOrdersPrevScreen)
     this.props.navigation.navigate("InventoryOrder", {
-      addedCartToItems: this.state.getListofOrdersPrevScreen
+      addedCartToItems: this.state.getListofOrdersPrevScreen,
+      clickOn: 2
     });
   };
   //Increment the order quantity

@@ -67,7 +67,8 @@ export default class InventoryOrder extends React.Component {
       lowerLimit: 0,
       upperLimit: 2,
       prevScreenTouchPressTargetEvent:0,
-      screenTouchPressTargetEvent: 10      
+      screenTouchPressTargetEvent: 10,
+      clckEvnt: this.props.navigation.getParam("clickOn")      
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -98,7 +99,7 @@ export default class InventoryOrder extends React.Component {
   }
   //Load Inventory Order data
   loadInventoryOrderData = () => {
-    //Get Inventory List data
+    //Get Inventory List data    
     //console.log('asdsasdasasasdas');
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -195,11 +196,13 @@ export default class InventoryOrder extends React.Component {
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
-    //console.log("Welcome To Cart Items", this.state.inventoryList);
+   // console.log('asda', this.state.inventoryList)
+   //console.log('Event', this.state.clckEvnt)
+   this.setState({ addToOrderList: [] })
     let cartArr = [];
     if (this.state.getCartItems !== undefined) {
       this.state.getCartItems.map(cartData => cartArr.push(cartData));
-    }
+    } 
     const addedOrderToCart = this.state.inventoryList.filter(
       addedItems => addedItems.selectItem === true
     );
@@ -209,14 +212,25 @@ export default class InventoryOrder extends React.Component {
       Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);
     } else {
       if (this.state.getCartItems !== undefined)
-        addedOrderToCart.map(cartNewData => cartArr.push(cartNewData));
+        addedOrderToCart.map(cartNewData => cartArr.push(cartNewData));     
+      
+     // else this.setState({ getCartItems: []})
       //cartArr.push(addedOrderToCart);
-      //console.log("Added List Before", cartArr);
-      {
-        this.state.getCartItems === undefined
-          ? this.setState({ addToOrderList: addedOrderToCart })
-          : this.setState({ addToOrderList: cartArr });
+      //
+      // console.log("Added List Before", addedOrderToCart);
+      // console.log("Added List Before 1", cartArr);
+      if(this.state.clckEvnt === 1) {
+        this.setState({addToOrderList: addedOrderToCart});
+        cartArr.shift();
+      } else {
+        this.setState({ addToOrderList: cartArr });
       }
+
+      // {
+      //   this.state.getCartItems === undefined
+      //     ? ( cartArr.shift(), console.log('1'),this.setState({addToOrderList: addedOrderToCart}))
+      //     : ( console.log('2', this.state.clckEvnt), this.setState({ addToOrderList: cartArr }))
+      // }
       //this.setState({ addToOrderList: addedOrderToCart });
       //console.log("Added List After", cartArr);
       Toast.showWithGravity(
@@ -341,7 +355,7 @@ export default class InventoryOrder extends React.Component {
     const cstmrDistributorId = navigation.getParam(
       "customerDistributorId",
       "CUSTOMER_DIST_ID"
-    );
+    );    
     // console.log("ID", cstmrId, cstmrDistributorId);
     return (
       <Container>
@@ -883,11 +897,13 @@ export default class InventoryOrder extends React.Component {
                 justifyContent: "center",
                 borderColor:'#ffffff'
               }}
-              onPress={() =>
+              onPress={() =>{
+                //console.log('Len', this.state.addToOrderList.length);
                 this.props.navigation.navigate("AddInventoryOrder", {
                   reviewOrderDetailsList: this.state.addToOrderList,
                   customerId: cstmrId
                 })
+              }
               }
             >
               <Text
