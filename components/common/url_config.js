@@ -28,7 +28,7 @@
 // export const postCashPaymentUrl = 'http://chalkcoutureapiorderservice-prod.us-west-1.elasticbeanstalk.com/api/orders/PostCashPayment';
 // //GET Designers List
 // export const getDesignerListUrl = 'http://chalkcoutureapicustomerservices-prod.us-west-1.elasticbeanstalk.com/api/Customer/GetDesigners/';
-//Reset Password
+// //Reset Password
 //export const resetPasswordUrl = 'http://chalkcoutureapiloginservice-prod.us-west-1.elasticbeanstalk.com/api/Login/forgotpassword'
 
 //------------------Development URLS--------------------
