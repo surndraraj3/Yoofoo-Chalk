@@ -28,7 +28,8 @@
 // export const postCashPaymentUrl = 'http://chalkcoutureapiorderservice-prod.us-west-1.elasticbeanstalk.com/api/orders/PostCashPayment';
 // //GET Designers List
 // export const getDesignerListUrl = 'http://chalkcoutureapicustomerservices-prod.us-west-1.elasticbeanstalk.com/api/Customer/GetDesigners/';
-
+//Reset Password
+//export const resetPasswordUrl = 'http://chalkcoutureapiloginservice-prod.us-west-1.elasticbeanstalk.com/api/Login/forgotpassword'
 
 //------------------Development URLS--------------------
 // export const baseURL = 'http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/';
@@ -61,3 +62,5 @@ export const postCashPaymentUrl = 'http://ccapiorderservice-dev.us-west-1.elasti
 export const payCreditCardUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/PostCreditCardPayment';
 //GET Designers List
 export const getDesignerListUrl = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/GetDesigners/'; 
+//Reset Password
+export const resetPasswordUrl = 'http://loginservice-dev.us-west-1.elasticbeanstalk.com/api/Login/forgotpassword'

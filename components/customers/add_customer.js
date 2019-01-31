@@ -156,7 +156,7 @@ export default class AddCutsomer extends React.Component {
           });
           //console.log("Data", this.state.customerData);
           this.setState({ loadFormMessage: true, loadSpinner: false });
-          if (this.state.customerData.Result !== "Failure") {
+          if (this.state.customerData.Result !== "Failed") {
             //console.log("Success");
             this.setState({
               customerEmail: "",

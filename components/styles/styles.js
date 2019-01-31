@@ -202,6 +202,11 @@ const commonStyles = StyleSheet.create({
   },
   designerInventoryRow: {
     flexDirection: 'row', justifyContent: 'space-evenly'
+  },
+  successMsg: {
+    margin: 10,
+    color: "#b3ff99",
+    textAlign: "center"
   }
 });
 
