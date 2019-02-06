@@ -50,9 +50,9 @@ export default class Customers extends React.Component {
   //get Customers list
   componentDidMount = async () => {
     this._isMounted = true;
-    await AsyncStorage.getItem("LoginDetails")      
+    await AsyncStorage.getItem("LoginDetails")
       .then(responseJson => {
-        responseJson = JSON.parse(responseJson);       
+        responseJson = JSON.parse(responseJson);
         if (this._isMounted) {
           this.setState({
             distributorId: responseJson.DistributorID,
@@ -289,24 +289,145 @@ export default class Customers extends React.Component {
             </Text> */}
             {this.state.searchCustomerList.length === 0
               ? this.state.customersListData.map((itm, i) => (
-                  <View key={i}>
+                <View key={i}>
+                  <Text style={commonStyles.warningMessage}>
+                    {itm.length === 0 ? "No Customers Found" : ""}
+                  </Text>
+                  <Card>
+                    <CardItem>
+                      <Left>
+                        <Text>
+                          {itm.FirstName} {itm.LastName}
+                        </Text>
+                      </Left>
+                    </CardItem>
+                    <CardItem>
+                      <Left>
+                        <Text>{itm.Email}</Text>
+                      </Left>
+                      <Right>
+                        <Button bordered
+                          style={{
+                            backgroundColor: "#61d0c8",
+                            width: 120,
+                            height: 40,
+                            margin: 10,
+                            justifyContent: "center",
+                            borderColor: '#ffffff'
+                          }}
+                          onPress={() => {
+                            this.props.navigation.navigate(
+                              "InventoryOrder",
+                              {
+                                customerID: itm.CustomerID,
+                                customerDistributorId: this.state
+                                  .distributorId,
+                                clickOn: 1
+                              }
+                            )
+                          }}
+                        >
+                          <Text style={{
+                            color: "#ffffff",
+                            fontSize: 15,
+                            fontWeight: 'bold'
+                          }}>Create Order</Text>
+                        </Button>
+                        {/* <ImageBackground
+                          resizeMode={"stretch"} // or cover
+                          style={{
+                            height: 30,
+                            width: 30,
+                            borderRadius: 15,
+                            backgroundColor: "#55e6f6"
+                          }}
+                          source={require("../../assets/ellipsis-h-white.png")}
+                        >
+                          <Picker
+                            selectedValue={this.state.selPickItm}
+                            mode="dropdown"
+                            style={{
+                              height: 20,
+                              width: 20
+                            }}
+                            onValueChange={(selVal, selIndex) => {
+
+                              this.setState({ selPickItm: selVal });
+                              this.props.navigation.navigate(
+                                "InventoryOrder",
+                                {
+                                  customerID: itm.CustomerID,
+                                  customerDistributorId: this.state
+                                    .distributorId,
+                                  clickOn: 1
+                                }
+                              );
+                            }}
+                          >
+                            <Picker.Item label="" value="" />
+                            <Picker.Item
+                              label="Create Order"
+                              value="CreateOrder"
+                            />
+                          </Picker>
+                        </ImageBackground> */}
+                      </Right>
+                    </CardItem>
+                    <CardItem>
+                      <Left>
+                        <Text>{itm.Phone}</Text>
+                      </Left>
+                    </CardItem>
+                  </Card>
+                </View>
+              ))
+              : this.state.searchCustomerList.map(
+                (srchCustItm, srchCustIndx) => (
+                  <View key={srchCustIndx}>
                     <Text style={commonStyles.warningMessage}>
-                      {itm.length === 0 ? "No Customers Found" : ""}
+                      {srchCustItm.length === 0 ? "No Customers Found" : ""}
                     </Text>
                     <Card>
                       <CardItem>
                         <Left>
                           <Text>
-                            {itm.FirstName} {itm.LastName}
+                            {srchCustItm.FirstName} {srchCustItm.LastName}
                           </Text>
                         </Left>
                       </CardItem>
                       <CardItem>
                         <Left>
-                          <Text>{itm.Email}</Text>
+                          <Text>{srchCustItm.Email}</Text>
                         </Left>
                         <Right>
-                          <ImageBackground
+                          <Button bordered
+                            style={{
+                              backgroundColor: "#61d0c8",
+                              width: 120,
+                              height: 40,
+                              margin: 10,
+                              justifyContent: "center",
+                              borderColor: '#ffffff'
+                            }}
+                            onPress={() => {
+                              this.props.navigation.navigate(
+                                "InventoryOrder",
+                                {
+                                  customerID: srchCustItm.CustomerID,
+                                  customerDistributorId: this.state
+                                    .distributorId,
+                                  clickOn: 1
+                                }
+                              )
+                            }}
+                          >
+                            <Text style={{
+                              color: "#ffffff",
+                              fontSize: 15,
+                              fontWeight: 'bold'
+                            }}>Create Order</Text>
+                          </Button>
+                          {/* <ImageBackground
                             resizeMode={"stretch"} // or cover
                             style={{
                               height: 30,
@@ -323,13 +444,13 @@ export default class Customers extends React.Component {
                                 height: 20,
                                 width: 20
                               }}
-                              onValueChange={(selVal, selIndex) => {
-                                
-                                this.setState({ selPickItm: selVal });
+                              onValueChange={(selItmVal, selItmIndex) => {
+                                //console.log("221", selItmVal, selItmIndex);
+                                this.setState({ selPickItm: selItmVal });
                                 this.props.navigation.navigate(
                                   "InventoryOrder",
                                   {
-                                    customerID: itm.CustomerID,
+                                    customerID: srchCustItm.CustomerID,
                                     customerDistributorId: this.state
                                       .distributorId,
                                     clickOn: 1
@@ -343,85 +464,18 @@ export default class Customers extends React.Component {
                                 value="CreateOrder"
                               />
                             </Picker>
-                          </ImageBackground>
+                          </ImageBackground> */}
                         </Right>
                       </CardItem>
                       <CardItem>
                         <Left>
-                          <Text>{itm.Phone}</Text>
+                          <Text>{srchCustItm.Phone}</Text>
                         </Left>
                       </CardItem>
                     </Card>
                   </View>
-                ))
-              : this.state.searchCustomerList.map(
-                  (srchCustItm, srchCustIndx) => (
-                    <View key={srchCustIndx}>
-                      <Text style={commonStyles.warningMessage}>
-                        {srchCustItm.length === 0 ? "No Customers Found" : ""}
-                      </Text>
-                      <Card>
-                        <CardItem>
-                          <Left>
-                            <Text>
-                              {srchCustItm.FirstName} {srchCustItm.LastName}
-                            </Text>
-                          </Left>
-                        </CardItem>
-                        <CardItem>
-                          <Left>
-                            <Text>{srchCustItm.Email}</Text>
-                          </Left>
-                          <Right>
-                            <ImageBackground
-                              resizeMode={"stretch"} // or cover
-                              style={{
-                                height: 30,
-                                width: 30,
-                                borderRadius: 15,
-                                backgroundColor: "#55e6f6"
-                              }}
-                              source={require("../../assets/ellipsis-h-white.png")}
-                            >
-                              <Picker
-                                selectedValue={this.state.selPickItm}
-                                mode="dropdown"
-                                style={{
-                                  height: 20,
-                                  width: 20
-                                }}
-                                onValueChange={(selItmVal, selItmIndex) => {
-                                  //console.log("221", selItmVal, selItmIndex);
-                                  this.setState({ selPickItm: selItmVal });
-                                  this.props.navigation.navigate(
-                                    "InventoryOrder",
-                                    {
-                                      customerID: srchCustItm.CustomerID,
-                                      customerDistributorId: this.state
-                                        .distributorId,
-                                        clickOn: 1
-                                    }
-                                  );
-                                }}
-                              >
-                                <Picker.Item label="" value="" />
-                                <Picker.Item
-                                  label="Create Order"
-                                  value="CreateOrder"
-                                />
-                              </Picker>
-                            </ImageBackground>
-                          </Right>
-                        </CardItem>
-                        <CardItem>
-                          <Left>
-                            <Text>{srchCustItm.Phone}</Text>
-                          </Left>
-                        </CardItem>
-                      </Card>
-                    </View>
-                  )
-                )}
+                )
+              )}
           </ScrollView>
         </Content>
         {this.renderLoading()}
