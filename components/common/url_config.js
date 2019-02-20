@@ -31,6 +31,8 @@
 // //Reset Password
 //export const resetPasswordUrl = 'http://chalkcoutureapiloginservice-prod.us-west-1.elasticbeanstalk.com/api/Login/forgotpassword'
 
+
+
 //------------------Development URLS--------------------
 // export const baseURL = 'http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/';
 // export const baseURL = 'http://loginservice-dev.us-west-1.elasticbeanstalk.com/api/';
@@ -65,9 +67,12 @@
 // //Reset Password
 // export const resetPasswordUrl = 'http://loginservice-dev.us-west-1.elasticbeanstalk.com/api/Login/forgotpassword'
 
+
+
+
+
 // ------Amazon Production URL'S-------------------------------------------------------------------------
-//Login URL POST
-// export const baseURL = 'http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/';
+// //Login URL POST
 export const baseURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/';
 //Customer Profile URL GET
 export const custPrflURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/GetExigoCustomer/' //'http://chalkcoutureapicustomerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/';
@@ -85,3 +90,13 @@ export const getInventoryListURL = 'https://mobileapilb-1459049514.us-west-1.elb
 export const addOrdersUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/AddOrder/';
 //Get Invoice Details Based on Order Id
 export const getInvoiceDetailsByOrderIdUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/GetINvoice/'
+//Post caluclating orders
+export const calculateAddOrdersUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/CalculateOrder/'
+//Zip Code Validation Url
+export const zipCodeUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/ValidateZip/';
+//POST Cash Payment
+export const postCashPaymentUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/orders/PostCashPayment';
+//GET Designers List
+export const getDesignerListUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Customer/GetDesigners/';
+//Reset Password
+export const resetPasswordUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Login/forgotpassword'
