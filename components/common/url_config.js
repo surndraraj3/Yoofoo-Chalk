@@ -33,34 +33,55 @@
 
 //------------------Development URLS--------------------
 // export const baseURL = 'http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/';
-export const baseURL = 'http://loginservice-dev.us-west-1.elasticbeanstalk.com/api/';
+// export const baseURL = 'http://loginservice-dev.us-west-1.elasticbeanstalk.com/api/';
+// //Customer Profile URL GET
+// export const custPrflURL = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/GetExigoCustomer/'  //'http://chalkcoutureapicustomerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/';
+// // Order URL GET by customer id
+// export const customerOrderURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/';
+// //Add Customer Screen
+// export const add_customerURL = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/CreateCustomer';
+// //Get List of CUstomers URL
+// export const getCustomerListURL = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/GetChalkCustomers/';
+// //Get List of Orders URL
+// export const getOrdersListURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/';
+// //Get Inventory List 
+// export const getInventoryListURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/InventoryByDesignerID/';
+// //Add Orders 
+// export const addOrdersUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/AddOrder/';
+// //Get Invoice Details Based on Order Id
+// export const getInvoiceDetailsByOrderIdUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/GetINvoice/'
+
+// //Post caluclating orders
+// export const calculateAddOrdersUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/CalculateOrder/'
+
+// //Zip Code Validation Url
+// export const zipCodeUrl = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/ValidateZip/';
+// //POST Cash Payment
+// export const postCashPaymentUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/PostCashPayment';
+// //Billing URL Credit Card
+// export const payCreditCardUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/PostCreditCardPayment';
+// //GET Designers List
+// export const getDesignerListUrl = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/GetDesigners/'; 
+// //Reset Password
+// export const resetPasswordUrl = 'http://loginservice-dev.us-west-1.elasticbeanstalk.com/api/Login/forgotpassword'
+
+// ------Amazon Production URL'S-------------------------------------------------------------------------
+//Login URL POST
+// export const baseURL = 'http://chalkcoutureapiloginservice-dev.us-west-1.elasticbeanstalk.com/api/';
+export const baseURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/';
 //Customer Profile URL GET
-export const custPrflURL = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/GetExigoCustomer/'  //'http://chalkcoutureapicustomerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/';
+export const custPrflURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/GetExigoCustomer/' //'http://chalkcoutureapicustomerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/';
 // Order URL GET by customer id
-export const customerOrderURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/';
+export const customerOrderURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/orders/';
 //Add Customer Screen
-export const add_customerURL = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/CreateCustomer';
+export const add_customerURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/CreateCustomer';
 //Get List of CUstomers URL
-export const getCustomerListURL = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/GetChalkCustomers/';
+export const getCustomerListURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/GetChalkCustomers/';
 //Get List of Orders URL
-export const getOrdersListURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/';
+export const getOrdersListURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/orders/OrdersByDesignerID/';
 //Get Inventory List 
-export const getInventoryListURL = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/InventoryByDesignerID/';
+export const getInventoryListURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/InventoryByDesignerID/';
 //Add Orders 
-export const addOrdersUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/AddOrder/';
+export const addOrdersUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/AddOrder/';
 //Get Invoice Details Based on Order Id
-export const getInvoiceDetailsByOrderIdUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/GetINvoice/'
-
-//Post caluclating orders
-export const calculateAddOrdersUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/CalculateOrder/'
-
-//Zip Code Validation Url
-export const zipCodeUrl = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/customer/ValidateZip/';
-//POST Cash Payment
-export const postCashPaymentUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/PostCashPayment';
-//Billing URL Credit Card
-export const payCreditCardUrl = 'http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/Orders/PostCreditCardPayment';
-//GET Designers List
-export const getDesignerListUrl = 'http://customerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/GetDesigners/'; 
-//Reset Password
-export const resetPasswordUrl = 'http://loginservice-dev.us-west-1.elasticbeanstalk.com/api/Login/forgotpassword'
+export const getInvoiceDetailsByOrderIdUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/GetINvoice/'
