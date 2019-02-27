@@ -73,30 +73,30 @@
 
 // ------Amazon Production URL'S-------------------------------------------------------------------------
 // //Login URL POST
-export const baseURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/';
+export const baseURL = 'https://mobile.chalkcouture.com/api/';
 //Customer Profile URL GET
-export const custPrflURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/GetExigoCustomer/' //'http://chalkcoutureapicustomerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/';
+export const custPrflURL = 'https://mobile.chalkcouture.com/api/customer/GetExigoCustomer/' //'http://chalkcoutureapicustomerservices-dev.us-west-1.elasticbeanstalk.com/api/Customer/';
 // Order URL GET by customer id
-export const customerOrderURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/orders/';
+export const customerOrderURL = 'https://mobile.chalkcouture.com/api/orders/';
 //Add Customer Screen
-export const add_customerURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/CreateCustomer';
+export const add_customerURL = 'https://mobile.chalkcouture.com/api/customer/CreateCustomer';
 //Get List of CUstomers URL
-export const getCustomerListURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/GetChalkCustomers/';
+export const getCustomerListURL = 'https://mobile.chalkcouture.com/api/customer/GetChalkCustomers/';
 //Get List of Orders URL
-export const getOrdersListURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/orders/OrdersByDesignerID/';
+export const getOrdersListURL = 'https://mobile.chalkcouture.com/api/orders/OrdersByDesignerID/';
 //Get Inventory List 
-export const getInventoryListURL = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/InventoryByDesignerID/';
+export const getInventoryListURL = 'https://mobile.chalkcouture.com/api/Orders/InventoryByDesignerID/';
 //Add Orders 
-export const addOrdersUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/AddOrder/';
+export const addOrdersUrl = 'https://mobile.chalkcouture.com/api/Orders/AddOrder/';
 //Get Invoice Details Based on Order Id
-export const getInvoiceDetailsByOrderIdUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/GetINvoice/'
+export const getInvoiceDetailsByOrderIdUrl = 'https://mobile.chalkcouture.com/api/Orders/GetINvoice/'
 //Post caluclating orders
-export const calculateAddOrdersUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Orders/CalculateOrder/'
+export const calculateAddOrdersUrl = 'https://mobile.chalkcouture.com/api/Orders/CalculateOrder/'
 //Zip Code Validation Url
-export const zipCodeUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/customer/ValidateZip/';
+export const zipCodeUrl = 'https://mobile.chalkcouture.com/api/customer/ValidateZip/';
 //POST Cash Payment
-export const postCashPaymentUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/orders/PostCashPayment';
+export const postCashPaymentUrl = 'https://mobile.chalkcouture.com/api/orders/PostCashPayment';
 //GET Designers List
-export const getDesignerListUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Customer/GetDesigners/';
+export const getDesignerListUrl = 'https://mobile.chalkcouture.com/api/Customer/GetDesigners/';
 //Reset Password
-export const resetPasswordUrl = 'https://mobileapilb-1459049514.us-west-1.elb.amazonaws.com/api/Login/forgotpassword'
+export const resetPasswordUrl = 'https://mobile.chalkcouture.com/api/Login/forgotpassword'
