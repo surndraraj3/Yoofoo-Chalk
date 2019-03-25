@@ -67,7 +67,7 @@ export default class Customers extends React.Component {
   }
   //Load Customer Details
   loadCustomerDetails = () => {
-    //console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
+    // console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -144,20 +144,7 @@ export default class Customers extends React.Component {
             color: "#fff"
           }}
           source={require("../../assets/new_customer.png")}
-        />
-        {/*<Button
-          style={{ backgroundColor: "#34A34F" }}
-          onPress={() => this.props.navigation.navigate("AddCutsomer")}
-        >
-          <Image
-            source={require("../../assets/new_customer.png")}
-            style={{
-              height: 40,
-              width: 40,
-              borderRadius: 40 / 2
-            }}
-          />
-        </Button> */}
+        />        
       </Fab>
     );
   }
@@ -284,9 +271,6 @@ export default class Customers extends React.Component {
             </View>
           </View>
           <ScrollView>
-            {/* <Text style={commonStyles.warningMessage}>
-              {this.state.customerCount === 0 ? "No Customers Found" : ""}
-            </Text> */}
             {this.state.searchCustomerList.length === 0
               ? this.state.customersListData.map((itm, i) => (
                 <View key={i}>
@@ -332,45 +316,7 @@ export default class Customers extends React.Component {
                             fontSize: 15,
                             fontWeight: 'bold'
                           }}>Create Order</Text>
-                        </Button>
-                        {/* <ImageBackground
-                          resizeMode={"stretch"} // or cover
-                          style={{
-                            height: 30,
-                            width: 30,
-                            borderRadius: 15,
-                            backgroundColor: "#55e6f6"
-                          }}
-                          source={require("../../assets/ellipsis-h-white.png")}
-                        >
-                          <Picker
-                            selectedValue={this.state.selPickItm}
-                            mode="dropdown"
-                            style={{
-                              height: 20,
-                              width: 20
-                            }}
-                            onValueChange={(selVal, selIndex) => {
-
-                              this.setState({ selPickItm: selVal });
-                              this.props.navigation.navigate(
-                                "InventoryOrder",
-                                {
-                                  customerID: itm.CustomerID,
-                                  customerDistributorId: this.state
-                                    .distributorId,
-                                  clickOn: 1
-                                }
-                              );
-                            }}
-                          >
-                            <Picker.Item label="" value="" />
-                            <Picker.Item
-                              label="Create Order"
-                              value="CreateOrder"
-                            />
-                          </Picker>
-                        </ImageBackground> */}
+                        </Button>                        
                       </Right>
                     </CardItem>
                     <CardItem>
@@ -427,44 +373,6 @@ export default class Customers extends React.Component {
                               fontWeight: 'bold'
                             }}>Create Order</Text>
                           </Button>
-                          {/* <ImageBackground
-                            resizeMode={"stretch"} // or cover
-                            style={{
-                              height: 30,
-                              width: 30,
-                              borderRadius: 15,
-                              backgroundColor: "#55e6f6"
-                            }}
-                            source={require("../../assets/ellipsis-h-white.png")}
-                          >
-                            <Picker
-                              selectedValue={this.state.selPickItm}
-                              mode="dropdown"
-                              style={{
-                                height: 20,
-                                width: 20
-                              }}
-                              onValueChange={(selItmVal, selItmIndex) => {
-                                //console.log("221", selItmVal, selItmIndex);
-                                this.setState({ selPickItm: selItmVal });
-                                this.props.navigation.navigate(
-                                  "InventoryOrder",
-                                  {
-                                    customerID: srchCustItm.CustomerID,
-                                    customerDistributorId: this.state
-                                      .distributorId,
-                                    clickOn: 1
-                                  }
-                                );
-                              }}
-                            >
-                              <Picker.Item label="" value="" />
-                              <Picker.Item
-                                label="Create Order"
-                                value="CreateOrder"
-                              />
-                            </Picker>
-                          </ImageBackground> */}
                         </Right>
                       </CardItem>
                       <CardItem>
