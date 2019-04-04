@@ -66,9 +66,9 @@ export default class InventoryOrder extends React.Component {
       getCartItems: this.props.navigation.getParam("addedCartToItems"),
       lowerLimit: 0,
       upperLimit: 2,
-      prevScreenTouchPressTargetEvent:0,
+      prevScreenTouchPressTargetEvent: 0,
       screenTouchPressTargetEvent: 10,
-      clckEvnt: this.props.navigation.getParam("clickOn")      
+      clckEvnt: this.props.navigation.getParam("clickOn")
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -99,7 +99,7 @@ export default class InventoryOrder extends React.Component {
   }
   //Load Inventory Order data
   loadInventoryOrderData = () => {
-    //Get Inventory List data    
+    //Get Inventory List data
     //console.log('asdsasdasasasdas');
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
@@ -159,12 +159,13 @@ export default class InventoryOrder extends React.Component {
   incrementOrder = (id, qty) => {
     const res = this.state.inventoryList.filter(v => v.ItemID === id);
     // const incremntVal = res[0].incVal + 1;
+    this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
     if (qty === 0) {
       alert("Max Quantity Reached");
+      this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
     } else {
-      res[0].incVal = res[0].incVal + 1;
-      res[0].Quantity = res[0].Quantity - 1;
-      this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
+      res[0].incVal += 1; //res[0].incVal + 1;
+      res[0].Quantity -= 1; //res[0].Quantity - 1;
     }
   };
 
@@ -175,8 +176,8 @@ export default class InventoryOrder extends React.Component {
     if (decrementVal < 0) {
       alert(`Can't decrement value`);
     } else {
-      res[0].incVal = res[0].incVal - 1;
-      res[0].Quantity = res[0].Quantity + 1;
+      res[0].incVal -= 1; // res[0].incVal - 1;
+      res[0].Quantity += 1; // res[0].Quantity + 1;
       this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
     }
   }
@@ -186,23 +187,23 @@ export default class InventoryOrder extends React.Component {
     const checkedItem = this.state.inventoryList.filter(
       chkItm => chkItm.ItemID === itemId
     );
+    checkedItem.selectItem = this.setState({ checked: true });
     if (checkedItem[0].incVal === 0)
       alert("Add the item quantity before selecting item");
     else {
       if (!checkedItem[0].selectItem) checkedItem[0].selectItem = true;
       else checkedItem[0].selectItem = false;
     }
-    checkedItem.selectItem = this.setState({ checked: true });
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
-   // console.log('asda', this.state.inventoryList)
-   //console.log('Event', this.state.clckEvnt)
-   this.setState({ addToOrderList: [] })
+    // console.log('asda', this.state.inventoryList)
+    //console.log('Event', this.state.clckEvnt)
+    this.setState({ addToOrderList: [] });
     let cartArr = [];
     if (this.state.getCartItems !== undefined) {
       this.state.getCartItems.map(cartData => cartArr.push(cartData));
-    } 
+    }
     const addedOrderToCart = this.state.inventoryList.filter(
       addedItems => addedItems.selectItem === true
     );
@@ -212,15 +213,15 @@ export default class InventoryOrder extends React.Component {
       Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);
     } else {
       if (this.state.getCartItems !== undefined)
-        addedOrderToCart.map(cartNewData => cartArr.push(cartNewData));     
-      
-     // else this.setState({ getCartItems: []})
+        addedOrderToCart.map(cartNewData => cartArr.push(cartNewData));
+
+      // else this.setState({ getCartItems: []})
       //cartArr.push(addedOrderToCart);
       //
       // console.log("Added List Before", addedOrderToCart);
       // console.log("Added List Before 1", cartArr);
-      if(this.state.clckEvnt === 1) {
-        this.setState({addToOrderList: addedOrderToCart});
+      if (this.state.clckEvnt === 1) {
+        this.setState({ addToOrderList: addedOrderToCart });
         cartArr.shift();
       } else {
         this.setState({ addToOrderList: cartArr });
@@ -355,7 +356,7 @@ export default class InventoryOrder extends React.Component {
     const cstmrDistributorId = navigation.getParam(
       "customerDistributorId",
       "CUSTOMER_DIST_ID"
-    );    
+    );
     // console.log("ID", cstmrId, cstmrDistributorId);
     return (
       <Container>
@@ -411,7 +412,7 @@ export default class InventoryOrder extends React.Component {
                   placeholder="search items"
                   style={{
                     textAlign: "center",
-                    height: 50,
+                    height: 50
                     // borderWidth: 2,
                     // borderColor: "#00e6e6",
                     // borderRadius: 20,
@@ -424,11 +425,11 @@ export default class InventoryOrder extends React.Component {
             </View>
           </View>
           <ScrollView
-            scrollEventThrottle={16}         
+            scrollEventThrottle={16}
             onTouchMove={e => {
               // this.setState(prevState => ({
               //   lowerLimit: prevState.upperLimit,
-              //   upperLimit: prevState.upperLimit + 3                 
+              //   upperLimit: prevState.upperLimit + 3
               // }));
               // offset= 0;
               // const currentOffset = e.nativeEvent.target; //locationY
@@ -437,48 +438,53 @@ export default class InventoryOrder extends React.Component {
               //console.log(e.nativeEvent);
               const targetVal = e.nativeEvent.locationY;
               this.setState(prevState => ({
-                prevScreenTouchPressTargetEvent: prevState.screenTouchPressTargetEvent,
-                screenTouchPressTargetEvent:targetVal
-              }))
-              const direction = targetVal > this.state.prevScreenTouchPressTargetEvent ? 'down' : 'up';
+                prevScreenTouchPressTargetEvent:
+                  prevState.screenTouchPressTargetEvent,
+                screenTouchPressTargetEvent: targetVal
+              }));
+              const direction =
+                targetVal > this.state.prevScreenTouchPressTargetEvent
+                  ? "down"
+                  : "up";
               //console.log('Directrion', direction, 'Current', targetVal, '--Prev', this.state.prevScreenTouchPressTargetEvent);
               //
               // this.setState(prevState => ({
               //   lowerLimit: prevState.upperLimit,
-              //   upperLimit: prevState.upperLimit + 5                 
+              //   upperLimit: prevState.upperLimit + 5
               // }));
-              if(direction === 'down') {
+              if (direction === "down") {
                 this.setState(prevState => ({
                   lowerLimit: prevState.upperLimit,
-                  upperLimit: prevState.upperLimit + 5                 
+                  upperLimit: prevState.upperLimit + 5
                 }));
-              } if (direction === 'up') {
+              }
+              if (direction === "up") {
                 this.setState(prevState => ({
                   lowerLimit: prevState.upperLimit - 2,
-                  upperLimit: prevState.upperLimit - 2             
+                  upperLimit: prevState.upperLimit - 2
                 }));
-              }  
+              }
 
               // if (this.state.inventoryList.length !== this.state.upperLimit) {
               //   if(direction === 'down') {
               //     this.setState(prevState => ({
               //       lowerLimit: prevState.upperLimit,
-              //       upperLimit: prevState.upperLimit + 3                 
+              //       upperLimit: prevState.upperLimit + 3
               //     }));
               //   } if (direction === 'up') {
               //     this.setState(prevState => ({
               //       lowerLimit: prevState.upperLimit -3,
-              //       upperLimit: prevState.upperLimit                  
+              //       upperLimit: prevState.upperLimit
               //     }));
-              //   }                
+              //   }
               // } else {
               //   this.setState({
               //     lowerLimit: this.state.inventoryList.length - 3,
               //     upperLimit: this.state.inventoryList.length
-              //   });          
+              //   });
               // }
               //console.log(this.state.lowerLimit, '-', this.state.upperLimit);
-            }}            
+            }}
           >
             {/* {this.state.inventoryList.length === 0 ? (
               <Text style={commonStyles.warningMessage}>
@@ -490,7 +496,7 @@ export default class InventoryOrder extends React.Component {
             )} */}
             {this.state.searchInventoryOrdersList.length === 0
               ? this.state.inventoryList.map((itm, i) =>
-              i >= 0 && i <= this.state.upperLimit ? (
+                  i >= 0 && i <= this.state.upperLimit ? (
                     <View key={i}>
                       <Text style={commonStyles.warningMessage}>
                         {itm.length === 0 ? "No records found" : ""}
@@ -663,9 +669,8 @@ export default class InventoryOrder extends React.Component {
                         </View>
                       </Card>
                     </View>
-                  ) 
-                  : (
-                    <View key={i} />   
+                  ) : (
+                    <View key={i} />
                   )
                 )
               : this.state.searchInventoryOrdersList.map(
@@ -782,7 +787,7 @@ export default class InventoryOrder extends React.Component {
                             justifyContent: "space-between"
                           }}
                         >
-                          <Text style={{ margin:10 }}>Discount</Text>
+                          <Text style={{ margin: 10 }}>Discount</Text>
                           <Button
                             style={
                               srchInvOrdrItm.btnDollarDiscountVal
@@ -873,7 +878,7 @@ export default class InventoryOrder extends React.Component {
                 height: 40,
                 margin: 10,
                 justifyContent: "center",
-                borderColor:'#ffffff'
+                borderColor: "#ffffff"
               }}
               onPress={this.addListOfOrders}
             >
@@ -881,7 +886,7 @@ export default class InventoryOrder extends React.Component {
                 style={{
                   color: "#ffffff",
                   fontSize: 15,
-                  fontWeight: 'bold'
+                  fontWeight: "bold"
                 }}
               >
                 Add to order
@@ -895,22 +900,21 @@ export default class InventoryOrder extends React.Component {
                 height: 40,
                 margin: 10,
                 justifyContent: "center",
-                borderColor:'#ffffff'
+                borderColor: "#ffffff"
               }}
-              onPress={() =>{
+              onPress={() => {
                 //console.log('Len', this.state.addToOrderList.length);
                 this.props.navigation.navigate("AddInventoryOrder", {
                   reviewOrderDetailsList: this.state.addToOrderList,
                   customerId: cstmrId
-                })
-              }
-              }
+                });
+              }}
             >
               <Text
                 style={{
                   color: "#ffffff",
                   fontSize: 15,
-                  fontWeight: 'bold'
+                  fontWeight: "bold"
                 }}
               >
                 Review Order
