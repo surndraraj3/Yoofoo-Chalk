@@ -160,13 +160,15 @@ export default class DesignerInventory extends React.Component {
   //Increment Counter and check whether it is exceeded more than quantity
   incrementOrder = (id, qty) => {
     const res = this.state.inventoryList.filter(v => v.ItemID === id);
+    this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
     // const incremntVal = res[0].incVal + 1;
     if (qty === 0) {
       alert("Max Quantity Reached");
+      this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
     } else {
-      res[0].incVal = res[0].incVal + 1;
-      res[0].Quantity = res[0].Quantity - 1;
-      this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
+      res[0].incVal += 1; //res[0].incVal + 1;
+      res[0].Quantity -= 1;//res[0].Quantity - 1;
+      // this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
     }
   };
 
@@ -178,8 +180,8 @@ export default class DesignerInventory extends React.Component {
     if (decrementVal < 0) {
       alert(`Can't decrement value`);
     } else {
-      res[0].incVal = res[0].incVal - 1;
-      res[0].Quantity = res[0].Quantity + 1;
+      res[0].incVal -= 1;//res[0].incVal - 1;
+      res[0].Quantity +=1;// res[0].Quantity + 1;
       this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
     }
   }
@@ -189,14 +191,14 @@ export default class DesignerInventory extends React.Component {
     const checkedItem = this.state.inventoryList.filter(
       chkItm => chkItm.ItemID === itemId
     );
-
+    checkedItem.selectItem = this.setState({ checked: true });
     if (checkedItem[0].incVal === 0)
       alert("Add the item quantity before selecting item");
     else {
       if (!checkedItem[0].selectItem) checkedItem[0].selectItem = true;
       else checkedItem[0].selectItem = false;
     }
-    checkedItem.selectItem = this.setState({ checked: true });
+   
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
@@ -531,7 +533,7 @@ export default class DesignerInventory extends React.Component {
                                   <Icon
                                     name="plus"
                                     type="FontAwesome"
-                                    style={{ color: "#61d0c8" }}
+                                    style={{ color: "#61d0c8", fontSize: 30 }}
                                   />
                                 </TouchableHighlight>
 
@@ -546,7 +548,7 @@ export default class DesignerInventory extends React.Component {
                                   <Icon
                                     name="minus"
                                     type="FontAwesome"
-                                    style={{ color: "#61d0c8" }}
+                                    style={{ color: "#61d0c8", fontSize: 30 }}
                                   />
                                 </TouchableHighlight>
                               </Right>
@@ -702,7 +704,7 @@ export default class DesignerInventory extends React.Component {
                                   <Icon
                                     name="plus"
                                     type="FontAwesome"
-                                    style={{ color: "#61d0c8" }}
+                                    style={{ color: "#61d0c8", fontSize: 30 }}
                                   />
                                 </TouchableHighlight>
 
@@ -720,7 +722,7 @@ export default class DesignerInventory extends React.Component {
                                   <Icon
                                     name="minus"
                                     type="FontAwesome"
-                                    style={{ color: "#61d0c8" }}
+                                    style={{ color: "#61d0c8", fontSize: 30 }}
                                   />
                                 </TouchableHighlight>
                               </Right>

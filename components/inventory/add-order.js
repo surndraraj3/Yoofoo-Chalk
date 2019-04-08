@@ -351,7 +351,7 @@ export default class AddInventoryOrder extends React.Component {
                               <Icon
                                 name="plus"
                                 type="FontAwesome"
-                                style={{ color: "#61d0c8" }}
+                                style={{ color: "#61d0c8", fontSize: 30 }}
                               />
                               </TouchableHighlight>                              
                               <Text style={{ fontWeight: "bold" }}>
@@ -361,7 +361,7 @@ export default class AddInventoryOrder extends React.Component {
                                 <Icon
                                   name="minus"
                                   type="FontAwesome"
-                                  style={{ color: "#61d0c8" }}
+                                  style={{ color: "#61d0c8", fontSize: 30 }}
                                 />
                               </TouchableHighlight>                              
                             </Right>

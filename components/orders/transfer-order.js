@@ -148,13 +148,13 @@ export default class TransferOrder extends React.Component {
                               <Icon
                                 name="plus"
                                 type="FontAwesome"
-                                style={{ color: "#61d0c8" }}
+                                style={{ color: "#61d0c8", fontSize: 30 }}
                               />
                               <Text style={{ fontWeight: "bold" }}>3</Text>
                               <Icon
                                 name="minus"
                                 type="FontAwesome"
-                                style={{ color: "#61d0c8" }}
+                                style={{ color: "#61d0c8", fontSize: 30 }}
                               />
                             </Right>
                           </View>
