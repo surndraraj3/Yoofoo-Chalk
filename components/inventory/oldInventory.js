@@ -68,8 +68,7 @@ export default class InventoryOrder extends React.Component {
       upperLimit: 2,
       prevScreenTouchPressTargetEvent: 0,
       screenTouchPressTargetEvent: 10,
-      clckEvnt: this.props.navigation.getParam("clickOn"),
-      pageNumber: 0
+      clckEvnt: this.props.navigation.getParam("clickOn")
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -101,20 +100,15 @@ export default class InventoryOrder extends React.Component {
   //Load Inventory Order data
   loadInventoryOrderData = () => {
     //Get Inventory List data
-    console.log("Test", this.state.pageNumber);
-    fetch(
-      `${getInventoryListURL}${this.state.distributorId}/${
-        this.state.pageNumber
-      }`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.state.authToken}`
-        }
+    //console.log('asdsasdasasasdas');
+    fetch(`${getInventoryListURL}${this.state.distributorId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
       }
-    )
+    })
       .then(response => response.json())
       .then(responseJson => {
         //console.log(responseJson);
@@ -430,7 +424,68 @@ export default class InventoryOrder extends React.Component {
               </Item>
             </View>
           </View>
-          <ScrollView>
+          <ScrollView
+            scrollEventThrottle={16}
+            onTouchMove={e => {
+              // this.setState(prevState => ({
+              //   lowerLimit: prevState.upperLimit,
+              //   upperLimit: prevState.upperLimit + 3
+              // }));
+              // offset= 0;
+              // const currentOffset = e.nativeEvent.target; //locationY
+              // const direction = currentOffset > this.offset ? 'down' : 'up';
+              // this.offset = currentOffset;
+              //console.log(e.nativeEvent);
+              const targetVal = e.nativeEvent.locationY;
+              this.setState(prevState => ({
+                prevScreenTouchPressTargetEvent:
+                  prevState.screenTouchPressTargetEvent,
+                screenTouchPressTargetEvent: targetVal
+              }));
+              const direction =
+                targetVal > this.state.prevScreenTouchPressTargetEvent
+                  ? "down"
+                  : "up";
+              //console.log('Directrion', direction, 'Current', targetVal, '--Prev', this.state.prevScreenTouchPressTargetEvent);
+              //
+              // this.setState(prevState => ({
+              //   lowerLimit: prevState.upperLimit,
+              //   upperLimit: prevState.upperLimit + 5
+              // }));
+              if (direction === "down") {
+                this.setState(prevState => ({
+                  lowerLimit: prevState.upperLimit,
+                  upperLimit: prevState.upperLimit + 5
+                }));
+              }
+              if (direction === "up") {
+                this.setState(prevState => ({
+                  lowerLimit: prevState.upperLimit - 2,
+                  upperLimit: prevState.upperLimit - 2
+                }));
+              }
+
+              // if (this.state.inventoryList.length !== this.state.upperLimit) {
+              //   if(direction === 'down') {
+              //     this.setState(prevState => ({
+              //       lowerLimit: prevState.upperLimit,
+              //       upperLimit: prevState.upperLimit + 3
+              //     }));
+              //   } if (direction === 'up') {
+              //     this.setState(prevState => ({
+              //       lowerLimit: prevState.upperLimit -3,
+              //       upperLimit: prevState.upperLimit
+              //     }));
+              //   }
+              // } else {
+              //   this.setState({
+              //     lowerLimit: this.state.inventoryList.length - 3,
+              //     upperLimit: this.state.inventoryList.length
+              //   });
+              // }
+              //console.log(this.state.lowerLimit, '-', this.state.upperLimit);
+            }}
+          >
             {/* {this.state.inventoryList.length === 0 ? (
               <Text style={commonStyles.warningMessage}>
                 {" "}
@@ -440,178 +495,184 @@ export default class InventoryOrder extends React.Component {
               <View /> i >= this.state.lowerLimit && 
             )} */}
             {this.state.searchInventoryOrdersList.length === 0
-              ? this.state.inventoryList.map((itm, i) => (
-                  // i >= 0 && i <= this.state.upperLimit ? (
-                  <View key={i}>
-                    <Text style={commonStyles.warningMessage}>
-                      {itm.length === 0 ? "No records found" : ""}
-                    </Text>
-                    <Card>
-                      <CardItem>
-                        <Left>
-                          <CheckBox
-                            onPress={() => this.onChangeCheck(itm.ItemID)}
-                            checked={itm.selectItem}
-                          />
-                        </Left>
-                        <Text style={{ fontWeight: "bold" }}>
-                          {itm.Description}
-                        </Text>
-                      </CardItem>
-                      <CardItem bordered>
-                        <View style={commonStyles.row}>
-                          <View
-                            style={{
-                              flexDirection: "column",
-                              width: 100,
-                              height: 50
-                            }}
-                          >
-                            <Image
-                              source={{ uri: `${itm.SmallPicture}` }}
-                              style={{
-                                height: 100,
-                                width: "100%"
-                                // borderRadius: 40 / 2
-                              }}
+              ? this.state.inventoryList.map((itm, i) =>
+                  i >= 0 && i <= this.state.upperLimit ? (
+                    <View key={i}>
+                      <Text style={commonStyles.warningMessage}>
+                        {itm.length === 0 ? "No records found" : ""}
+                      </Text>
+                      <Card>
+                        <CardItem>
+                          <Left>
+                            <CheckBox
+                              onPress={() => this.onChangeCheck(itm.ItemID)}
+                              checked={itm.selectItem}
                             />
-                          </View>
-                          <View style={commonStyles.column}>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Qty Available </Text>
-                              <Text>{itm.Quantity}</Text>
+                          </Left>
+                          <Text style={{ fontWeight: "bold" }}>
+                            {itm.Description}
+                          </Text>
+                        </CardItem>
+                        <CardItem bordered>
+                          <View style={commonStyles.row}>
+                            <View
+                              style={{
+                                flexDirection: "column",
+                                width: 100,
+                                height: 50
+                              }}
+                            >
+                              <Image
+                                source={{ uri: `${itm.SmallPicture}` }}
+                                style={{
+                                  height: 100,
+                                  width: "100%"
+                                  // borderRadius: 40 / 2
+                                }}
+                              />
                             </View>
-                            <View style={commonStyles.nestedRow}>
-                              <TouchableHighlight
-                              // onPress={() => {
-                              //   this.props.navigation.navigate(
-                              //     "InventoryOrderDiscount",
-                              //     {
-                              //       inventoryItemId: itm.ItemID
-                              //     }
-                              //   );
-                              // }}
-                              >
-                                <Text> Discount </Text>
-                              </TouchableHighlight>
-                              <Text>{itm.discountVal}</Text>
-                              {itm.discountType === "d" ? (
-                                <Text>{"\u0024"}</Text>
-                              ) : (
-                                <Text>%</Text>
-                              )}
+                            <View style={commonStyles.column}>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Qty Available </Text>
+                                <Text>{itm.Quantity}</Text>
+                              </View>
+                              <View style={commonStyles.nestedRow}>
+                                <TouchableHighlight
+                                // onPress={() => {
+                                //   this.props.navigation.navigate(
+                                //     "InventoryOrderDiscount",
+                                //     {
+                                //       inventoryItemId: itm.ItemID
+                                //     }
+                                //   );
+                                // }}
+                                >
+                                  <Text> Discount </Text>
+                                </TouchableHighlight>
+                                <Text>{itm.discountVal}</Text>
+                                {itm.discountType === "d" ? (
+                                  <Text>{"\u0024"}</Text>
+                                ) : (
+                                  <Text>%</Text>
+                                )}
+                              </View>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Retail</Text>
+                                <Text>
+                                  {"\u0024"}
+                                  {itm.RetailPrice}
+                                </Text>
+                              </View>
+                              <View style={commonStyles.nestedRow}>
+                                <Text>Designer</Text>
+                                <Text>
+                                  {"\u0024"}
+                                  {itm.Price}
+                                </Text>
+                              </View>
                             </View>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Retail</Text>
-                              <Text>
-                                {"\u0024"}
-                                {itm.RetailPrice}
-                              </Text>
-                            </View>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Designer</Text>
-                              <Text>
-                                {"\u0024"}
-                                {itm.Price}
-                              </Text>
-                            </View>
-                          </View>
-                          <View style={commonStyles.column}>
-                            <Right>
-                              <TouchableHighlight
-                                onPress={() =>
-                                  this.incrementOrder(itm.ItemID, itm.Quantity)
-                                }
-                              >
-                                <Icon
-                                  name="plus"
-                                  type="FontAwesome"
-                                  style={{ color: "#61d0c8", fontSize: 30 }}
-                                />
-                              </TouchableHighlight>
+                            <View style={commonStyles.column}>
+                              <Right>
+                                <TouchableHighlight
+                                  onPress={() =>
+                                    this.incrementOrder(
+                                      itm.ItemID,
+                                      itm.Quantity
+                                    )
+                                  }
+                                >
+                                  <Icon
+                                    name="plus"
+                                    type="FontAwesome"
+                                    style={{ color: "#61d0c8", fontSize: 30 }}
+                                  />
+                                </TouchableHighlight>
 
-                              <Text style={{ fontWeight: "bold" }}>
-                                {itm.incVal}
-                              </Text>
-                              <TouchableHighlight
-                                onPress={() =>
-                                  this.decCounter(itm.ItemID, itm.Quantity)
-                                }
-                              >
-                                <Icon
-                                  name="minus"
-                                  type="FontAwesome"
-                                  style={{ color: "#61d0c8", fontSize: 30 }}
-                                />
-                              </TouchableHighlight>
-                            </Right>
+                                <Text style={{ fontWeight: "bold" }}>
+                                  {itm.incVal}
+                                </Text>
+                                <TouchableHighlight
+                                  onPress={() =>
+                                    this.decCounter(itm.ItemID, itm.Quantity)
+                                  }
+                                >
+                                  <Icon
+                                    name="minus"
+                                    type="FontAwesome"
+                                    style={{ color: "#61d0c8", fontSize: 30 }}
+                                  />
+                                </TouchableHighlight>
+                              </Right>
+                            </View>
                           </View>
-                        </View>
-                      </CardItem>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "space-around"
-                        }}
-                      >
-                        <Text style={{ margin: 10 }}>Discount</Text>
-
-                        <Button
-                          style={
-                            itm.btnDollarDiscountVal
-                              ? { margin: 5 }
-                              : { margin: 5, backgroundColor: "#61d0c8" }
-                          }
-                          onPress={() => {
-                            this.discountEnable("d", itm.ItemID);
-                          }}
-                          disabled={itm.btnDollarDiscountVal}
-                        >
-                          <Icon
-                            name="dollar"
-                            type="FontAwesome"
-                            style={{ color: "#ffffff" }}
-                          />
-                        </Button>
-                        <Button
-                          style={
-                            itm.btnPercentDiscountVal
-                              ? { margin: 5 }
-                              : { margin: 5, backgroundColor: "#61d0c8" }
-                          }
-                          onPress={() => {
-                            this.discountEnable("p", itm.ItemID);
-                          }}
-                          disabled={itm.btnPercentDiscountVal}
-                        >
-                          <Icon
-                            name="percent"
-                            type="FontAwesome"
-                            style={{ color: "#ffffff" }}
-                          />
-                        </Button>
-                        <TextInput
-                          autoCapitalize="sentences"
-                          value={this.state.selDiscountVal}
-                          onChangeText={txtVal => {
-                            this.discountTextChange(txtVal, itm.ItemID);
-                          }}
-                          placeholder="Discount"
+                        </CardItem>
+                        <View
                           style={{
-                            width: 60,
-                            height: 30,
-                            borderWidth: 1,
-                            margin: 5
+                            flexDirection: "row",
+                            justifyContent: "space-around"
                           }}
-                          keyboardType="numeric"
-                          returnKeyType="done"
-                          onSubmitEditing={Keyboard.dismiss}
-                          autoCapitalize="sentences"
-                        />
-                      </View>
-                    </Card>
-                  </View>
-                ))
+                        >
+                          <Text style={{ margin: 10 }}>Discount</Text>
+
+                          <Button
+                            style={
+                              itm.btnDollarDiscountVal
+                                ? { margin: 5 }
+                                : { margin: 5, backgroundColor: "#61d0c8" }
+                            }
+                            onPress={() => {
+                              this.discountEnable("d", itm.ItemID);
+                            }}
+                            disabled={itm.btnDollarDiscountVal}
+                          >
+                            <Icon
+                              name="dollar"
+                              type="FontAwesome"
+                              style={{ color: "#ffffff" }}
+                            />
+                          </Button>
+                          <Button
+                            style={
+                              itm.btnPercentDiscountVal
+                                ? { margin: 5 }
+                                : { margin: 5, backgroundColor: "#61d0c8" }
+                            }
+                            onPress={() => {
+                              this.discountEnable("p", itm.ItemID);
+                            }}
+                            disabled={itm.btnPercentDiscountVal}
+                          >
+                            <Icon
+                              name="percent"
+                              type="FontAwesome"
+                              style={{ color: "#ffffff" }}
+                            />
+                          </Button>
+                          <TextInput
+                            autoCapitalize="sentences"
+                            value={this.state.selDiscountVal}
+                            onChangeText={txtVal => {
+                              this.discountTextChange(txtVal, itm.ItemID);
+                            }}
+                            placeholder="Discount"
+                            style={{
+                              width: 60,
+                              height: 30,
+                              borderWidth: 1,
+                              margin: 5
+                            }}
+                            keyboardType="numeric"
+                            returnKeyType="done"
+                            onSubmitEditing={Keyboard.dismiss}
+                            autoCapitalize="sentences"
+                          />
+                        </View>
+                      </Card>
+                    </View>
+                  ) : (
+                    <View key={i} />
+                  )
+                )
               : this.state.searchInventoryOrdersList.map(
                   (srchInvOrdrItm, srchInvOrdrItmIndx) => (
                     <View key={srchInvOrdrItmIndx}>
@@ -795,13 +856,6 @@ export default class InventoryOrder extends React.Component {
           style={{
             position: "absolute",
             right: 0,
-            bottom: 0
-          }}
-        />
-        <View
-          style={{
-            position: "absolute",
-            right: 0,
             bottom: 0,
             width: deviceWidth,
             height: 70
@@ -866,17 +920,6 @@ export default class InventoryOrder extends React.Component {
                 Review Order
               </Text>
             </Button>
-
-            <TouchableHighlight
-              onPress={() => {
-                this.setState(prevState => {
-                  return { pageNumber: prevState.pageNumber + 1 };
-                });
-                this.loadInventoryOrderData();
-              }}
-            >
-              <Image source={require("../../assets/arrow.png")} />
-            </TouchableHighlight>
           </View>
         </View>
       </Container>
