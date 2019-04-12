@@ -100,4 +100,7 @@ export const getInventoryPaginationUrl = 'http://chalkcouturemobileapi-dev2.us-w
 // //GET Designers List
 // export const getDesignerListUrl = 'https://mobile.chalkcouture.com/api/Customer/GetDesigners/';
 // //Reset Password
-// export const resetPasswordUrl = 'https://mobile.chalkcouture.com/api/Login/forgotpassword'
+// export const resetPasswordUrl = 'https://mobile.chalkcouture.com/api/Login/forgotpassword';
+// // //Pagination Inventory
+// export const getInventoryPaginationUrl = 'https://mobile.chalkcouture.com/api/Orders/InventoryByDesignerID/';
+

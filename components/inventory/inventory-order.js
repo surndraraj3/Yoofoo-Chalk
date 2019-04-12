@@ -162,43 +162,43 @@ export default class InventoryOrder extends React.Component {
     }
   }
   //Increment Counter and check whether it is exceeded more than quantity
-  incrementOrder = (id, qty) => {
-    const res = this.state.inventoryList.filter(v => v.ItemID === id);
-    // const incremntVal = res[0].incVal + 1;
-    this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
+  incrementOrder = (id, qty) => {  
+    const res = this.state.inventoryList.find(v => v.ItemID === id);   
+    this.setState({ orderItemCounter: res.incVal +1 });
+    res.incVal += 1; 
+    res.Quantity -= 1;
     if (qty === 0) {
       alert("Max Quantity Reached");
-      this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
-    } else {
-      res[0].incVal += 1; //res[0].incVal + 1;
-      res[0].Quantity -= 1; //res[0].Quantity - 1;
-    }
+      res.incVal -= 1;
+      res.Quantity += 1;
+      this.setState({ orderItemCounter: res.incVal - 1 });
+    }  
   };
 
   // Decrement Counter by getting current value of an array
   decCounter(itmId, decQty) {
-    const res = this.state.inventoryList.filter(v => v.ItemID === itmId);
-    const decrementVal = res[0].incVal - 1;
+    const res = this.state.inventoryList.find(v => v.ItemID === itmId);
+    const decrementVal = res.incVal - 1;
     if (decrementVal < 0) {
       alert(`Can't decrement value`);
     } else {
-      res[0].incVal -= 1; // res[0].incVal - 1;
-      res[0].Quantity += 1; // res[0].Quantity + 1;
-      this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
+      res.incVal -= 1; // res[0].incVal - 1;
+      res.Quantity += 1; // res[0].Quantity + 1;
+      this.setState({ orderItemCounter: res.incVal - 1 });
     }
   }
   //Check which item is checked and get the array and overwrite it
   // If Item IncVal is greaterthan zero prompt a message
   onChangeCheck = itemId => {
-    const checkedItem = this.state.inventoryList.filter(
+    const checkedItem = this.state.inventoryList.find(
       chkItm => chkItm.ItemID === itemId
     );
     checkedItem.selectItem = this.setState({ checked: true });
-    if (checkedItem[0].incVal === 0)
+    if (checkedItem.incVal === 0)
       alert("Add the item quantity before selecting item");
     else {
-      if (!checkedItem[0].selectItem) checkedItem[0].selectItem = true;
-      else checkedItem[0].selectItem = false;
+      if (!checkedItem.selectItem) checkedItem.selectItem = true;
+      else checkedItem.selectItem = false;
     }
   };
   // Adding the list of selected orders
@@ -526,7 +526,7 @@ export default class InventoryOrder extends React.Component {
                                 <Icon
                                   name="plus"
                                   type="FontAwesome"
-                                  style={{ color: "#61d0c8", fontSize: 30 }}
+                                  style={{ color: "#61d0c8", fontSize: 40 }}
                                 />
                               </TouchableHighlight>
 
@@ -541,7 +541,7 @@ export default class InventoryOrder extends React.Component {
                                 <Icon
                                   name="minus"
                                   type="FontAwesome"
-                                  style={{ color: "#61d0c8", fontSize: 30 }}
+                                  style={{ color: "#61d0c8", fontSize: 40 }}
                                 />
                               </TouchableHighlight>
                             </Right>
@@ -695,7 +695,7 @@ export default class InventoryOrder extends React.Component {
                                   <Icon
                                     name="plus"
                                     type="FontAwesome"
-                                    style={{ color: "#61d0c8", fontSize: 30 }}
+                                    style={{ color: "#61d0c8", fontSize: 40 }}
                                   />
                                 </TouchableHighlight>
 
@@ -713,7 +713,7 @@ export default class InventoryOrder extends React.Component {
                                   <Icon
                                     name="minus"
                                     type="FontAwesome"
-                                    style={{ color: "#61d0c8", fontSize: 30 }}
+                                    style={{ color: "#61d0c8", fontSize: 40 }}
                                   />
                                 </TouchableHighlight>
                               </Right>
@@ -816,6 +816,16 @@ export default class InventoryOrder extends React.Component {
               height: 100
             }}
           >
+            <TouchableHighlight
+              onPress={() => {
+                this.setState(prevState => {
+                  return { pageNumber: prevState.pageNumber - 1 };
+                });
+                this.loadInventoryOrderData();
+              }}
+            >
+              <Image source={require("../../assets/arrowleft.png")} />
+            </TouchableHighlight>
             <Button
               bordered
               style={{
