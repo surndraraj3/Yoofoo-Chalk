@@ -52,24 +52,21 @@ export default class InventoryOrder extends React.Component {
       stVal: 0,
       checked: false,
       addToOrderList: [],
-      dup: "",
       searchInventoryOrdersList: [],
       selDiscountVal: 0,
       invDiscountVal: this.props.navigation.getParam("discountValue"),
       invDiscountItemIdVal: this.props.navigation.getParam("discountItem"),
-      selected2: "",
       valDiscountSwitch: false,
       valDiscount: 0,
       valDiscountType: "",
       btnDollarDiscount: false,
       btnPercentDiscount: false,
       getCartItems: this.props.navigation.getParam("addedCartToItems"),
-      lowerLimit: 0,
-      upperLimit: 2,
-      prevScreenTouchPressTargetEvent: 0,
-      screenTouchPressTargetEvent: 10,
       clckEvnt: this.props.navigation.getParam("clickOn"),
-      pageNumber: 0
+      pageNumber: 0,
+      pagingArr: [],
+      srchFlag: false,
+      txtSrch: ""
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -100,21 +97,27 @@ export default class InventoryOrder extends React.Component {
   }
   //Load Inventory Order data
   loadInventoryOrderData = () => {
-    //Get Inventory List data
-    console.log("Test", this.state.pageNumber);
-    fetch(
-      `${getInventoryListURL}${this.state.distributorId}/${
+    let invntryUrl = "";
+    if (this.state.txtSrch.length ===0) {
+      // console.log("false flag", this.state.txtSrch.length);
+      invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.state.authToken}`
-        }
+      }`;
+    } else {
+      // console.log("True Search Flag", this.state.txtSrch.length);
+      invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
+        this.state.pageNumber
+      }/${this.state.txtSrch}`;
+    }
+    //Get Inventory List data
+    fetch(`${invntryUrl}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.state.authToken}`
       }
-    )
+    })
       .then(response => response.json())
       .then(responseJson => {
         //console.log(responseJson);
@@ -131,7 +134,7 @@ export default class InventoryOrder extends React.Component {
             inventoryList: responseJson,
             inventoryCount: responseJson.length
           });
-          this.setState({ loading: false });
+          this.setState({ loading: false});
         }
       })
       .catch(error => {
@@ -162,17 +165,17 @@ export default class InventoryOrder extends React.Component {
     }
   }
   //Increment Counter and check whether it is exceeded more than quantity
-  incrementOrder = (id, qty) => {  
-    const res = this.state.inventoryList.find(v => v.ItemID === id);   
-    this.setState({ orderItemCounter: res.incVal +1 });
-    res.incVal += 1; 
+  incrementOrder = (id, qty) => {
+    const res = this.state.inventoryList.find(v => v.ItemID === id);
+    this.setState({ orderItemCounter: res.incVal + 1 });
+    res.incVal += 1;
     res.Quantity -= 1;
     if (qty === 0) {
       alert("Max Quantity Reached");
       res.incVal -= 1;
       res.Quantity += 1;
       this.setState({ orderItemCounter: res.incVal - 1 });
-    }  
+    }
   };
 
   // Decrement Counter by getting current value of an array
@@ -197,8 +200,10 @@ export default class InventoryOrder extends React.Component {
     if (checkedItem.incVal === 0)
       alert("Add the item quantity before selecting item");
     else {
-      if (!checkedItem.selectItem) checkedItem.selectItem = true;
-      else checkedItem.selectItem = false;
+      if (!checkedItem.selectItem) {
+        checkedItem.selectItem = true;
+        this.state.pagingArr.push(checkedItem);
+      } else checkedItem.selectItem = false;
     }
   };
   // Adding the list of selected orders
@@ -210,7 +215,7 @@ export default class InventoryOrder extends React.Component {
     if (this.state.getCartItems !== undefined) {
       this.state.getCartItems.map(cartData => cartArr.push(cartData));
     }
-    const addedOrderToCart = this.state.inventoryList.filter(
+    const addedOrderToCart = this.state.pagingArr.filter(
       addedItems => addedItems.selectItem === true
     );
     //console.log("Welcome To Cart Items", addedOrderToCart);
@@ -221,11 +226,6 @@ export default class InventoryOrder extends React.Component {
       if (this.state.getCartItems !== undefined)
         addedOrderToCart.map(cartNewData => cartArr.push(cartNewData));
 
-      // else this.setState({ getCartItems: []})
-      //cartArr.push(addedOrderToCart);
-      //
-      // console.log("Added List Before", addedOrderToCart);
-      // console.log("Added List Before 1", cartArr);
       if (this.state.clckEvnt === 1) {
         this.setState({ addToOrderList: addedOrderToCart });
         cartArr.shift();
@@ -233,13 +233,6 @@ export default class InventoryOrder extends React.Component {
         this.setState({ addToOrderList: cartArr });
       }
 
-      // {
-      //   this.state.getCartItems === undefined
-      //     ? ( cartArr.shift(), console.log('1'),this.setState({addToOrderList: addedOrderToCart}))
-      //     : ( console.log('2', this.state.clckEvnt), this.setState({ addToOrderList: cartArr }))
-      // }
-      //this.setState({ addToOrderList: addedOrderToCart });
-      //console.log("Added List After", cartArr);
       Toast.showWithGravity(
         "Item has been added to order",
         Toast.SHORT,
@@ -249,16 +242,18 @@ export default class InventoryOrder extends React.Component {
   };
   //Search the inventory based on keyword match
   onSearchInventoryOrder = txtInventoryFld => {
-    const rsSrchInvtryOrder = this.state.inventoryList.filter(
-      k =>
-        //k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
-        k.Description.toLowerCase().includes(txtInventoryFld.toLowerCase())
-      // k.Quantity.contains(txtInventoryFld)
-    );
-    this.setState({
-      searchInventoryOrdersList: rsSrchInvtryOrder,
-      inventoryCount: rsSrchInvtryOrder.length
-    });
+    this.setState({ srchFlag: true, txtSrch: txtInventoryFld.toLowerCase() });
+    this.loadInventoryOrderData();
+    // const rsSrchInvtryOrder = this.state.inventoryList.filter(
+    //   k =>
+    //     //k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
+    //     k.Description.toLowerCase().includes(txtInventoryFld.toLowerCase())
+    //   // k.Quantity.contains(txtInventoryFld)
+    // );
+    // this.setState({
+    //   searchInventoryOrdersList: rsSrchInvtryOrder,
+    //   inventoryCount: rsSrchInvtryOrder.length
+    // });
   };
   // Enable the functionality of discount
   discountEnable = (discountMode, itmId) => {
@@ -355,15 +350,31 @@ export default class InventoryOrder extends React.Component {
     AsyncStorage.removeItem("LoginDetails");
     this.props.navigation.navigate("Login");
   };
+  //Review Order Button
+  onReviewOrderClck = () => {
+    // console.log("Review Click", this.state.addToOrderList.length);
+    const { navigation } = this.props;
+    if (this.state.addToOrderList.length !== 0) {
+      const cstmrId = navigation.getParam("customerID", "CUSTOMER-ID");
+      this.props.navigation.navigate("AddInventoryOrder", {
+        reviewOrderDetailsList: this.state.addToOrderList,
+        customerId: cstmrId
+      });
+    } else {
+      Toast.showWithGravity(
+        "No items added to cart",
+        Toast.SHORT,
+        Toast.CENTER
+      );
+    }
+  };
 
   render() {
     const { navigation } = this.props;
-    const cstmrId = navigation.getParam("customerID", "CUSTOMER-ID");
     const cstmrDistributorId = navigation.getParam(
       "customerDistributorId",
       "CUSTOMER_DIST_ID"
     );
-    // console.log("ID", cstmrId, cstmrDistributorId);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -858,13 +869,7 @@ export default class InventoryOrder extends React.Component {
                 justifyContent: "center",
                 borderColor: "#ffffff"
               }}
-              onPress={() => {
-                //console.log('Len', this.state.addToOrderList.length);
-                this.props.navigation.navigate("AddInventoryOrder", {
-                  reviewOrderDetailsList: this.state.addToOrderList,
-                  customerId: cstmrId
-                });
-              }}
+              onPress={this.onReviewOrderClck}
             >
               <Text
                 style={{
