@@ -835,7 +835,7 @@ export default class InventoryOrder extends React.Component {
                 this.loadInventoryOrderData();
               }}
             >
-              <Image source={require("../../assets/arrowleft.png")} />
+              <Image source={require("../../assets/arrowleft.png")} style={{ margin: 10 }} />
             </TouchableHighlight>
             <Button
               bordered
@@ -890,7 +890,7 @@ export default class InventoryOrder extends React.Component {
                 this.loadInventoryOrderData();
               }}
             >
-              <Image source={require("../../assets/arrow.png")} />
+              <Image source={require("../../assets/arrow.png")} style={{ margin: 10}}/>
             </TouchableHighlight>
           </View>
         </View>
