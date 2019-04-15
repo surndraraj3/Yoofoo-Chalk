@@ -67,7 +67,6 @@ export default class Customers extends React.Component {
   }
   //Load Customer Details
   loadCustomerDetails = () => {
-    // console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -78,7 +77,6 @@ export default class Customers extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        // console.log(responseJson);
         this.setState({
           customersListData: responseJson,
           customerCount: responseJson.length
@@ -149,13 +147,11 @@ export default class Customers extends React.Component {
     );
   }
   onOpenMenu = openMenuid => {
-    //console.log("Ids", openMenuid);
     UIManager.showPopupMenu(
       findNodeHandle(this._button),
       ["Create Order"],
       () => console.log("something went wrong with the popup menu"),
       (e, i) => {
-        //console.log(`${e} : ${i}`);
         if (i === 0) {
           this.props.navigation.navigate("TransferOrder", {
             customerId: openMenuid
@@ -183,7 +179,6 @@ export default class Customers extends React.Component {
       searchCustomerList: rsSrchCustomer,
       customerCount: rsSrchCustomer.length
     });
-    //console.log("ListCustomer", rsSrchCustomer.length);
   };
 
   //Go to Profile Screen

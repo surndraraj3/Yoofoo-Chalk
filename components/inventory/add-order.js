@@ -50,7 +50,6 @@ export default class AddInventoryOrder extends React.Component {
     _isMounted = true;
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
-      //console.log(responseJson.message, responseJson.DistributorID);
       if (this._isMounted) {
         this.setState({
           distributorId: responseJson.DistributorID,
@@ -74,17 +73,9 @@ export default class AddInventoryOrder extends React.Component {
   };
   //save checkout orders
   saveOrderDtls = () => {
-    // console.log(
-    //   "Welcom to data",
-    //   this.state.distributorId,
-    //   this.state.getListofOrdersPrevScreen
-    // );
     this.state.getListofOrdersPrevScreen.map(itmVal => {
-      //console.log("Before Quantity", itmVal.Quantity);
       itmVal.Quantity = itmVal.incVal;
-      //console.log("After Quantity", itmVal.Quantity);
     });
-    //console.log("Final Composure Data", this.state.getListofOrdersPrevScreen);
     fetch(`${addOrdersUrl}`, {
       method: "POST",
       headers: {
@@ -96,7 +87,6 @@ export default class AddInventoryOrder extends React.Component {
     })
       .then(response => response.json())
       .then(resAddOrderJson => {
-        //console.log("resAddOrderJson", resAddOrderJson);
         const resMessage = `Order placed successfully Order Id: ${
           resAddOrderJson.OrderID
         }`;
@@ -108,25 +98,17 @@ export default class AddInventoryOrder extends React.Component {
   };
   //Delete Record from Array
   handleDeleteReviewOrder = itmId => {
-    //console.log("Welcome Delete", itmId);
     Toast.showWithGravity(
       "Item has been removed from the order",
       Toast.LONG,
       Toast.CENTER
     );
-    // const filteredItems = this.state.getListofOrdersPrevScreen.filter(item => {
-    //   return item.ItemID !== itmId;
-    // });
-    // const filteredItems1 = this.state.getListofOrdersPrevScreen.filter(item => {
-    //   return item.ItemID === itmId;
-    // });
     this.state.getListofOrdersPrevScreen.map((dt, i) => {
       if (dt.ItemID === itmId) {
         dt.Quantity = 0;
         dt.incVal = 0;
       }
     });
-    //console.log("Filter Items", this.state.getListofOrdersPrevScreen);
 
     this.setState({
       getListofOrdersPrevScreen: this.state.getListofOrdersPrevScreen
@@ -142,20 +124,15 @@ export default class AddInventoryOrder extends React.Component {
   };
   //Increment the order quantity
   incrementQuantityOrder = (itmId, itmQty) => {
-    //console.log('Item Id', itmId, itmQty);
     const incQtyRes = this.state.getListofOrdersPrevScreen.filter(v => v.ItemID === itmId);
-    //console.log('response', incQtyRes);
     incQtyRes.map(c => {
-      //console.log("-----", c.incVal, qty);
       const incremntVal = c.incVal + 1;
       if (itmQty === 0) {
         alert("Max Quantity Reached");
       } else {
-        //console.log("Lesser Val");
         c.incVal = c.incVal + 1;
         c.Quantity = c.Quantity - 1;
-        this.setState({ orderItemQtyCounter: this.state.orderItemQtyCounter + 1 });        
-        //this.state.getListofOrdersPrevScreen.push(incQtyRes);
+        this.setState({ orderItemQtyCounter: this.state.orderItemQtyCounter + 1 });  
       }
     });
   }
@@ -194,7 +171,6 @@ export default class AddInventoryOrder extends React.Component {
   //-----------------------------------------------------
 
   render() {
-    //console.log('----------------------------', this.state.getCustomerId);
     return (
       <Container>
         <View style={{ padding: 10 }} />

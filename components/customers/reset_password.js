@@ -56,7 +56,6 @@ export default class ResetPassword extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        // console.log("Response", responseJson.message);
         this.setState({
           msgSuccess: responseJson.message,
           msgSuccessState: true
@@ -73,7 +72,6 @@ export default class ResetPassword extends React.Component {
     this.setState({ resetEmailId: txtEmail });
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (reg.test(txtEmail) === false) {
-      // console.log("Email is Not Correct");
       this.setState({
         validateEmail: "Invalid Email",
         errorEmail: true,
@@ -82,19 +80,12 @@ export default class ResetPassword extends React.Component {
       return false;
     } else {
       this.setState({ validateEmail: "Email is Correct", errorEmail: false, btnActiveState: false });
-      // console.log("Email is Correct");
     }
   };
 
   render() {
     return (
-      <Container>
-        {/* <View style={{ padding: 10 }} />
-        <Button full>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            Reset Password
-          </Text>
-        </Button> */}
+      <Container>        
         <View style={{ padding: 10 }} />
         <Header style={{ backgroundColor: "#778899" }}>
           <View style={{ flex: 2, justifyContent: "center" }}>

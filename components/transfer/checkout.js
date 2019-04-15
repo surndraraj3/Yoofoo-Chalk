@@ -82,7 +82,6 @@ export default class Checkout extends React.Component {
     this._isMounted = true;
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
-      //console.log(responseJson.message, responseJson.DistributorID);
       if (this._isMounted) {
         this.setState({
           distributorId: responseJson.DistributorID,
@@ -114,7 +113,6 @@ export default class Checkout extends React.Component {
       .then(responseJson => {
         if (this.state.getDesignerObject !== undefined) {
           responseJson.push(this.state.getDesignerObject);
-          //console.log("CustId", this.state.getDesignerObject.CustomerID);
         }
         this.setState({
           customersListData: responseJson
@@ -130,11 +128,9 @@ export default class Checkout extends React.Component {
   };
   //save checkout Validated orders
   saveOrderValidatedDtls = () => {
-    //console.log("Remaining Due Val Validate", this.state.getOrdesFromCart);
     if (this.state.getOrdesFromCart !== undefined) {
       let payloadData = [];
       this.state.getOrdesFromCart.map(itmVal => {
-        //console.log("Before Quantity", itmVal.Quantity);
         itmVal.Quantity = itmVal.incVal;
         itmVal.Discount = itmVal.discountVal;
         itmVal.DesignerID = this.state.distributorId;
@@ -149,7 +145,6 @@ export default class Checkout extends React.Component {
           DiscountedPrice: 0.0
         };
         payloadData.push(objPay);
-        //console.log("After Quantity", itmVal.Quantity);
       });
 
       const creditVal = (
@@ -187,12 +182,10 @@ export default class Checkout extends React.Component {
       })
         .then(response => response.json())
         .then(resAddOrderJson => {
-          //console.log("resAddOrderJson", resAddOrderJson);
           if (
             resAddOrderJson.OrderID === null ||
             resAddOrderJson.OrderID === "null"
           ) {
-            //console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
             this.setState({ btnCheckoutStatus: true });
             Toast.showWithGravity(
               `Order Failed: ${resAddOrderJson.message}`,
@@ -201,7 +194,6 @@ export default class Checkout extends React.Component {
             );
             this.setState({ loading: false });
           } else {
-            //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
             Alert.alert(
               "Orders",
               `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
@@ -235,7 +227,6 @@ export default class Checkout extends React.Component {
   //save checkout orders
   saveOrderDtls = () => {
     this.setState({ loading: true });
-    // console.log("Remaining Due Val", this.state.remainingDueVal);
     if (this.state.getCalculatedOrders.totalField - this.state.cashVal > 0) {
       if (this.state.cadrNumber === "") {
         this.setState({ errCardNumber: "Please enter card number" });
@@ -267,16 +258,13 @@ export default class Checkout extends React.Component {
   };
   //On Customer Change get value and map it across all orders
   handleOnChangeCustomersList = e => {
-    //console.log("OnChange", e);
     if (e !== "Select Customer") {
       this.setState({ customerId: e, selCustomerVal: e });
-      //console.log('Order List Before', this.state.getOrdesFromCart);
       if (this.state.getOrdesFromCart !== undefined) {
         this.state.getOrdesFromCart.map(dt => {
           dt.CustomerID = e;
         });
         this.setState({ getOrdesFromCart: this.state.getOrdesFromCart });
-        //console.log('Order List After', this.state.getOrdesFromCart);
         this.handleCalculateOrder();
       } else {
         console.log("Undefined Customer");
@@ -288,7 +276,6 @@ export default class Checkout extends React.Component {
   };
 
   handleCalculateOrder = () => {
-    //console.log("No Customer", this.state.getPrevCustomerId);
     if (isNaN(this.state.getPrevCustomerId)) {
       //console.log("Get Customer Id", this.state.getPrevCustomerId);
       //this.setState({ selCustomerVal: "", customerId: "" });
@@ -303,7 +290,6 @@ export default class Checkout extends React.Component {
           dt.Price = dt.Price;
           dt.DesignerID = this.state.distributorId;
         });
-        // console.log("-----Get Customer Id----", this.state.getDesignerObject.CustomerID);
       } else {
         this.setState({
           selCustomerVal: this.state.getPrevCustomerId,
@@ -315,11 +301,6 @@ export default class Checkout extends React.Component {
           dt.DesignerID = this.state.distributorId;
         });
       }
-      // this.handleOnChangeCustomersList();
-      //console.log('Before Cart Items', this.state.getOrdesFromCart);
-
-      //console.log('Cart Items', this.state.getOrdesFromCart);
-      //console.log("-----Get Customer Id----", this.state.getOrdesFromCart);
     }
 
     if (
@@ -335,9 +316,7 @@ export default class Checkout extends React.Component {
       const getCustId = this.state.getOrdesFromCart.filter(
         dt => dt.CustomerID === "CUSTOMER-ID"
       );
-      //console.log("getCustId", getCustId);
       if (getCustId.length > 0) {
-        //console.log("Add Customer Id", getCustId);
         Toast.showWithGravity(
           "No customer id found, Please add customer to place an order",
           Toast.SHORT,
@@ -345,12 +324,9 @@ export default class Checkout extends React.Component {
         );
       } else {
         this.state.getOrdesFromCart.map(itmVal => {
-          //console.log("Before Quantity", itmVal.Quantity);
           itmVal.Quantity = itmVal.incVal;
           itmVal.Discount = itmVal.discountVal;
-          //console.log("After Quantity", itmVal.Quantity);
         });
-        //console.log("Data Found", getCustId);
         fetch(`${calculateAddOrdersUrl}`, {
           method: "POST",
           headers: {
@@ -362,7 +338,6 @@ export default class Checkout extends React.Component {
         })
           .then(respCalOrder => respCalOrder.json())
           .then(respCalOrderJson => {
-            //console.log("Orders", respCalOrderJson);
             this.setState({
               getCalculatedOrders: respCalOrderJson,
               loading: false
@@ -397,13 +372,11 @@ export default class Checkout extends React.Component {
   }
   // Validate billing address fields
   handleValidateBillingDtls = (txt, type) => {
-    //console.log("Address Dteails", txt, type);
     if (type === "address1") {
       if (txt.length >= 128) {
         this.setState({
           errMsgBillingAddress1: "The text can not exceed 128 characters long"
         });
-        //console.log("Length Exceeds", this.state.errMsgBillingAddress1);
       } else {
         this.setState({
           errMsgBillingAddress1: ""
@@ -415,7 +388,6 @@ export default class Checkout extends React.Component {
         this.setState({
           errMsgBillingCity: ""
         });
-        //console.log("Length Exceeds", this.state.errMsgBillingAddress1);
       } else {
         this.setState({
           errMsgBillingCity: "Please enter city"
@@ -503,9 +475,6 @@ export default class Checkout extends React.Component {
   //---------------------------------------------------------------
 
   render() {
-    //console.log("Customer Id", this.state.selCustomerVal);
-    //console.log('-------------', this.state.customersListData);
-    //console.log('Test Designer Obj', this.state.getDesignerObject);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -752,7 +721,6 @@ export default class Checkout extends React.Component {
                         style={{ flex: 1, color: "#413E4F" }}
                         onChangeText={crdNm => {
                           this.setState({ cardName: crdNm });
-                          //console.log("CrdNm", crdNm);
                         }}
                         value={this.state.cardName}
                         placeholderTextColor="#413E4F"

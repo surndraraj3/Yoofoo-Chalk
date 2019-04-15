@@ -44,7 +44,6 @@ export default class Settings extends React.Component {
   }
   //Get Distributor ID from login response
   loadDistributorDtls = async () => {
-    //console.log("Welcome to load login details");
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
       if (this._isMounted) {
@@ -56,13 +55,11 @@ export default class Settings extends React.Component {
       }
     });
   };
-  handleZipCode = valZipCode => {
-    //console.log('valZipCode', valZipCode);
+  handleZipCode = valZipCode => {   
     this.setState({ distributorZipCode: valZipCode });
   };
   //Validate Zip Code
   validateZipCode = () => {
-    console.log("Welcome Zip", `${zipCodeUrl}${this.state.distributorZipCode}/${this.state.distributorId}`);
     if (this.state.distributorZipCode !== 0) {
       fetch(`${zipCodeUrl}${this.state.distributorZipCode}/${this.state.distributorId}`, {
         method: "GET",
@@ -74,7 +71,6 @@ export default class Settings extends React.Component {
       })
         .then(zipCodeResponse => zipCodeResponse.json())
         .then(zipCodeResponseJson => {
-          // console.log("Zip Validation", zipCodeResponseJson.ZipCode.Zip5);
           {
             zipCodeResponseJson.ZipCode.Zip5 === null
               ? Toast.showWithGravity(

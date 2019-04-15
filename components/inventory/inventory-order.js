@@ -98,16 +98,15 @@ export default class InventoryOrder extends React.Component {
   //Load Inventory Order data
   loadInventoryOrderData = () => {
     let invntryUrl = "";
+    this.setState({ loading: true});
     if (this.state.txtSrch.length ===0) {
-      // console.log("false flag", this.state.txtSrch.length);
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }`;
+      }`;     
     } else {
-      // console.log("True Search Flag", this.state.txtSrch.length);
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }/${this.state.txtSrch}`;
+      }/${this.state.txtSrch}`;     
     }
     //Get Inventory List data
     fetch(`${invntryUrl}`, {
@@ -120,7 +119,6 @@ export default class InventoryOrder extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        //console.log(responseJson);
         if (this._isMounted) {
           responseJson.map(v => {
             v.incVal = 0;
@@ -208,8 +206,6 @@ export default class InventoryOrder extends React.Component {
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
-    // console.log('asda', this.state.inventoryList)
-    //console.log('Event', this.state.clckEvnt)
     this.setState({ addToOrderList: [] });
     let cartArr = [];
     if (this.state.getCartItems !== undefined) {
@@ -218,7 +214,6 @@ export default class InventoryOrder extends React.Component {
     const addedOrderToCart = this.state.pagingArr.filter(
       addedItems => addedItems.selectItem === true
     );
-    //console.log("Welcome To Cart Items", addedOrderToCart);
     if (addedOrderToCart.length === 0) {
       //Toast.show('No Items are in cart.', Toast.TOP);
       Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);
@@ -243,21 +238,10 @@ export default class InventoryOrder extends React.Component {
   //Search the inventory based on keyword match
   onSearchInventoryOrder = txtInventoryFld => {
     this.setState({ srchFlag: true, txtSrch: txtInventoryFld.toLowerCase() });
-    this.loadInventoryOrderData();
-    // const rsSrchInvtryOrder = this.state.inventoryList.filter(
-    //   k =>
-    //     //k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
-    //     k.Description.toLowerCase().includes(txtInventoryFld.toLowerCase())
-    //   // k.Quantity.contains(txtInventoryFld)
-    // );
-    // this.setState({
-    //   searchInventoryOrdersList: rsSrchInvtryOrder,
-    //   inventoryCount: rsSrchInvtryOrder.length
-    // });
+    this.loadInventoryOrderData();    
   };
   // Enable the functionality of discount
   discountEnable = (discountMode, itmId) => {
-    //console.log("Mode", discountMode, "Item Id", itmId);
     const discounRes = this.state.inventoryList.filter(v => v.ItemID === itmId);
     discounRes.map(v => {
       v.discountType = discountMode;
@@ -276,13 +260,11 @@ export default class InventoryOrder extends React.Component {
       }
       this.state.inventoryList.push(discounRes);
     });
-    //console.log("Mode Res", discounRes);
   };
   // Discount Change text
   discountTextChange = (discountVal, id) => {
     const fltrItemId = this.state.inventoryList.filter(v => v.ItemID === id);
     fltrItemId.map(c => {
-      //console.log(c.discountType, 'Discount Mode');
       if (c.discountType === "") {
         Toast.showWithGravity(
           "Select discount mode",
@@ -295,7 +277,6 @@ export default class InventoryOrder extends React.Component {
       // Check Percentage Value Condition
       if (c.discountType === "p") {
         if (discountVal >= 100.0) {
-          //console.log('');
           Toast.showWithGravity(
             "Max Discount value reached",
             Toast.SHORT,
@@ -304,14 +285,12 @@ export default class InventoryOrder extends React.Component {
           c.discountVal = 100;
           c.Discount = 100;
         } else {
-          //console.log('Discount applicable');
           c.discountVal = discountVal;
         }
       }
       // Check Discount Value Condition
       if (c.discountType === "d") {
         if (discountVal >= c.RetailPrice) {
-          //console.log('Max Discount Dollar reached');
           c.discountVal = c.RetailPrice;
           c.Discount = c.RetailPrice;
           Toast.showWithGravity(
@@ -320,7 +299,6 @@ export default class InventoryOrder extends React.Component {
             Toast.CENTER
           );
         } else {
-          //console.log("Discount applicable");
           c.discountVal = discountVal;
           c.Discount = discountVal;
         }
@@ -332,7 +310,6 @@ export default class InventoryOrder extends React.Component {
       this.state.inventoryList.push(fltrItemId);
       // }
     });
-    //console.log("Discount Res", fltrItemId);
   };
   //Go to Profile Screen
   gotoProfile = () => {
@@ -352,7 +329,6 @@ export default class InventoryOrder extends React.Component {
   };
   //Review Order Button
   onReviewOrderClck = () => {
-    // console.log("Review Click", this.state.addToOrderList.length);
     const { navigation } = this.props;
     if (this.state.addToOrderList.length !== 0) {
       const cstmrId = navigation.getParam("customerID", "CUSTOMER-ID");

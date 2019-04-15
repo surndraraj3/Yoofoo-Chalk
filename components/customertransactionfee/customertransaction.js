@@ -51,10 +51,8 @@ export default class CustomerTransactionScreen extends React.Component {
   componentDidMount = async () => {
     this._isMounted = true;
     await AsyncStorage.getItem("LoginDetails")
-      // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
-        // console.log(responseJson.message, responseJson.DistributorID);
         if (this._isMounted) {
           this.setState({
             distributorId: responseJson.DistributorID,
@@ -69,7 +67,6 @@ export default class CustomerTransactionScreen extends React.Component {
   }
   //Load Customer Details
   loadCustomerDetails = () => {
-    //console.log("url", `${getCustomerListURL}${this.state.distributorId}`);
     fetch(`${getCustomerListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -80,7 +77,6 @@ export default class CustomerTransactionScreen extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        // console.log(responseJson);
         this.setState({
           customersListData: responseJson,
           customerCount: responseJson.length
@@ -88,7 +84,6 @@ export default class CustomerTransactionScreen extends React.Component {
         this.setState({ loading: false });
       })
       .catch(error => {
-        //console.error(error);
         this.setState({ customersListData: [] });
         this.setState({ loading: false });
       });
@@ -164,13 +159,11 @@ export default class CustomerTransactionScreen extends React.Component {
     );
   }
   onOpenMenu = openMenuid => {
-    //console.log("Ids", openMenuid);
     UIManager.showPopupMenu(
       findNodeHandle(this._button),
       ["Create Order"],
       () => console.log("something went wrong with the popup menu"),
       (e, i) => {
-        //console.log(`${e} : ${i}`);
         if (i === 0) {
           this.props.navigation.navigate("TransferOrder", {
             customerId: openMenuid
@@ -198,7 +191,6 @@ export default class CustomerTransactionScreen extends React.Component {
       searchCustomerList: rsSrchCustomer,
       customerCount: rsSrchCustomer.length
     });
-    //console.log("ListCustomer", rsSrchCustomer.length);
   };
 
   //Go to Profile Screen
@@ -326,7 +318,6 @@ export default class CustomerTransactionScreen extends React.Component {
                                 width: 20
                               }}
                               onValueChange={(selVal, selIndex) => {
-                                //console.log("221", selVal, selIndex);
                                 this.setState({ selPickItm: selVal });
                                 this.props.navigation.navigate(
                                   "CheckoutCustomerTransactionScreen",
@@ -392,7 +383,6 @@ export default class CustomerTransactionScreen extends React.Component {
                                   width: 20
                                 }}
                                 onValueChange={(selItmVal, selItmIndex) => {
-                                  //console.log("221", selItmVal, selItmIndex);
                                   this.setState({ selPickItm: selItmVal });
                                   this.props.navigation.navigate(
                                     "InventoryOrder",

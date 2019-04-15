@@ -33,18 +33,14 @@ export default class TransferOrder extends React.Component {
     };
   }
   componentDidMount() {
-    // this.setState({ loading: true });
-    //console.log("Order Id URL", `${customerOrderURL}${this.state.customerId}`);
     fetch(`${customerOrderURL}${this.state.customerId}`, {
       method: "GET"
     })
       .then(response => response.json())
       .then(responseJson => {
-        //  console.log(responseJson);
         this.setState({
           orderData: responseJson
         });
-        // this.setState({ loading: false });
       })
       .catch(error => {
         console.error(error);
@@ -103,7 +99,6 @@ export default class TransferOrder extends React.Component {
           <ScrollView>
             <View>              
               {this.state.orderData.map((data, i) => {
-                //   console.log("Data", data.companyField);
                 return (
                   <View key={i}>
                     <Card>

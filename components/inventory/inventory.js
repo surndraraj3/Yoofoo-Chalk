@@ -55,27 +55,16 @@ export default class Inventory extends React.Component {
           distributorId: resLoginDtls.DistributorID,
           authToken: resLoginDtls.Token
         });
-        //}
-        // console.log(this.state.distributorId, 'Dis');
       });
       this.loadInventoryDetails();
     }
   };
   componentWillUnmount() {
-    this._isMounted = false;
-    // this.setState({
-    //   inventoryList: [],
-    //   inventoryCount: 0,
-    //   distributorId: "",
-    //   authToken: "",
-    // });
-    // clearInterval(this.loadInventoryDetails)
+    this._isMounted = false;    
   }
   //Load Inventory Details
-  loadInventoryDetails = () => {
-    // console.log('Inventory', `${getInventoryListURL}${this.state.distributorId}`);
-    //Get Inventory List
-    //console.log('distributorId', this.state.distributorId);
+  loadInventoryDetails = () => {   
+    //Get Inventory List   
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -86,7 +75,6 @@ export default class Inventory extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        //console.log(responseJson);
         if (this._isMounted) {
           this.setState({
             inventoryList: responseJson,
@@ -181,7 +169,6 @@ export default class Inventory extends React.Component {
   };
 
   render() {
-    //console.log('Inventory', this.state.inventoryList);
     return (
       <Container>
         <View style={{ padding: 10 }} />

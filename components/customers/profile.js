@@ -43,7 +43,6 @@ export default class CustomerProfile extends React.Component {
       // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
-        // console.log(responseJson.message, responseJson.DistributorID);
         if (this._isMounted) {
           this.setState({
             distributorId: responseJson.DistributorID,
@@ -53,7 +52,6 @@ export default class CustomerProfile extends React.Component {
         }
       });
     if (this._isMounted) this.loadProfileData();
-    // console.log(`${custPrflURL}${this.state.distributorId}`);
   };
   componentWillUnmount() {
     this._isMounted = false;
@@ -69,11 +67,9 @@ export default class CustomerProfile extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        // console.log(responseJson);
         this.setState({
           customerProfileData: responseJson
         });
-        // console.log(this.state.customerProfileData);
         this.setState({ loading: false });
       })
       .catch(error => {

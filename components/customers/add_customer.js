@@ -64,7 +64,6 @@ export default class AddCutsomer extends React.Component {
       // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
-        //console.log(responseJson.message, responseJson.DistributorID);
         if (this._isMounted) {
           this.setState({
             distributorId: responseJson.DistributorID,
@@ -78,7 +77,6 @@ export default class AddCutsomer extends React.Component {
   }
   //Display Billing Address form based on condition
   onBillingAddressChange = itm => {
-    // console.log("itm", itm);
     if (itm) this.setState({ valBillingAddress: true });
     else this.setState({ valBillingAddress: false });
   };
@@ -87,7 +85,6 @@ export default class AddCutsomer extends React.Component {
     this.setState({ customerEmail: txtEmail });
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (reg.test(txtEmail) === false) {
-      // console.log("Email is Not Correct");
       this.setState({
         validateEmail: "Invalid Email",
         errorEmail: true
@@ -95,7 +92,6 @@ export default class AddCutsomer extends React.Component {
       return false;
     } else {
       this.setState({ validateEmail: "Email is Correct", errorEmail: false });
-      // console.log("Email is Correct");
     }
   };
   // Get First Name from textbox
@@ -115,7 +111,6 @@ export default class AddCutsomer extends React.Component {
   saveCustomerDetails = (email, firstNm, lastNm, phoneNum) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (reg.test(email) === false) {
-      // console.log("Email is Not Correct");
       this.setState({
         validateEmail: "Invalid Email",
         errorEmail: true
@@ -127,7 +122,6 @@ export default class AddCutsomer extends React.Component {
     // } 
     else {
       this.setState({ validateEmail: "Email is Correct", errorEmail: false });
-      // console.log("Email is Correct");
       this.setState({ loadSpinner: true });
       fetch(`${add_customerURL}`, {
         method: "POST",
@@ -150,14 +144,11 @@ export default class AddCutsomer extends React.Component {
       })
         .then(response => response.json())
         .then(responseJson => {
-          // console.log(responseJson);
           this.setState({
             customerData: responseJson
           });
-          //console.log("Data", this.state.customerData);
           this.setState({ loadFormMessage: true, loadSpinner: false });
           if (this.state.customerData.Result !== "Failed") {
-            //console.log("Success");
             this.setState({
               customerEmail: "",
               customerFirstName: "",
@@ -169,7 +160,6 @@ export default class AddCutsomer extends React.Component {
               customerZipCode: ""
             });
           } else {
-            //console.log("Fail");
             this.setState({
               customerEmail: email,
               customerFirstName: firstNm,

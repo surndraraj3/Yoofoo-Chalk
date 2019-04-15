@@ -56,7 +56,6 @@ export default class Transfer extends React.Component {
   };
   //Handle To load designer list
   handleDesignerList = () => {
-    //console.log("Welcome Search", this.state.srchDsgnrId);
     this.renderLoading();
     this.setState({ loading: true });
     if (this.state.srchDsgnrId !== "") {
@@ -70,7 +69,6 @@ export default class Transfer extends React.Component {
       })
         .then(rspDsgnrs => rspDsgnrs.json())
         .then(respDsgnrJson => {
-          //console.log("test", respDsgnrJson);
           if (!respDsgnrJson.Message) {
             this.setState({ designerList: respDsgnrJson, loading: false });
             this.handleLoadDesignersListView();
@@ -89,7 +87,6 @@ export default class Transfer extends React.Component {
   };
   //----Load designer in form of list view------
   handleLoadDesignersListView = () => {
-    // console.log('this.state.designerList', this.state.designerList)
     return (
       <List>
         <ListItem selected>

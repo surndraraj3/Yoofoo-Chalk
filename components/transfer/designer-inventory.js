@@ -57,8 +57,6 @@ export default class DesignerInventory extends React.Component {
       dup: "",
       searchInventoryOrdersList: [],
       selDiscountVal: 0,
-      //   invDiscountVal: this.props.navigation.getParam("discountValue"),
-      //   invDiscountItemIdVal: this.props.navigation.getParam("discountItem"),
       selected2: "",
       valDiscountSwitch: false,
       valDiscount: 0,
@@ -71,7 +69,9 @@ export default class DesignerInventory extends React.Component {
       upperLimit: 2,
       prevScreenTouchPressTargetEvent: 0,
       screenTouchPressTargetEvent: 10,
-      clckEvnt: this.props.navigation.getParam("clickOn")
+      clckEvnt: this.props.navigation.getParam("clickOn"),
+      pagingArr: [],
+      txtSrch: ""
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -102,8 +102,6 @@ export default class DesignerInventory extends React.Component {
   }
   //Load Inventory Order data
   loadInventoryOrderData = () => {
-    //Get Inventory List data
-    //console.log('asdsasdasasasdas');
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -159,55 +157,53 @@ export default class DesignerInventory extends React.Component {
   }
   //Increment Counter and check whether it is exceeded more than quantity
   incrementOrder = (id, qty) => {
-    const res = this.state.inventoryList.filter(v => v.ItemID === id);
-    this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
-    // const incremntVal = res[0].incVal + 1;
+    const res = this.state.inventoryList.find(v => v.ItemID === id);
+    this.setState({ orderItemCounter: res.incVal + 1 });
+    res.incVal += 1;
+    res.Quantity -= 1;
     if (qty === 0) {
       alert("Max Quantity Reached");
-      this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
-    } else {
-      res[0].incVal += 1; //res[0].incVal + 1;
-      res[0].Quantity -= 1;//res[0].Quantity - 1;
-      // this.setState({ orderItemCounter: this.state.orderItemCounter + 1 });
+      res.incVal -= 1;
+      res.Quantity += 1;
+      this.setState({ orderItemCounter: res.incVal - 1 });
     }
   };
 
   // Decrement Counter by getting current value of an array
   decCounter(itmId, decQty) {
-    const res = this.state.inventoryList.filter(v => v.ItemID === itmId);
-    //console.log("Decrement Response", res[0], res[0].ItemID);
-    const decrementVal = res[0].incVal - 1;
+    const res = this.state.inventoryList.find(v => v.ItemID === itmId);
+    const decrementVal = res.incVal - 1;
     if (decrementVal < 0) {
       alert(`Can't decrement value`);
     } else {
-      res[0].incVal -= 1;//res[0].incVal - 1;
-      res[0].Quantity +=1;// res[0].Quantity + 1;
-      this.setState({ orderItemCounter: this.state.orderItemCounter - 1 });
+      res.incVal -= 1; // res[0].incVal - 1;
+      res.Quantity += 1; // res[0].Quantity + 1;
+      this.setState({ orderItemCounter: res.incVal - 1 });
     }
   }
   //Check which item is checked and get the array and overwrite it
   // If Item IncVal is greaterthan zero prompt a message
   onChangeCheck = itemId => {
-    const checkedItem = this.state.inventoryList.filter(
+    const checkedItem = this.state.inventoryList.find(
       chkItm => chkItm.ItemID === itemId
     );
     checkedItem.selectItem = this.setState({ checked: true });
-    if (checkedItem[0].incVal === 0)
+    if (checkedItem.incVal === 0)
       alert("Add the item quantity before selecting item");
     else {
-      if (!checkedItem[0].selectItem) checkedItem[0].selectItem = true;
-      else checkedItem[0].selectItem = false;
+      if (!checkedItem.selectItem) {
+        checkedItem.selectItem = true;
+        this.state.pagingArr.push(checkedItem);
+      } else checkedItem.selectItem = false;
     }
-   
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
-    //console.log("Welcome To Cart Items", this.state.getCartItems);
     let cartArr = [];
     if (this.state.getCartItems !== undefined) {
       this.state.getCartItems.map(cartData => cartArr.push(cartData));
     }
-    const addedOrderToCart = this.state.inventoryList.filter(
+    const addedOrderToCart = this.state.pagingArr.filter(
       addedItems => addedItems.selectItem === true
     );
     if (addedOrderToCart.length === 0) {
@@ -216,15 +212,11 @@ export default class DesignerInventory extends React.Component {
     } else {
       if (this.state.getCartItems !== undefined)
         addedOrderToCart.map(cartNewData => cartArr.push(cartNewData));
-      //cartArr.push(addedOrderToCart);
-      //console.log("Added List Before", cartArr);
       {
         this.state.getCartItems === undefined
           ? this.setState({ addToOrderList: addedOrderToCart })
           : this.setState({ addToOrderList: cartArr });
       }
-      //this.setState({ addToOrderList: addedOrderToCart });
-      //console.log("Added List After", cartArr);
       Toast.showWithGravity(
         "Item has been added to order",
         Toast.SHORT,
@@ -247,7 +239,6 @@ export default class DesignerInventory extends React.Component {
   };
   // Enable the functionality of discount
   discountEnable = (discountMode, itmId) => {
-    //console.log("Mode", discountMode, "Item Id", itmId);
     const discounRes = this.state.inventoryList.filter(v => v.ItemID === itmId);
     discounRes.map(v => {
       v.discountType = discountMode;
@@ -266,13 +257,11 @@ export default class DesignerInventory extends React.Component {
       }
       this.state.inventoryList.push(discounRes);
     });
-    //console.log("Mode Res", discounRes);
   };
   // Discount Change text
   discountTextChange = (discountVal, id) => {
     const fltrItemId = this.state.inventoryList.filter(v => v.ItemID === id);
     fltrItemId.map(c => {
-      //console.log(c.discountType, 'Discount Mode');
       if (c.discountType === "") {
         Toast.showWithGravity(
           "Select discount mode",
@@ -285,7 +274,6 @@ export default class DesignerInventory extends React.Component {
       // Check Percentage Value Condition
       if (c.discountType === "p") {
         if (discountVal >= 100.0) {
-          //console.log('');
           Toast.showWithGravity(
             "Max Discount value reached",
             Toast.SHORT,
@@ -294,14 +282,12 @@ export default class DesignerInventory extends React.Component {
           c.discountVal = 100;
           c.Discount = 100;
         } else {
-          //console.log('Discount applicable');
           c.discountVal = discountVal;
         }
       }
       // Check Discount Value Condition
       if (c.discountType === "d") {
         if (discountVal >= c.Price) {
-          //console.log('Max Discount Dollar reached');
           c.discountVal = c.Price;
           c.Discount = c.Price;
           Toast.showWithGravity(
@@ -310,7 +296,6 @@ export default class DesignerInventory extends React.Component {
             Toast.CENTER
           );
         } else {
-          //console.log("Discount applicable");
           c.discountVal = discountVal;
           c.Discount = discountVal;
         }
@@ -322,7 +307,6 @@ export default class DesignerInventory extends React.Component {
       this.state.inventoryList.push(fltrItemId);
       // }
     });
-    //console.log("Discount Res", fltrItemId);
   };
 
   //--------------------------------------------------------------
@@ -351,7 +335,6 @@ export default class DesignerInventory extends React.Component {
       "customerDistributorId",
       "CUSTOMER_DIST_ID"
     );
-    //console.log("Desgnr Obj", this.state.getObjDsgnr);
     return (
       <Container>
         <View style={{ padding: 10 }} />

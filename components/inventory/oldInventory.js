@@ -100,7 +100,6 @@ export default class InventoryOrder extends React.Component {
   //Load Inventory Order data
   loadInventoryOrderData = () => {
     //Get Inventory List data
-    //console.log('asdsasdasasasdas');
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -111,7 +110,6 @@ export default class InventoryOrder extends React.Component {
     })
       .then(response => response.json())
       .then(responseJson => {
-        //console.log(responseJson);
         if (this._isMounted) {
           responseJson.map(v => {
             v.incVal = 0;
@@ -197,8 +195,6 @@ export default class InventoryOrder extends React.Component {
   };
   // Adding the list of selected orders
   addListOfOrders = () => {
-    // console.log('asda', this.state.inventoryList)
-    //console.log('Event', this.state.clckEvnt)
     this.setState({ addToOrderList: [] });
     let cartArr = [];
     if (this.state.getCartItems !== undefined) {
@@ -207,7 +203,6 @@ export default class InventoryOrder extends React.Component {
     const addedOrderToCart = this.state.inventoryList.filter(
       addedItems => addedItems.selectItem === true
     );
-    //console.log("Welcome To Cart Items", addedOrderToCart);
     if (addedOrderToCart.length === 0) {
       //Toast.show('No Items are in cart.', Toast.TOP);
       Toast.showWithGravity("No items added in cart", Toast.LONG, Toast.CENTER);

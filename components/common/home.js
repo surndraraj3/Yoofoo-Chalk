@@ -41,8 +41,7 @@ export default class Home extends React.Component {
       ReactNative.findNodeHandle(this._button),
       ["Profile", "Settings", "Help", "Signout"],
       () => console.log("something went wrong with the popup menu"),
-      (e, i) => {
-        // console.log(`${e} : ${i}`);
+      (e, i) => {        
         if (i === 0) {
           this.props.navigation.navigate("Profile");
         } else if (i === 1) {
@@ -50,10 +49,8 @@ export default class Home extends React.Component {
         } else if (i === 2) {
           this.props.navigation.navigate("HelpScreen");
         } else if (i === 3) {
-          // this.props.navigation.navigate("LoginScreen");
-          //console.log(`${e} : ${i}`);
-        } else {
-          //console.log(`${e} : ${i}`);
+          // this.props.navigation.navigate("LoginScreen");         
+        } else {          
           // this.props.navigation.navigate("Customer");
         }
       }

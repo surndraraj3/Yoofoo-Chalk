@@ -46,16 +46,13 @@ export default class Orders extends React.Component {
   componentDidMount = async () => {
     this.setState({ loading: true });
     await AsyncStorage.getItem("LoginDetails")
-      // .then(response => response.json())
       .then(responseJson => {
         responseJson = JSON.parse(responseJson);
-        //console.log(responseJson.message, responseJson.DistributorID);
         this.setState({
           distributorId: responseJson.DistributorID,
           authToken: responseJson.Token
         });
       });
-    //console.log("Order URL", `${getOrdersListURL}${this.state.distributorId}`);
     fetch(
       // "http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/14711",
       `${getOrdersListURL}${this.state.distributorId}`,
@@ -70,7 +67,6 @@ export default class Orders extends React.Component {
     )
       .then(response => response.json())
       .then(responseJson => {
-        // console.log("Data", responseJson);
         this.setState({
           dataSource: responseJson,
           orderCount: responseJson.length
@@ -82,7 +78,6 @@ export default class Orders extends React.Component {
       });
   };
   onOpenMenu = openMenuid => {
-    //console.log("Ids", openMenuid);
     UIManager.showPopupMenu(
       findNodeHandle(this._button),
       ["Open", "Ressend"],
@@ -150,8 +145,6 @@ export default class Orders extends React.Component {
   }
   // Filter by text box search
   onChangeOrder = txtSrchFild => {
-    //txtSearchBox
-    //console.log("Search Field", txtSrchFild);
     const res = this.state.dataSource.filter(
       v =>
         v.Customer.toLowerCase().includes(txtSrchFild.toLowerCase()) ||
@@ -179,7 +172,6 @@ export default class Orders extends React.Component {
   };
 
   render() {
-    // console.log("Lang", this.state.language);
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -283,24 +275,7 @@ export default class Orders extends React.Component {
                       }
                     >
                       <Text>{orderItem.OrderNum.trim()}</Text>
-                    </TouchableHighlight>
-
-                    {/* <Picker
-                        selectedValue={this.state.language}
-                        mode="dropdown"
-                        style={{
-                          height: 20,
-                          width: 20
-                        }}
-                        onValueChange={(itemValue, itemIndex) => {
-                          console.log("221", itemValue, itemIndex);
-                          this.setState({ language: itemValue });
-                          this.props.navigation.navigate("ResendInvoice");
-                        }}
-                      >
-                        <Picker.Item label="" value="" />
-                        <Picker.Item label="View Invoice" value="ViewInvoice" />
-                      </Picker> */}
+                    </TouchableHighlight>                    
                   </View>
                 </View>
               ))
@@ -319,33 +294,6 @@ export default class Orders extends React.Component {
                     >
                       <Text>{orderItem.OrderNum}</Text>
                     </TouchableHighlight>
-                    {/* <ImageBackground
-                      resizeMode={"stretch"} // or cover
-                      style={{
-                        height: 30,
-                        width: 30,
-                        borderRadius: 15,
-                        backgroundColor: "#55e6f6"
-                      }}
-                      source={require("../../assets/ellipsis-h-white.png")}
-                    >
-                      <Picker
-                        selectedValue={this.state.language}
-                        mode="dropdown"
-                        style={{
-                          height: 20,
-                          width: 20
-                        }}
-                        onValueChange={(itemValue, itemIndex) => {
-                          console.log("221", itemValue);
-                          this.setState({ language: itemValue });
-                          this.props.navigation.navigate("ResendInvoice");
-                        }}
-                      >
-                        <Picker.Item label="" value="" />
-                        <Picker.Item label="View Invoice" value="ViewInvoice" />
-                      </Picker>
-                    </ImageBackground> */}
                   </View>
                 </View>
               ))}
@@ -360,8 +308,6 @@ export default class Orders extends React.Component {
               right: 0,
               bottom: 0,
               top: 0
-              // backgroundColor: 'red',
-              // opacity: 0.3
             }}
           />
         )}

@@ -81,7 +81,6 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
     this._isMounted = true;
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
-      //console.log(responseJson.message, responseJson.DistributorID);
       if (this._isMounted) {
         this.setState({
           distributorId: responseJson.DistributorID,
@@ -131,7 +130,6 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
   //If all fields are filled save the form data
   validateCheckoutOrderDtls = () => {
     this.setState({ loading: true });
-    // console.log("Remaining Due Val", this.state.remainingDueVal);
     if (this.state.calculateOrdersData.totalField - this.state.cashVal > 0) {
       if (this.state.cadrNumber === "") {
         this.setState({ errCardNumber: "Please enter card number" });
@@ -156,23 +154,19 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
         this.setState({ loading: false });
       } else {
         this.saveOrderDtls();
-        // console.log('Save');
       }
     } else {
       this.saveOrderDtls();
-      // console.log('Save')
     }
   };
 
   // Validate form fields on text change
   handleValidateBillingDtls = (txt, type) => {
-    //console.log("Address Dteails", txt, type);
     if (type === "address1") {
       if (txt.length >= 128) {
         this.setState({
           errMsgBillingAddress1: "The text can not exceed 128 characters long"
         });
-        //console.log("Length Exceeds", this.state.errMsgBillingAddress1);
       } else {
         this.setState({
           errMsgBillingAddress1: ""
@@ -184,7 +178,6 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
         this.setState({
           errMsgBillingCity: ""
         });
-        //console.log("Length Exceeds", this.state.errMsgBillingAddress1);
       } else {
         this.setState({
           errMsgBillingCity: "Please enter city"
@@ -292,7 +285,6 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
     })
       .then(respOrderDtls => respOrderDtls.json())
       .then(respCalOrderJson => {
-        //console.log("Orders", respCalOrderJson);
         this.setState({
           calculateOrdersData: respCalOrderJson,
           loading: false
@@ -356,8 +348,6 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
           resAddOrderJson.OrderID === null ||
           resAddOrderJson.OrderID === "null"
         ) {
-          console.log("resAddOrderJson-----", resAddOrderJson.OrderID);
-
           Toast.showWithGravity(
             `Order Failed: ${resAddOrderJson.message}`,
             Toast.SHORT,
@@ -365,7 +355,6 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
           );
           this.setState({ loading: false });
         } else {
-          //console.log("resAddOrderJson Failed", resAddOrderJson.OrderID);
           Alert.alert(
             "Orders",
             `Order placed successfully Order Id: ${resAddOrderJson.OrderID}`,
@@ -703,7 +692,6 @@ export default class CheckoutCustomerTransactionScreen extends React.Component {
                         style={{ flex: 1, color: "#413E4F" }}
                         onChangeText={crdNm => {
                           this.setState({ cardName: crdNm });
-                          //console.log("CrdNm", crdNm);
                         }}
                         value={this.state.cardName}
                         placeholderTextColor="#413E4F"

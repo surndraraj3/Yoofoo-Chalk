@@ -67,7 +67,6 @@ export default class ResendInvoice extends React.Component {
     })
       .then(invoiceResp => invoiceResp.json())
       .then(invoiceRespJson => {
-        //console.log("Data", invoiceRespJson);
         this.setState({
           invoiceList: invoiceRespJson
         });
@@ -102,14 +101,6 @@ export default class ResendInvoice extends React.Component {
       this.state.invoiceList,
       "LineDetailInfos"
     );
-    // var result = _.map(getLineDetailInfosDtls, item => ({
-    //   id: item.Quantity,
-    //   name: item.Price
-    // }));
-    // console.log("Result", result);
-    // this.setState({lineInfoDtls: getLineDetailInfosDtls});
-    // console.log('getDtls', getLineDetailInfosDtls);
-    // console.log('getLine Info Dtls', this.state.lineInfoDtls);
     return (
       <Container>
         <View style={{ padding: 10 }} />
