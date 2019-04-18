@@ -33,6 +33,7 @@ import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
 const deviceWidth = Dimensions.get("window").width;
+const deviceHeight = Dimensions.get("window").height;
 export default class InventoryOrder extends React.Component {
   _isMounted = false;
   constructor(props) {
@@ -66,7 +67,8 @@ export default class InventoryOrder extends React.Component {
       pageNumber: 0,
       pagingArr: [],
       srchFlag: false,
-      txtSrch: ""
+      txtSrch: "",
+      screenHeight: deviceHeight
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -98,15 +100,15 @@ export default class InventoryOrder extends React.Component {
   //Load Inventory Order data
   loadInventoryOrderData = () => {
     let invntryUrl = "";
-    this.setState({ loading: true});
-    if (this.state.txtSrch.length ===0) {
+    this.setState({ loading: true });
+    if (this.state.txtSrch.length === 0) {
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }`;     
+      }`;
     } else {
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }/${this.state.txtSrch}`;     
+      }/${this.state.txtSrch}`;
     }
     //Get Inventory List data
     fetch(`${invntryUrl}`, {
@@ -132,7 +134,7 @@ export default class InventoryOrder extends React.Component {
             inventoryList: responseJson,
             inventoryCount: responseJson.length
           });
-          this.setState({ loading: false});
+          this.setState({ loading: false });
         }
       })
       .catch(error => {
@@ -238,7 +240,7 @@ export default class InventoryOrder extends React.Component {
   //Search the inventory based on keyword match
   onSearchInventoryOrder = txtInventoryFld => {
     this.setState({ srchFlag: true, txtSrch: txtInventoryFld.toLowerCase() });
-    this.loadInventoryOrderData();    
+    this.loadInventoryOrderData();
   };
   // Enable the functionality of discount
   discountEnable = (discountMode, itmId) => {
@@ -344,13 +346,22 @@ export default class InventoryOrder extends React.Component {
       );
     }
   };
-
+  //Return scroll based on content offset whether it reaches bottom of a page
+  isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
+  };
+  //Return scroll based on content offset whether it reaches Top of a page
+  isCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    if (contentOffset.y === 0) return true;
+    else return false;
+  };
   render() {
     const { navigation } = this.props;
     const cstmrDistributorId = navigation.getParam(
       "customerDistributorId",
       "CUSTOMER_DIST_ID"
     );
+    const scrollEnabled = this.state.screenHeight > deviceHeight;
     return (
       <Container>
         <View style={{ padding: 10 }} />
@@ -394,7 +405,22 @@ export default class InventoryOrder extends React.Component {
             </TouchableHighlight>
           </Right>
         </Header>
-        <Content>
+        <Content
+          onScroll={({ nativeEvent }) => {
+            if (this.isCloseToBottom(nativeEvent)) {
+              this.setState(prevState => {
+                return { pageNumber: prevState.pageNumber + 1 };
+              });
+              console.log("Reached end of page");
+            }
+            if (this.isCloseToTop(nativeEvent)) {
+              this.setState(prevState => {
+                return { pageNumber: prevState.pageNumber - 1 };
+              });
+              console.log("Reached Top of page");
+            }
+          }}
+        >
           <View style={{ backgroundColor: "#e6e6e6" }}>
             {/* <Text style={{ margin: 15, fontSize: 20 }}>
               {this.state.inventoryCount} Order
@@ -811,7 +837,10 @@ export default class InventoryOrder extends React.Component {
                 this.loadInventoryOrderData();
               }}
             >
-              <Image source={require("../../assets/arrowleft.png")} style={{ margin: 10 }} />
+              <Image
+                source={require("../../assets/arrowleft.png")}
+                style={{ margin: 10 }}
+              />
             </TouchableHighlight>
             <Button
               bordered
@@ -866,7 +895,10 @@ export default class InventoryOrder extends React.Component {
                 this.loadInventoryOrderData();
               }}
             >
-              <Image source={require("../../assets/arrow.png")} style={{ margin: 10}}/>
+              <Image
+                source={require("../../assets/arrow.png")}
+                style={{ margin: 10 }}
+              />
             </TouchableHighlight>
           </View>
         </View>
