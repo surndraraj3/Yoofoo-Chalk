@@ -68,7 +68,8 @@ export default class InventoryOrder extends React.Component {
       pagingArr: [],
       srchFlag: false,
       txtSrch: "",
-      screenHeight: deviceHeight
+      screenHeight: deviceHeight,
+      pageSize: 4
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -104,12 +105,13 @@ export default class InventoryOrder extends React.Component {
     if (this.state.txtSrch.length === 0) {
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }`;
+      }/${this.state.pageSize}`;
     } else {
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }/${this.state.txtSrch}`;
+      }/${this.state.pageSize}/${this.state.txtSrch}`;
     }
+    // console.log("URL", invntryUrl);
     //Get Inventory List data
     fetch(`${invntryUrl}`, {
       method: "GET",
@@ -408,16 +410,34 @@ export default class InventoryOrder extends React.Component {
         <Content
           onScroll={({ nativeEvent }) => {
             if (this.isCloseToBottom(nativeEvent)) {
+              let pageNo = 4;
               this.setState(prevState => {
-                return { pageNumber: prevState.pageNumber + 1 };
+                if (prevState.pageSize > 18) prevState.pageSize = 4;
+                return {
+                  pageNumber: prevState.pageNumber + 1,
+                  pageSize: prevState.pageSize + 2
+                };
               });
-              console.log("Reached end of page");
+              this.loadInventoryOrderData();
+              // console.log("Reached end of page");
             }
             if (this.isCloseToTop(nativeEvent)) {
+              let prevpage, pageCnt;
               this.setState(prevState => {
-                return { pageNumber: prevState.pageNumber - 1 };
+                if (prevState.pageNumber <= 0) {
+                  prevpage = 0;
+                  pageCnt = this.state.pageSize;
+                } else {
+                  prevpage = prevState.pageNumber - 1;
+                  pageCnt = prevState.pageSize - 2;
+                }
+                return {
+                  pageNumber: prevpage,
+                  pageSize: pageCnt
+                };
               });
-              console.log("Reached Top of page");
+              this.loadInventoryOrderData();
+              // console.log("Reached Top of page");
             }
           }}
         >
@@ -444,14 +464,14 @@ export default class InventoryOrder extends React.Component {
             </View>
           </View>
           <ScrollView>
-            {/* {this.state.inventoryList.length === 0 ? (
+            {this.state.inventoryList.length === 0 ? (
               <Text style={commonStyles.warningMessage}>
                 {" "}
                 No records found !
               </Text>
             ) : (
-              <View /> i >= this.state.lowerLimit && 
-            )} */}
+              <View />
+            )}
             {this.state.searchInventoryOrdersList.length === 0
               ? this.state.inventoryList.map((itm, i) => (
                   // i >= 0 && i <= this.state.upperLimit ? (
