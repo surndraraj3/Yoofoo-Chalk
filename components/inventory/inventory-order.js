@@ -69,7 +69,8 @@ export default class InventoryOrder extends React.Component {
       srchFlag: false,
       txtSrch: "",
       screenHeight: deviceHeight,
-      pageSize: 4
+      pageSize: 4,
+      increment: 2
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -100,8 +101,9 @@ export default class InventoryOrder extends React.Component {
   }
   //Load Inventory Order data
   loadInventoryOrderData = () => {
-    let invntryUrl = "";
-    this.setState({ loading: true });
+    let invntryUrl = "";       
+    this.setState({ loading: true});
+    console.log('Page Size', this.state.pageSize);
     if (this.state.txtSrch.length === 0) {
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
@@ -356,6 +358,7 @@ export default class InventoryOrder extends React.Component {
   isCloseToTop = ({ layoutMeasurement, contentOffset, contentSize }) => {
     if (contentOffset.y === 0) return true;
     else return false;
+    // return layoutMeasurement.height + contentOffset.y <= contentSize.height - 2;
   };
   render() {
     const { navigation } = this.props;
@@ -408,35 +411,41 @@ export default class InventoryOrder extends React.Component {
           </Right>
         </Header>
         <Content
-          onScroll={({ nativeEvent }) => {
-            if (this.isCloseToBottom(nativeEvent)) {
-              let pageNo = 4;
-              this.setState(prevState => {
-                if (prevState.pageSize > 18) prevState.pageSize = 4;
-                return {
-                  pageNumber: prevState.pageNumber + 1,
-                  pageSize: prevState.pageSize + 2
-                };
-              });
+          onScroll={({ nativeEvent }) => {            
+            if (this.isCloseToBottom(nativeEvent)) {             
+              this.setState({pageSize: this.state.pageSize + 2});                          
               this.loadInventoryOrderData();
+
+             // let pageNo = 4;
+              // this.setState(prevState => {
+              //   if (prevState.pageSize > 18) prevState.pageSize = 4;
+              //   return {
+              //     pageNumber: prevState.pageNumber + 1,
+              //     pageSize: prevState.pageSize + 2
+              //   };
+              // });
+              
               // console.log("Reached end of page");
             }
             if (this.isCloseToTop(nativeEvent)) {
-              let prevpage, pageCnt;
-              this.setState(prevState => {
-                if (prevState.pageNumber <= 0) {
-                  prevpage = 0;
-                  pageCnt = this.state.pageSize;
-                } else {
-                  prevpage = prevState.pageNumber - 1;
-                  pageCnt = prevState.pageSize - 2;
-                }
-                return {
-                  pageNumber: prevpage,
-                  pageSize: pageCnt
-                };
-              });
+              this.setState({pageSize: this.state.pageSize - 2})
               this.loadInventoryOrderData();
+
+              //let prevpage, pageCnt;
+              // this.setState(prevState => {
+              //   if (prevState.pageNumber <= 0) {
+              //     prevpage = 0;
+              //     pageCnt = this.state.pageSize;
+              //   } else {
+              //     prevpage = prevState.pageNumber - 1;
+              //     pageCnt = prevState.pageSize - 2;
+              //   }
+              //   return {
+              //     pageNumber: prevpage,
+              //     pageSize: pageCnt
+              //   };
+              // });
+              
               // console.log("Reached Top of page");
             }
           }}
@@ -643,6 +652,7 @@ export default class InventoryOrder extends React.Component {
                         />
                       </View>
                     </Card>
+                    <View />
                   </View>
                 ))
               : this.state.searchInventoryOrdersList.map(
@@ -849,7 +859,7 @@ export default class InventoryOrder extends React.Component {
               height: 100
             }}
           >
-            <TouchableHighlight
+            {/* <TouchableHighlight
               onPress={() => {
                 this.setState(prevState => {
                   return { pageNumber: prevState.pageNumber - 1 };
@@ -861,7 +871,7 @@ export default class InventoryOrder extends React.Component {
                 source={require("../../assets/arrowleft.png")}
                 style={{ margin: 10 }}
               />
-            </TouchableHighlight>
+            </TouchableHighlight> */}
             <Button
               bordered
               style={{
@@ -907,7 +917,7 @@ export default class InventoryOrder extends React.Component {
               </Text>
             </Button>
 
-            <TouchableHighlight
+            {/* <TouchableHighlight
               onPress={() => {
                 this.setState(prevState => {
                   return { pageNumber: prevState.pageNumber + 1 };
@@ -919,7 +929,7 @@ export default class InventoryOrder extends React.Component {
                 source={require("../../assets/arrow.png")}
                 style={{ margin: 10 }}
               />
-            </TouchableHighlight>
+            </TouchableHighlight> */}
           </View>
         </View>
       </Container>
