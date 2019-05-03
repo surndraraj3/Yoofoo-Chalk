@@ -69,7 +69,7 @@ export default class InventoryOrder extends React.Component {
       srchFlag: false,
       txtSrch: "",
       screenHeight: deviceHeight,
-      pageSize: 4,
+      pageSize: 2,
       increment: 2
     };
   }
@@ -102,8 +102,8 @@ export default class InventoryOrder extends React.Component {
   //Load Inventory Order data
   loadInventoryOrderData = () => {
     let invntryUrl = "";       
-    this.setState({ loading: true});
-    console.log('Page Size', this.state.pageSize);
+    this.setState({ loading: true, pageSize: this.state.pageSize + 2});
+    // console.log('Page Size', this.state.pageSize);
     if (this.state.txtSrch.length === 0) {
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
@@ -413,40 +413,12 @@ export default class InventoryOrder extends React.Component {
         <Content
           onScroll={({ nativeEvent }) => {            
             if (this.isCloseToBottom(nativeEvent)) {             
-              this.setState({pageSize: this.state.pageSize + 2});                          
+              //this.setState({pageSize: this.state.pageSize + 2});                          
               this.loadInventoryOrderData();
-
-             // let pageNo = 4;
-              // this.setState(prevState => {
-              //   if (prevState.pageSize > 18) prevState.pageSize = 4;
-              //   return {
-              //     pageNumber: prevState.pageNumber + 1,
-              //     pageSize: prevState.pageSize + 2
-              //   };
-              // });
-              
-              // console.log("Reached end of page");
             }
             if (this.isCloseToTop(nativeEvent)) {
               this.setState({pageSize: this.state.pageSize - 2})
-              this.loadInventoryOrderData();
-
-              //let prevpage, pageCnt;
-              // this.setState(prevState => {
-              //   if (prevState.pageNumber <= 0) {
-              //     prevpage = 0;
-              //     pageCnt = this.state.pageSize;
-              //   } else {
-              //     prevpage = prevState.pageNumber - 1;
-              //     pageCnt = prevState.pageSize - 2;
-              //   }
-              //   return {
-              //     pageNumber: prevpage,
-              //     pageSize: pageCnt
-              //   };
-              // });
-              
-              // console.log("Reached Top of page");
+              this.loadInventoryOrderData();              
             }
           }}
         >
