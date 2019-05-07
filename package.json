@@ -18,6 +18,8 @@
     "react-native-options-menu": "^2.0.2",
     "react-native-simple-toast": "0.0.8",
     "react-navigation": "^2.18.2",
+    "react-redux": "^6.0.1",
+    "redux": "^4.0.1",
     "whatwg-fetch": "^2.0.4"
   }
 }

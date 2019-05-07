@@ -921,3 +921,118 @@ export default class InventoryOrder extends React.Component {
     );
   }
 }
+
+//-------------------------Old Customer Code----------------------------
+{this.state.searchCustomerList.length === 0
+  ? this.state.customersListData.map((itm, i) => (
+    <View key={i}>
+      <Text style={commonStyles.warningMessage}>
+        {itm.length === 0 ? "No Customers Found" : ""}
+      </Text>
+      <Card>
+        <CardItem>
+          <Left>
+            <Text>
+              {itm.FirstName} {itm.LastName}
+            </Text>
+          </Left>
+        </CardItem>
+        <CardItem>
+          <Left>
+            <Text>{itm.Email}</Text>
+          </Left>
+          <Right>
+            <Button bordered
+              style={{
+                backgroundColor: "#61d0c8",
+                width: 120,
+                height: 40,
+                margin: 10,
+                justifyContent: "center",
+                borderColor: '#ffffff'
+              }}
+              onPress={() => {
+                this.props.navigation.navigate(
+                  "InventoryOrder",
+                  {
+                    customerID: itm.CustomerID,
+                    customerDistributorId: this.state
+                      .distributorId,
+                    clickOn: 1
+                  }
+                )
+              }}
+            >
+              <Text style={{
+                color: "#ffffff",
+                fontSize: 15,
+                fontWeight: 'bold'
+              }}>Create Order</Text>
+            </Button>                        
+          </Right>
+        </CardItem>
+        <CardItem>
+          <Left>
+            <Text>{itm.Phone}</Text>
+          </Left>
+        </CardItem>
+      </Card>
+    </View>
+  ))
+  : this.state.searchCustomerList.map(
+    (srchCustItm, srchCustIndx) => (
+      <View key={srchCustIndx}>
+        <Text style={commonStyles.warningMessage}>
+          {srchCustItm.length === 0 ? "No Customers Found" : ""}
+        </Text>
+        <Card>
+          <CardItem>
+            <Left>
+              <Text>
+                {srchCustItm.FirstName} {srchCustItm.LastName}
+              </Text>
+            </Left>
+          </CardItem>
+          <CardItem>
+            <Left>
+              <Text>{srchCustItm.Email}</Text>
+            </Left>
+            <Right>
+              <Button bordered
+                style={{
+                  backgroundColor: "#61d0c8",
+                  width: 120,
+                  height: 40,
+                  margin: 10,
+                  justifyContent: "center",
+                  borderColor: '#ffffff'
+                }}
+                onPress={() => {
+                  this.props.navigation.navigate(
+                    "InventoryOrder",
+                    {
+                      customerID: srchCustItm.CustomerID,
+                      customerDistributorId: this.state
+                        .distributorId,
+                      clickOn: 1
+                    }
+                  )
+                }}
+              >
+                <Text style={{
+                  color: "#ffffff",
+                  fontSize: 15,
+                  fontWeight: 'bold'
+                }}>Create Order</Text>
+              </Button>
+            </Right>
+          </CardItem>
+          <CardItem>
+            <Left>
+              <Text>{srchCustItm.Phone}</Text>
+            </Left>
+          </CardItem>
+        </Card>
+      </View>
+    )
+  )}

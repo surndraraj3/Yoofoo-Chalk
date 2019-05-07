@@ -25,8 +25,8 @@ export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: "",
-      userPassword: "",
+      userName: "Term_14711_20190416110005",
+      userPassword: "12pampered",
       errorDetails: false,
       loginData: "",
       spinnerStatus: false,

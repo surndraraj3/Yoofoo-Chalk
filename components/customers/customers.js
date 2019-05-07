@@ -9,7 +9,8 @@ import {
   ActivityIndicator,
   AsyncStorage,
   ImageBackground,
-  TouchableHighlight
+  TouchableHighlight,
+  FlatList
 } from "react-native";
 import {
   Container,
@@ -26,7 +27,8 @@ import {
   Card,
   CardItem,
   Fab,
-  Picker
+  Picker,
+  List
 } from "native-base";
 import OptionsMenu from "react-native-options-menu";
 import { getCustomerListURL } from "../common/url_config";
@@ -50,16 +52,15 @@ export default class Customers extends React.Component {
   //get Customers list
   componentDidMount = async () => {
     this._isMounted = true;
-    await AsyncStorage.getItem("LoginDetails")
-      .then(responseJson => {
-        responseJson = JSON.parse(responseJson);
-        if (this._isMounted) {
-          this.setState({
-            distributorId: responseJson.DistributorID,
-            authToken: responseJson.Token
-          });
-        }
-      });
+    await AsyncStorage.getItem("LoginDetails").then(responseJson => {
+      responseJson = JSON.parse(responseJson);
+      if (this._isMounted) {
+        this.setState({
+          distributorId: responseJson.DistributorID,
+          authToken: responseJson.Token
+        });
+      }
+    });
     if (this._isMounted) this.loadCustomerDetails();
   };
   componentWillUnmount() {
@@ -142,7 +143,7 @@ export default class Customers extends React.Component {
             color: "#fff"
           }}
           source={require("../../assets/new_customer.png")}
-        />        
+        />
       </Fab>
     );
   }
@@ -266,119 +267,124 @@ export default class Customers extends React.Component {
             </View>
           </View>
           <ScrollView>
-            {this.state.searchCustomerList.length === 0
-              ? this.state.customersListData.map((itm, i) => (
-                <View key={i}>
-                  <Text style={commonStyles.warningMessage}>
-                    {itm.length === 0 ? "No Customers Found" : ""}
-                  </Text>
+            {this.state.searchCustomerList.length === 0 ? (
+              <FlatList
+                data={this.state.customersListData}
+                renderItem={({ item }) => (
                   <Card>
                     <CardItem>
                       <Left>
                         <Text>
-                          {itm.FirstName} {itm.LastName}
+                          {item.FirstName} {item.LastName}
                         </Text>
                       </Left>
                     </CardItem>
                     <CardItem>
                       <Left>
-                        <Text>{itm.Email}</Text>
+                        <Text>{item.Email}</Text>
                       </Left>
                       <Right>
-                        <Button bordered
+                        <Button
+                          bordered
                           style={{
                             backgroundColor: "#61d0c8",
                             width: 120,
                             height: 40,
                             margin: 10,
                             justifyContent: "center",
-                            borderColor: '#ffffff'
+                            borderColor: "#ffffff"
                           }}
                           onPress={() => {
-                            this.props.navigation.navigate(
-                              "InventoryOrder",
-                              {
-                                customerID: itm.CustomerID,
-                                customerDistributorId: this.state
-                                  .distributorId,
-                                clickOn: 1
-                              }
-                            )
+                            this.props.navigation.navigate("InventoryOrder", {
+                              customerID: item.CustomerID,
+                              customerDistributorId: this.state.distributorId,
+                              clickOn: 1
+                            });
                           }}
                         >
-                          <Text style={{
-                            color: "#ffffff",
-                            fontSize: 15,
-                            fontWeight: 'bold'
-                          }}>Create Order</Text>
-                        </Button>                        
+                          <Text
+                            style={{
+                              color: "#ffffff",
+                              fontSize: 15,
+                              fontWeight: "bold"
+                            }}
+                          >
+                            Create Order
+                          </Text>
+                        </Button>
                       </Right>
                     </CardItem>
                     <CardItem>
                       <Left>
-                        <Text>{itm.Phone}</Text>
+                        <Text>{item.Phone}</Text>
                       </Left>
                     </CardItem>
                   </Card>
-                </View>
-              ))
-              : this.state.searchCustomerList.map(
-                (srchCustItm, srchCustIndx) => (
-                  <View key={srchCustIndx}>
-                    <Text style={commonStyles.warningMessage}>
-                      {srchCustItm.length === 0 ? "No Customers Found" : ""}
-                    </Text>
-                    <Card>
-                      <CardItem>
-                        <Left>
-                          <Text>
-                            {srchCustItm.FirstName} {srchCustItm.LastName}
-                          </Text>
-                        </Left>
-                      </CardItem>
-                      <CardItem>
-                        <Left>
-                          <Text>{srchCustItm.Email}</Text>
-                        </Left>
-                        <Right>
-                          <Button bordered
+                )}
+                keyExtractor={item => item.CustomerID}
+                // ItemSeparatorComponent={this.renderSeparator}
+              />
+            ) : (
+              <FlatList
+                data={this.state.searchCustomerList}
+                renderItem={({ srchItem }) => (
+                  <Card>
+                    {/* <CardItem>
+                    <Text>{srchItem.FirstName}Surendra</Text>
+                    </CardItem> */}
+                    {/* <CardItem>
+                      <Left>
+                        <Text>
+                          {srchItem.FirstName} {srchItem.LastName}
+                        </Text>
+                      </Left>
+                    </CardItem>
+                    <CardItem>
+                      <Left>
+                        <Text>{srchItem.Email}</Text>
+                      </Left>
+                      <Right>
+                        <Button
+                          bordered
+                          style={{
+                            backgroundColor: "#61d0c8",
+                            width: 120,
+                            height: 40,
+                            margin: 10,
+                            justifyContent: "center",
+                            borderColor: "#ffffff"
+                          }}
+                          onPress={() => {
+                            this.props.navigation.navigate("InventoryOrder", {
+                              customerID: srchItem.CustomerID,
+                              customerDistributorId: this.state.distributorId,
+                              clickOn: 1
+                            });
+                          }}
+                        >
+                          <Text
                             style={{
-                              backgroundColor: "#61d0c8",
-                              width: 120,
-                              height: 40,
-                              margin: 10,
-                              justifyContent: "center",
-                              borderColor: '#ffffff'
-                            }}
-                            onPress={() => {
-                              this.props.navigation.navigate(
-                                "InventoryOrder",
-                                {
-                                  customerID: srchCustItm.CustomerID,
-                                  customerDistributorId: this.state
-                                    .distributorId,
-                                  clickOn: 1
-                                }
-                              )
-                            }}
-                          >
-                            <Text style={{
                               color: "#ffffff",
                               fontSize: 15,
-                              fontWeight: 'bold'
-                            }}>Create Order</Text>
-                          </Button>
-                        </Right>
-                      </CardItem>
-                      <CardItem>
-                        <Left>
-                          <Text>{srchCustItm.Phone}</Text>
-                        </Left>
-                      </CardItem>
-                    </Card>
-                  </View>
-                )
-              )}
+                              fontWeight: "bold"
+                            }}
+                          >
+                            Create Order
+                          </Text>
+                        </Button>
+                      </Right>
+                    </CardItem>
+                    <CardItem>
+                      <Left>
+                        <Text>{srchItem.Phone}</Text>
+                      </Left>
+                    </CardItem> */}
+                  </Card>
+                )}
+                keyExtractor={srchItem1 => srchItem1.CustomerID}
+                // ItemSeparatorComponent={this.renderSeparator}
+              />
+            )}
           </ScrollView>
         </Content>
         {this.renderLoading()}
