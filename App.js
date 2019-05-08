@@ -1,6 +1,8 @@
 import React from "react";
 import Expo from "expo";
 import Login from "./components/login/login";
+import { Provider } from "react-redux";
+import store from "./components/store/store";
 import Routes from "./components/shared/routes";
 
 export default class App extends React.Component {
@@ -19,10 +21,14 @@ export default class App extends React.Component {
   }
 
   render() {
-    console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
+    console.ignoredYellowBox = ["Warning: Each", "Warning: Failed"];
     if (this.state.loading) {
       return <Expo.AppLoading />;
     }
-    return <Routes />;
+    return (
+      <Provider store={store}>
+        <Routes />
+      </Provider>
+    );
   }
 }

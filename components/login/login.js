@@ -1,4 +1,5 @@
 import React from "react";
+import {connect} from 'react-redux';
 import {
   View,
   ActivityIndicator,
@@ -21,7 +22,7 @@ import commonStyles from "../styles/styles";
 import { NavigationActions} from 'react-navigation'
 import { baseURL } from "../common/url_config";
 
-export default class Login extends React.Component {
+class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,7 +37,7 @@ export default class Login extends React.Component {
       clearInputPass: false,
       handleLogOut: this.props.navigation.getParam("logout")
     };
-  }  
+  }    
   //Get the username from the textbox onchange
   handleUsername = txtUserName => {
     this.setState({ userName: txtUserName });
@@ -63,9 +64,10 @@ export default class Login extends React.Component {
       .then(responseJson => {
         this.setState({
           loginData: responseJson
-        });
+        });        
         if (responseJson.message === "Success") {
-          this.setState({ spinnerStatus: false });         
+          this.setState({ spinnerStatus: false });  
+          this.props.onLoginTokenUpdate(responseJson.Token)       
           this.props.navigation.navigate("Dashboard");
           AsyncStorage.setItem(
             "LoginDetails",
@@ -110,8 +112,7 @@ export default class Login extends React.Component {
             }}
           >
             <Image source={require("../../assets/logo.png")} />
-          </View>
-
+          </View>           
           <Form>
             <Label style={commonStyles.labelPos}>Username/Email</Label>
             <Item>
@@ -176,3 +177,18 @@ export default class Login extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state=> {  
+  console.log(state)
+  return {
+   tokenValue: state.tokenReducer.authToken
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onLoginTokenUpdate: (tokenVal) => dispatch({ type: 'LoginToken', payload: tokenVal})
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Login);

@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from "react-redux";
+import store from "../store/store";
 import {
   StyleSheet,
   Text,
@@ -34,7 +36,7 @@ import OptionsMenu from "react-native-options-menu";
 import { getCustomerListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
-export default class Customers extends React.Component {
+class Customers extends React.Component {
   _isMounted = false;
   constructor(props) {
     super(props);
@@ -52,12 +54,16 @@ export default class Customers extends React.Component {
   //get Customers list
   componentDidMount = async () => {
     this._isMounted = true;
+    var newState = store.getState();
+    this.setState({
+      authToken: newState.tokenReducer.authToken
+    });
     await AsyncStorage.getItem("LoginDetails").then(responseJson => {
       responseJson = JSON.parse(responseJson);
       if (this._isMounted) {
         this.setState({
-          distributorId: responseJson.DistributorID,
-          authToken: responseJson.Token
+          distributorId: responseJson.DistributorID
+          // authToken: responseJson.Token
         });
       }
     });
@@ -321,7 +327,8 @@ export default class Customers extends React.Component {
                     </CardItem>
                   </Card>
                 )}
-                keyExtractor={item => item.CustomerID}
+                // keyExtractor={item => item.CustomerID}
+                keyExtractor={(item, index) => index.toString()}
                 // ItemSeparatorComponent={this.renderSeparator}
               />
             ) : (
@@ -424,3 +431,19 @@ const styles = StyleSheet.create({
     // color: "#841584"
   }
 });
+
+const mapStateToProps = state => {
+  return {
+    tokenValue: state.tokenReducer.authToken
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    getLoginUserToken: () => dispatch({ type: "GetTokenValue" })
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Customers);

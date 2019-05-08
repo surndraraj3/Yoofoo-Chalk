@@ -1,4 +1,5 @@
 import React from "react";
+import store from "../store/store";
 import {
   Text,
   View,
@@ -76,13 +77,16 @@ export default class InventoryOrder extends React.Component {
   //get the token and pass it to end point, fetch respose and assign it to an array
   componentDidMount = async () => {
     this._isMounted = true;
-    //if (this._isMounted) {
+    var newState = store.getState();
+    this.setState({
+      authToken: newState.tokenReducer.authToken
+    });
     await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
       resLoginDtls = JSON.parse(resLoginDtls);
       if (this._isMounted) {
         this.setState({
           distributorId: resLoginDtls.DistributorID,
-          authToken: resLoginDtls.Token
+          // authToken: resLoginDtls.Token
         });
       }
     });
