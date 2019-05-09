@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from "react-redux";
+import store from "../store/store";
 import {
   Text,
   View,
@@ -7,7 +9,8 @@ import {
   Image,
   AsyncStorage,
   TouchableHighlight,
-  ImageBackground
+  ImageBackground,
+  FlatList
 } from "react-native";
 import {
   Container,
@@ -29,7 +32,7 @@ import OptionsMenu from "react-native-options-menu";
 import { getInventoryListURL } from "../common/url_config";
 import commonStyles from "../styles/styles";
 
-export default class Inventory extends React.Component {
+class Inventory extends React.Component {
   _isMounted = false;
   constructor(props) {
     super(props);
@@ -48,23 +51,28 @@ export default class Inventory extends React.Component {
   componentDidMount = async () => {
     this._isMounted = true;
     if (this._isMounted) {
+      var newState = store.getState();
+      this.setState({
+        authToken: newState.tokenReducer.authToken
+      });
+
       await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
         resLoginDtls = JSON.parse(resLoginDtls);
         //if (this._isMounted) {
         this.setState({
-          distributorId: resLoginDtls.DistributorID,
-          authToken: resLoginDtls.Token
+          distributorId: resLoginDtls.DistributorID
+          // authToken: resLoginDtls.Token
         });
       });
       this.loadInventoryDetails();
     }
   };
   componentWillUnmount() {
-    this._isMounted = false;    
+    this._isMounted = false;
   }
   //Load Inventory Details
-  loadInventoryDetails = () => {   
-    //Get Inventory List   
+  loadInventoryDetails = () => {
+    //Get Inventory List
     fetch(`${getInventoryListURL}${this.state.distributorId}`, {
       method: "GET",
       headers: {
@@ -111,17 +119,20 @@ export default class Inventory extends React.Component {
     }
   }
   //Search the inventory based on keyword match
-  onSearchInventory = txtInventoryFld => {
-    const rsSrchInvtry = this.state.inventoryList.filter(
-      k =>
-        k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
-        k.Description.toLowerCase().includes(txtInventoryFld.toLowerCase())
-      // k.Quantity.contains(txtInventoryFld)
-    );
-    this.setState({
-      searchInventoryList: rsSrchInvtry,
-      inventoryCount: rsSrchInvtry.length
-    });
+  onSearchInventory = txtInventoryFld => {    
+    if(txtInventoryFld === '') this.loadInventoryDetails();
+    else {
+      const rsSrchInvtry = this.state.inventoryList.filter(
+        k =>
+          k.ItemID.toLowerCase().includes(txtInventoryFld.toLowerCase()) ||
+          k.Description.toLowerCase().includes(txtInventoryFld.toLowerCase())
+        // k.Quantity.contains(txtInventoryFld)
+      );
+      this.setState({
+        inventoryList: rsSrchInvtry,
+        inventoryCount: rsSrchInvtry.length
+      });
+    }    
   };
   //Render FAB
   renderInventoryFloatingActionButton() {
@@ -223,19 +234,71 @@ export default class Inventory extends React.Component {
                   placeholder="search items"
                   style={{
                     textAlign: "center",
-                    height: 50,
-                    // borderWidth: 2,
-                    // borderColor: "#00e6e6",
-                    // borderRadius: 20,
-                    // backgroundColor: "#FFFFFF"
+                    height: 50                   
                   }}
                   onChangeText={this.onSearchInventory}
                 />
                 <Icon active name="search" />
               </Item>
             </View>
-          </View>
-          <ScrollView>
+          </View>          
+            <FlatList
+              data={this.state.inventoryList}
+              renderItem={({ item }) => (
+                <Card>
+                  <CardItem bordered>
+                    <View style={commonStyles.row}>
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          width: 100,
+                          height: 50
+                        }}
+                      >
+                        <Image
+                          source={{ uri: `${item.SmallPicture}` }}
+                          style={{
+                            height: 100,
+                            width: "100%"
+                          }}
+                        />
+                      </View>
+                      <View style={commonStyles.column}>
+                        <Text style={{ fontWeight: "bold" }}>
+                          {item.Description}
+                        </Text>
+                        <View style={commonStyles.nestedRow}>
+                          <Text>SKU</Text>
+                          <Text>{item.ItemID}</Text>
+                        </View>
+                        <View style={commonStyles.nestedRow}>
+                          <Text>Retail Price</Text>
+                          <Text>{item.RetailPrice}</Text>
+                        </View>
+                        <View style={commonStyles.nestedRow}>
+                          <Text>Designer Price</Text>
+                          <Text>{item.Price}</Text>
+                        </View>
+                        <View style={commonStyles.nestedRow}>
+                          <Text>Size </Text>
+                          <Text>{item.Quantity}</Text>
+                          <Text>Count</Text>
+                          <Text>{item.Quantity}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </CardItem>
+                </Card>
+              )}
+              keyExtractor={item => item.ItemID}
+            />
+         
+            
+                      
+            
+        
+
+          {/* <ScrollView>
             {this.state.inventoryList.length === 0 ? (
               <Text style={commonStyles.warningMessage}>
                 {" "}
@@ -244,100 +307,8 @@ export default class Inventory extends React.Component {
             ) : (
               <View />
             )}
-            {this.state.searchInventoryList.length === 0
-              ? this.state.inventoryList.map((itm, i) => (
-                  <View key={i}>
-                    <Card>
-                      <CardItem bordered>
-                        <View style={commonStyles.row}>
-                          <View style={{flexDirection: "column",width: 100, height: 50}}>
-                            {/* <Icon
-                              active
-                              name="birthday-cake"
-                              type="FontAwesome"
-                              style={{ color: "#ff6666" }}
-                            /> */}
-                            <Image
-                              source={{ uri: `${itm.SmallPicture}` }}
-                              style={{
-                                height: 100,
-                                width: "100%"
-                                // borderRadius: 40 / 2
-                              }}
-                            />
-                          </View>
-                          <View style={commonStyles.column}>
-                            <Text style={{ fontWeight: "bold" }}>
-                              {itm.Description}
-                            </Text>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>SKU</Text>
-                              <Text>{itm.ItemID}</Text>
-                            </View>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Retail Price</Text>
-                              <Text>{itm.RetailPrice}</Text>
-                            </View>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Designer Price</Text>
-                              <Text>{itm.Price}</Text>
-                            </View>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Size </Text>
-                              <Text>{itm.Quantity}</Text>
-                              <Text>Count</Text>
-                              <Text>{itm.Quantity}</Text>
-                            </View>
-                          </View>
-                        </View>
-                      </CardItem>
-                    </Card>
-                  </View>
-                ))
-              : this.state.searchInventoryList.map((srchItm, srchIndx) => (
-                  <View key={srchIndx}>
-                    <Card>
-                      <CardItem bordered>
-                        <View style={commonStyles.row}>
-                          <View style={{flexDirection: "column",width: 100, height: 50}}>                            
-                            <Image
-                              source={{ uri: `${srchItm.SmallPicture}` }}
-                              style={{
-                                height: 100,
-                                width: "100%"
-                                // borderRadius: 40 / 2
-                              }}
-                            />
-                          </View>
-                          <View style={commonStyles.column}>
-                            <Text style={{ fontWeight: "bold" }}>
-                              {srchItm.Description}
-                            </Text>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>SKU</Text>
-                              <Text>{srchItm.ItemID}</Text>
-                            </View>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Retail Price</Text>
-                              <Text>{srchItm.RetailPrice}</Text>
-                            </View>
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Designer Price</Text>
-                              <Text>{srchItm.Price}</Text>
-                            </View>                            
-                            <View style={commonStyles.nestedRow}>
-                              <Text>Size </Text>
-                              <Text>{srchItm.Quantity}</Text>
-                              <Text>Count</Text>
-                              <Text>{srchItm.Quantity}</Text>
-                            </View>
-                          </View>
-                        </View>
-                      </CardItem>
-                    </Card>
-                  </View>
-                ))}
-          </ScrollView>
+           
+          </ScrollView> */}
         </Content>
         {this.renderLoading()}
         {this.renderInventoryFloatingActionButton()}
@@ -345,3 +316,9 @@ export default class Inventory extends React.Component {
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    tokenValue: state.tokenReducer.authToken
+  };
+};
+export default connect(mapStateToProps)(Inventory);
