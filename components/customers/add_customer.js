@@ -1,4 +1,5 @@
 import React from "react";
+import store from "../store/store";
 import {
   View,
   Text,
@@ -60,17 +61,24 @@ export default class AddCutsomer extends React.Component {
   //Get Distributor Id from sync storage
   componentDidMount = async () => {
     this._isMounted = true;
-    await AsyncStorage.getItem("LoginDetails")
-      // .then(response => response.json())
-      .then(responseJson => {
-        responseJson = JSON.parse(responseJson);
-        if (this._isMounted) {
-          this.setState({
-            distributorId: responseJson.DistributorID,
-            authToken: responseJson.Token
-          });
-        }
+    var newState = store.getState();
+    if (this._isMounted) {
+      await this.setState({
+        authToken: newState.tokenReducer.loginInfo.tokenKey,
+        distributorId: newState.tokenReducer.loginInfo.distributorKey
       });
+    }
+    // await AsyncStorage.getItem("LoginDetails")
+    //   // .then(response => response.json())
+    //   .then(responseJson => {
+    //     responseJson = JSON.parse(responseJson);
+    //     if (this._isMounted) {
+    //       this.setState({
+    //         distributorId: responseJson.DistributorID,
+    //         authToken: responseJson.Token
+    //       });
+    //     }
+    //   });
   };
   componentWillUnmount() {
     this._isMounted = false;
@@ -116,10 +124,10 @@ export default class AddCutsomer extends React.Component {
         errorEmail: true
       });
       return false;
-    } 
+    }
     // else if (isNaN(phoneNum) || phoneNum.length !== 10 || phoneNum == "") {
     //   Toast.showWithGravity("Invalid Phone Number", Toast.SHORT, Toast.CENTER);
-    // } 
+    // }
     else {
       this.setState({ validateEmail: "Email is Correct", errorEmail: false });
       this.setState({ loadSpinner: true });

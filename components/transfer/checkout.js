@@ -1,4 +1,5 @@
 import React from "react";
+import store from '../store/store';
 import {
   Text,
   TextInput,
@@ -80,15 +81,22 @@ export default class Checkout extends React.Component {
   }
   componentDidMount = async () => {
     this._isMounted = true;
-    await AsyncStorage.getItem("LoginDetails").then(responseJson => {
-      responseJson = JSON.parse(responseJson);
+    var newState = store.getState();
       if (this._isMounted) {
-        this.setState({
-          distributorId: responseJson.DistributorID,
-          authToken: responseJson.Token
+        await this.setState({
+          authToken: newState.tokenReducer.loginInfo.tokenKey,
+          distributorId: newState.tokenReducer.loginInfo.distributorKey,
         });
-      }
-    });
+      }  
+    // await AsyncStorage.getItem("LoginDetails").then(responseJson => {
+    //   responseJson = JSON.parse(responseJson);
+    //   if (this._isMounted) {
+    //     this.setState({
+    //       distributorId: responseJson.DistributorID,
+    //       authToken: responseJson.Token
+    //     });
+    //   }
+    // });
     if (this._isMounted) this.loadCheckoutDetails();
   };
   componentWillUnmount() {

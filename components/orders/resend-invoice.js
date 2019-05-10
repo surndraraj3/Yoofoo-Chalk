@@ -1,4 +1,5 @@
 import React from "react";
+import store from "../store/store";
 import {
   View,
   Dimensions,
@@ -50,13 +51,19 @@ export default class ResendInvoice extends React.Component {
   }
   componentDidMount = async () => {
     this.setState({ loading: true });
-    await AsyncStorage.getItem("LoginDetails").then(responseOrderDtlsJson => {
-      responseOrderDtlsJson = JSON.parse(responseOrderDtlsJson);
-      this.setState({
-        distributorId: responseOrderDtlsJson.DistributorID,
-        authToken: responseOrderDtlsJson.Token
-      });
+    var newState = store.getState();
+    await this.setState({
+      authToken: newState.tokenReducer.loginInfo.tokenKey,
+      distributorId: newState.tokenReducer.loginInfo.distributorKey
     });
+
+    // await AsyncStorage.getItem("LoginDetails").then(responseOrderDtlsJson => {
+    //   responseOrderDtlsJson = JSON.parse(responseOrderDtlsJson);
+    //   this.setState({
+    //     distributorId: responseOrderDtlsJson.DistributorID,
+    //     authToken: responseOrderDtlsJson.Token
+    //   });
+    // });
     fetch(`${getInvoiceDetailsByOrderIdUrl}${this.state.invoiceOrderNumber}`, {
       method: "GET",
       headers: {
@@ -78,8 +85,8 @@ export default class ResendInvoice extends React.Component {
   };
   _toggleModal = () =>
     this.setState({ isModalVisible: !this.state.isModalVisible });
-  
-    //Go to Profile Screen
+
+  //Go to Profile Screen
   gotoProfile = () => {
     this.props.navigation.navigate("Profile");
   };
@@ -140,7 +147,7 @@ export default class ResendInvoice extends React.Component {
                   this.goToHelp,
                   this.goToSignout
                 ]}
-              />  
+              />
             </TouchableHighlight>
           </Right>
         </Header>

@@ -1,12 +1,12 @@
 const initialState = {
-  authToken: ""
+  loginInfo: {}
 };
 
 export default function tokenReducer(state = initialState, action) {
     let st = state;
     switch (action.type) {
       case 'LoginToken': {
-        st = { ...state, authToken: action.payload};
+        st = { ...state, loginInfo: action.payload};
         console.log('st', st);
         break;
       }

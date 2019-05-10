@@ -1,4 +1,5 @@
 import React from "react";
+import store from '../store/store';
 import {
   Text,
   View,
@@ -45,14 +46,21 @@ export default class Orders extends React.Component {
   }
   componentDidMount = async () => {
     this.setState({ loading: true });
-    await AsyncStorage.getItem("LoginDetails")
-      .then(responseJson => {
-        responseJson = JSON.parse(responseJson);
-        this.setState({
-          distributorId: responseJson.DistributorID,
-          authToken: responseJson.Token
-        });
+    var newState = store.getState();
+   
+      await this.setState({
+        authToken: newState.tokenReducer.loginInfo.tokenKey,
+        distributorId: newState.tokenReducer.loginInfo.distributorKey,
       });
+   
+    // await AsyncStorage.getItem("LoginDetails")
+    //   .then(responseJson => {
+    //     responseJson = JSON.parse(responseJson);
+    //     this.setState({
+    //       distributorId: responseJson.DistributorID,
+    //       authToken: responseJson.Token
+    //     });
+    //   });
     fetch(
       // "http://ccapiorderservice-dev.us-west-1.elasticbeanstalk.com/api/orders/OrdersByDesignerID/14711",
       `${getOrdersListURL}${this.state.distributorId}`,

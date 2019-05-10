@@ -78,18 +78,12 @@ export default class InventoryOrder extends React.Component {
   componentDidMount = async () => {
     this._isMounted = true;
     var newState = store.getState();
-    this.setState({
-      authToken: newState.tokenReducer.authToken
-    });
-    await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
-      resLoginDtls = JSON.parse(resLoginDtls);
-      if (this._isMounted) {
-        this.setState({
-          distributorId: resLoginDtls.DistributorID,
-          // authToken: resLoginDtls.Token
-        });
-      }
-    });
+    if (this._isMounted) {
+      await this.setState({
+        authToken: newState.tokenReducer.loginInfo.tokenKey,
+        distributorId: newState.tokenReducer.loginInfo.distributorKey,
+      });
+    }   
     if (this._isMounted) this.loadInventoryOrderData();
     //}
   };

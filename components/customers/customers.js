@@ -55,18 +55,14 @@ class Customers extends React.Component {
   componentDidMount = async () => {
     this._isMounted = true;
     var newState = store.getState();
-    this.setState({
-      authToken: newState.tokenReducer.authToken
-    });
-    await AsyncStorage.getItem("LoginDetails").then(responseJson => {
-      responseJson = JSON.parse(responseJson);
-      if (this._isMounted) {
-        this.setState({
-          distributorId: responseJson.DistributorID
-          // authToken: responseJson.Token
-        });
-      }
-    });
+    // console.log('newState', newState.tokenReducer.loginInfo.tokenKey);
+    if (this._isMounted) {
+      await this.setState({
+        authToken: newState.tokenReducer.loginInfo.tokenKey,
+        distributorId: newState.tokenReducer.loginInfo.distributorKey,
+      });
+    }   
+    
     if (this._isMounted) this.loadCustomerDetails();
   };
   componentWillUnmount() {

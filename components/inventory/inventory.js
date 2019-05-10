@@ -52,18 +52,12 @@ class Inventory extends React.Component {
     this._isMounted = true;
     if (this._isMounted) {
       var newState = store.getState();
-      this.setState({
-        authToken: newState.tokenReducer.authToken
-      });
-
-      await AsyncStorage.getItem("LoginDetails").then(resLoginDtls => {
-        resLoginDtls = JSON.parse(resLoginDtls);
-        //if (this._isMounted) {
-        this.setState({
-          distributorId: resLoginDtls.DistributorID
-          // authToken: resLoginDtls.Token
+      if (this._isMounted) {
+        await this.setState({
+          authToken: newState.tokenReducer.loginInfo.tokenKey,
+          distributorId: newState.tokenReducer.loginInfo.distributorKey,
         });
-      });
+      }   
       this.loadInventoryDetails();
     }
   };

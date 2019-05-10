@@ -67,7 +67,7 @@ class Login extends React.Component {
         });        
         if (responseJson.message === "Success") {
           this.setState({ spinnerStatus: false });  
-          this.props.onLoginTokenUpdate(responseJson.Token)       
+          this.props.onLoginTokenUpdate({tokenKey: responseJson.Token, distributorKey: responseJson.DistributorID})       
           this.props.navigation.navigate("Dashboard");
           AsyncStorage.setItem(
             "LoginDetails",
@@ -181,7 +181,7 @@ class Login extends React.Component {
 const mapStateToProps = state=> {  
   console.log(state)
   return {
-   tokenValue: state.tokenReducer.authToken
+   tokenValue: state.tokenReducer.loginInfo
   }
 };
 
