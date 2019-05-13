@@ -9,7 +9,7 @@ const chalkReducer = combineReducers({
 const middelware = applyMiddleware(thunk, createLogger());
 const store = createStore(chalkReducer, middelware);
 store.subscribe = () =>{
-    console.log('Store')
+    // console.log('Store')
 }
 
 export default store;

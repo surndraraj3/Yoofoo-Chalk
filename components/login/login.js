@@ -26,8 +26,8 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: "Term_14711_20190416110005",
-      userPassword: "12pampered",
+      userName: "",
+      userPassword: "",
       errorDetails: false,
       loginData: "",
       spinnerStatus: false,
@@ -178,8 +178,7 @@ class Login extends React.Component {
   }
 }
 
-const mapStateToProps = state=> {  
-  console.log(state)
+const mapStateToProps = state=> { 
   return {
    tokenValue: state.tokenReducer.loginInfo
   }

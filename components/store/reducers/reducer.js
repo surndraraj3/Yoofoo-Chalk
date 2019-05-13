@@ -7,7 +7,7 @@ export default function tokenReducer(state = initialState, action) {
     switch (action.type) {
       case 'LoginToken': {
         st = { ...state, loginInfo: action.payload};
-        console.log('st', st);
+        // console.log('st', st);
         break;
       }
       case 'GetTokenValue': {

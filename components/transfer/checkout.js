@@ -109,7 +109,7 @@ export default class Checkout extends React.Component {
   }
   //Load Checkout Details
   loadCheckoutDetails = () => {
-    fetch(`${getCustomerListURL}${this.state.distributorId}`, {
+    fetch(`${getCustomerListURL}${this.state.distributorId}/0`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -278,7 +278,7 @@ export default class Checkout extends React.Component {
         console.log("Undefined Customer");
       }
     } else {
-      console.log("Default Value");
+      // console.log("Default Value");
       this.setState({ customerId: e, selCustomerVal: e });
     }
   };
@@ -297,7 +297,7 @@ export default class Checkout extends React.Component {
           dt.CustomerID = this.state.getDesignerObject.CustomerID;
           dt.Price = dt.Price;
           dt.DesignerID = this.state.distributorId;
-        });
+        });        
       } else {
         this.setState({
           selCustomerVal: this.state.getPrevCustomerId,
@@ -547,9 +547,10 @@ export default class Checkout extends React.Component {
                     value="Select Customer"
                   />
                   {this.state.customersListData.map((dt, i) => {
+                    const selectCustomerName = dt.FirstName + " " + dt.LastName;
                     return (
                       <Picker.Item
-                        label={dt.FirstName}
+                        label={selectCustomerName}
                         value={dt.CustomerID}
                         key={i}
                       />

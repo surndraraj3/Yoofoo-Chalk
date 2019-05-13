@@ -70,7 +70,7 @@ class Customers extends React.Component {
   }
   //Load Customer Details
   loadCustomerDetails = () => {
-    fetch(`${getCustomerListURL}${this.state.distributorId}`, {
+    fetch(`${getCustomerListURL}${this.state.distributorId}/0`, {
       method: "GET",
       headers: {
         Accept: "application/json",
