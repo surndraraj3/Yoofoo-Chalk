@@ -48,7 +48,9 @@ class Customers extends React.Component {
       customerCount: 0,
       authToken: "",
       searchCustomerList: [],
-      selPickItm: "test"
+      selPickItm: "test",
+      pageNumber: 1,
+      recordsPerPage: 5
     };
   }
   //get Customers list
@@ -59,29 +61,35 @@ class Customers extends React.Component {
     if (this._isMounted) {
       await this.setState({
         authToken: newState.tokenReducer.loginInfo.tokenKey,
-        distributorId: newState.tokenReducer.loginInfo.distributorKey,
+        distributorId: newState.tokenReducer.loginInfo.distributorKey
       });
-    }   
-    
+    }
+
     if (this._isMounted) this.loadCustomerDetails();
   };
   componentWillUnmount() {
     this._isMounted = false;
   }
   //Load Customer Details
-  loadCustomerDetails = () => {
-    fetch(`${getCustomerListURL}${this.state.distributorId}/0`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.state.authToken}`
+  loadCustomerDetails = () => {    
+   
+    fetch(
+      `${getCustomerListURL}${this.state.distributorId}/${
+        this.state.pageNumber
+      }/5`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.state.authToken}`
+        }
       }
-    })
+    )
       .then(response => response.json())
       .then(responseJson => {
         this.setState({
-          customersListData: responseJson,
+          customersListData: this.state.customersListData.concat(responseJson),
           customerCount: responseJson.length
         });
         this.setState({ loading: false });
@@ -97,9 +105,6 @@ class Customers extends React.Component {
     this.setState({ customersListData: [] });
   };
 
-  onChangeFab = fabitem => {
-    //console.log("item", fabitem);
-  };
   //show spinner
   renderLoading() {
     if (this.state.loading) {
@@ -167,21 +172,26 @@ class Customers extends React.Component {
   };
   //Search Customer
   onSearchCustomer = txtSrchCustomer => {
-    const rsSrchCustomer = this.state.customersListData.filter(
-      cstmrItm =>
-        cstmrItm.FirstName.toLowerCase().includes(
-          txtSrchCustomer.toLowerCase()
-        ) ||
-        cstmrItm.LastName.toLowerCase().includes(
-          txtSrchCustomer.toLowerCase()
-        ) ||
-        cstmrItm.Email.toLowerCase().includes(txtSrchCustomer.toLowerCase()) ||
-        cstmrItm.Phone.includes(txtSrchCustomer)
-    );
-    this.setState({
-      searchCustomerList: rsSrchCustomer,
-      customerCount: rsSrchCustomer.length
-    });
+    if (txtSrchCustomer === "") this.loadCustomerDetails();
+    else {
+      const rsSrchCustomer = this.state.customersListData.filter(
+        cstmrItm =>
+          cstmrItm.FirstName.toLowerCase().includes(
+            txtSrchCustomer.toLowerCase()
+          ) ||
+          cstmrItm.LastName.toLowerCase().includes(
+            txtSrchCustomer.toLowerCase()
+          ) ||
+          cstmrItm.Email.toLowerCase().includes(
+            txtSrchCustomer.toLowerCase()
+          ) ||
+          cstmrItm.Phone.includes(txtSrchCustomer)
+      );      
+      this.setState({
+        customersListData: rsSrchCustomer,
+        customerCount: rsSrchCustomer.length
+      });
+    }
   };
 
   //Go to Profile Screen
@@ -200,7 +210,12 @@ class Customers extends React.Component {
     AsyncStorage.removeItem("LoginDetails");
     this.props.navigation.navigate("Login");
   };
-
+  onScrollPageEnd = () => {
+    this.setState(
+      { pageNumber: this.state.pageNumber + 1 },
+      this.loadCustomerDetails
+    );
+  };
   render() {
     return (
       <Container>
@@ -245,7 +260,8 @@ class Customers extends React.Component {
             </TouchableHighlight>
           </Right>
         </Header>
-        <Content>
+        {/* <Content /> */}
+        <View>
           <View style={{ backgroundColor: "#e6e6e6" }}>
             <Text style={{ margin: 15, fontSize: 12 }}>
               {this.state.customerCount} Customers
@@ -257,10 +273,6 @@ class Customers extends React.Component {
                   style={{
                     textAlign: "center",
                     height: 50
-                    //borderWidth: 2,
-                    //borderColor: "#00e6e6",
-                    //borderRadius: 20,
-                    //backgroundColor: "#FFFFFF"
                   }}
                   onChangeText={this.onSearchCustomer}
                 />
@@ -268,128 +280,67 @@ class Customers extends React.Component {
               </Item>
             </View>
           </View>
-          <ScrollView>
-            {this.state.searchCustomerList.length === 0 ? (
-              <FlatList
-                data={this.state.customersListData}
-                renderItem={({ item }) => (
-                  <Card>
-                    <CardItem>
-                      <Left>
-                        <Text>
-                          {item.FirstName} {item.LastName}
-                        </Text>
-                      </Left>
-                    </CardItem>
-                    <CardItem>
-                      <Left>
-                        <Text>{item.Email}</Text>
-                      </Left>
-                      <Right>
-                        <Button
-                          bordered
-                          style={{
-                            backgroundColor: "#61d0c8",
-                            width: 120,
-                            height: 40,
-                            margin: 10,
-                            justifyContent: "center",
-                            borderColor: "#ffffff"
-                          }}
-                          onPress={() => {
-                            this.props.navigation.navigate("InventoryOrder", {
-                              customerID: item.CustomerID,
-                              customerDistributorId: this.state.distributorId,
-                              clickOn: 1
-                            });
-                          }}
-                        >
-                          <Text
-                            style={{
-                              color: "#ffffff",
-                              fontSize: 15,
-                              fontWeight: "bold"
-                            }}
-                          >
-                            Create Order
-                          </Text>
-                        </Button>
-                      </Right>
-                    </CardItem>
-                    <CardItem>
-                      <Left>
-                        <Text>{item.Phone}</Text>
-                      </Left>
-                    </CardItem>
-                  </Card>
-                )}
-                // keyExtractor={item => item.CustomerID}
-                keyExtractor={(item, index) => index.toString()}
-                // ItemSeparatorComponent={this.renderSeparator}
-              />
-            ) : (
-              <FlatList
-                data={this.state.searchCustomerList}
-                renderItem={({ srchItem }) => (
-                  <Card>
-                    {/* <CardItem>
-                    <Text>{srchItem.FirstName}Surendra</Text>
-                    </CardItem> */}
-                    {/* <CardItem>
-                      <Left>
-                        <Text>
-                          {srchItem.FirstName} {srchItem.LastName}
-                        </Text>
-                      </Left>
-                    </CardItem>
-                    <CardItem>
-                      <Left>
-                        <Text>{srchItem.Email}</Text>
-                      </Left>
-                      <Right>
-                        <Button
-                          bordered
-                          style={{
-                            backgroundColor: "#61d0c8",
-                            width: 120,
-                            height: 40,
-                            margin: 10,
-                            justifyContent: "center",
-                            borderColor: "#ffffff"
-                          }}
-                          onPress={() => {
-                            this.props.navigation.navigate("InventoryOrder", {
-                              customerID: srchItem.CustomerID,
-                              customerDistributorId: this.state.distributorId,
-                              clickOn: 1
-                            });
-                          }}
-                        >
-                          <Text
-                            style={{
-                              color: "#ffffff",
-                              fontSize: 15,
-                              fontWeight: "bold"
-                            }}
-                          >
-                            Create Order
-                          </Text>
-                        </Button>
-                      </Right>
-                    </CardItem>
-                    <CardItem>
-                      <Left>
-                        <Text>{srchItem.Phone}</Text>
-                      </Left>
-                    </CardItem> */}
-                  </Card>
-                )}
-                keyExtractor={srchItem1 => srchItem1.CustomerID}
-                // ItemSeparatorComponent={this.renderSeparator}
-              />
+          <FlatList
+            data={this.state.customersListData}
+            renderItem={({ item }) => (
+              <Card>
+                <CardItem>
+                  <Left>
+                    <Text>
+                      {item.FirstName} {item.LastName}
+                    </Text>
+                  </Left>
+                </CardItem>
+                <CardItem>
+                  <Left>
+                    <Text>{item.Email}</Text>
+                  </Left>
+                  <Right>
+                    <Button
+                      bordered
+                      style={{
+                        backgroundColor: "#61d0c8",
+                        width: 120,
+                        height: 40,
+                        margin: 10,
+                        justifyContent: "center",
+                        borderColor: "#ffffff"
+                      }}
+                      onPress={() => {
+                        this.props.navigation.navigate("InventoryOrder", {
+                          customerID: item.CustomerID,
+                          customerDistributorId: this.state.distributorId,
+                          clickOn: 1
+                        });
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#ffffff",
+                          fontSize: 15,
+                          fontWeight: "bold"
+                        }}
+                      >
+                        Create Order
+                      </Text>
+                    </Button>
+                  </Right>
+                </CardItem>
+                <CardItem>
+                  <Left>
+                    <Text>{item.Phone}</Text>
+                  </Left>
+                </CardItem>
+              </Card>
             )}
-          </ScrollView>
-        </Content>
+            // keyExtractor={item => item.CustomerID}
+            keyExtractor={(item, index) => index.toString()}
+            onEndReached={this.onScrollPageEnd}
+            onEndReachedThreshold={0}
+            // ItemSeparatorComponent={this.renderSeparator}
+          />
+        </View>
+
         {this.renderLoading()}
         {this.renderFloatingActionButton()}
       </Container>

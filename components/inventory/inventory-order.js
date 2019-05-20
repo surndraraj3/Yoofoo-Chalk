@@ -71,7 +71,8 @@ export default class InventoryOrder extends React.Component {
       txtSrch: "",
       screenHeight: deviceHeight,
       pageSize: 2,
-      increment: 2
+      increment: 2,
+      recordsPerPage: 3
     };
   }
   //get the token and pass it to end point, fetch respose and assign it to an array
@@ -105,11 +106,11 @@ export default class InventoryOrder extends React.Component {
     if (this.state.txtSrch.length === 0) {
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }/${this.state.pageSize}`;
+      }/${this.state.recordsPerPage}`;
     } else {
       invntryUrl = `${getInventoryListURL}${this.state.distributorId}/${
         this.state.pageNumber
-      }/${this.state.pageSize}/${this.state.txtSrch}`;
+      }/${this.state.recordsPerPage}/${this.state.txtSrch}`;
     }
     // console.log("URL", invntryUrl);
     //Get Inventory List data
@@ -133,7 +134,7 @@ export default class InventoryOrder extends React.Component {
             v.btnPercentDiscountVal = false;
           });
           this.setState({
-            inventoryList: responseJson,
+            inventoryList: this.state.inventoryList.concat(responseJson),
             inventoryCount: responseJson.length
           });
           this.setState({ loading: false });
@@ -411,8 +412,8 @@ export default class InventoryOrder extends React.Component {
         <Content
           onScroll={({ nativeEvent }) => {            
             if (this.isCloseToBottom(nativeEvent)) {             
-              //this.setState({pageSize: this.state.pageSize + 2});                          
-              this.loadInventoryOrderData();
+              this.setState({pageNumber: this.state.pageNumber + 1}, this.loadInventoryOrderData);                          
+              // this.loadInventoryOrderData();
             }
             if (this.isCloseToTop(nativeEvent)) {
               this.setState({pageSize: this.state.pageSize - 2})
